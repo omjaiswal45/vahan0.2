@@ -1,0 +1,79 @@
+`MyStartupApp/
+├── src/
+│   ├── assets/               # Static assets
+│   │   ├── fonts/
+│   │   ├── icons/
+│   │   └── images/
+│   │
+│   ├── features/                # Feature-first architecture
+│   │   ├── auth/                # Authentication feature
+│   │   │   ├── components/      # Auth-specific UI components
+│   │   │   │   ├── AuthButton.tsx
+│   │   │   │   └── AuthInput.tsx
+│   │   │   ├── screens/         # Auth screens
+│   │   │   │   ├── LoginScreen.tsx
+│   │   │   │   ├── SignupScreen.tsx
+│   │   │   │   └── OTPScreen.tsx
+│   │   │   ├── services/        # Auth services
+│   │   │   │   ├── authAPI.ts
+│   │   │   │   ├── authService.ts
+│   │   │   │   ├── googleAuth.ts
+│   │   │   │   └── otpService.ts
+│   │   │   ├── hooks/           # Auth-specific hooks
+│   │   │   │   └── useAuth.ts
+│   │   │   └── types.ts          # Auth-related types
+│   │   │
+│   │   ├── home/                # Home feature
+│   │   │   ├── components/
+│   │   │   ├── screens/
+│   │   │   ├── services/
+│   │   │   └── types.ts
+│   │   │
+│   │   └── profile/             # Profile feature
+│   │       ├── components/
+│   │       ├── screens/
+│   │       ├── services/
+│   │       └── types.ts
+│   │
+│   ├── common/                  # Shared components across feat
+│   │   ├── Button.tsx
+│   │   ├── Input.tsx
+│   │   └── Modal.tsx
+│   │
+│   ├── navigation/              # Navigation
+│   │   ├── AppNavigator.tsx
+│   │   ├── AuthNavigator.tsx
+│   │   └── RootNavigator.tsx
+│   │
+│   ├── store/                   # Redux state management
+│   │   ├── slices/
+│   │   │   ├── authSlice.ts
+│   │   │   └── userSlice.ts
+│   │   └── store.ts
+│   │
+│   ├── hooks/                   # Global custom hooks
+│   │   ├── useAPI.ts
+│   │   └── useValidation.ts
+│   │
+│   ├── utils/                   # Helper functions
+│   │   ├── constants.ts
+│   │   ├── formatters.ts
+│   │   ├── helpers.ts
+│   │   └── validators.ts
+│   │
+│   ├── styles/                  # Global styles & themes
+│   │   ├── colors.ts
+│   │   ├── globalStyles.ts
+│   │   ├── spacing.ts
+│   │   └── typography.ts
+│   │
+│   └── types/                   # Global/shared TypeScript types
+│       ├── api.d.ts
+│       ├── navigation.d.ts
+│       └── store.d.ts
+│
+├── App.tsx                      # Entry point
+├── app.json                      # Expo config
+├── package.json
+├── tsconfig.json                 # TypeScript config
+└── README.md`
