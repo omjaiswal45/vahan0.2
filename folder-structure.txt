@@ -34,6 +34,11 @@
 │   │       ├── screens/
 │   │       ├── services/
 │   │       └── types.ts
+│   │   └── location/             # location feature
+│   │       ├── components/
+│   │       ├── screens/
+│   │       ├── services/
+│   │       └── types.ts
 │   │
 │   ├── common/                  # Shared components across feat
 │   │   ├── Button.tsx
@@ -44,11 +49,14 @@
 │   │   ├── AppNavigator.tsx
 │   │   ├── AuthNavigator.tsx
 │   │   └── RootNavigator.tsx
+        └── CustomerTabs.tsx
+        └── DealerTabs.tsx
 │   │
 │   ├── store/                   # Redux state management
 │   │   ├── slices/
 │   │   │   ├── authSlice.ts
 │   │   │   └── userSlice.ts
+            |---locationSlice.ts
 │   │   └── store.ts
 │   │
 │   ├── hooks/                   # Global custom hooks

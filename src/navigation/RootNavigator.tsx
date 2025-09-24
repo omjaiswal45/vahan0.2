@@ -1,16 +1,21 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import AuthNavigator from './AuthNavigator';
-import CustomerTabs from './CustomerTabs';
 import DealerTabs from './DealerTabs';
+import CustomerTabs from './CustomerTabs';
+import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 
 const RootNavigator = () => {
-  const { isLoggedIn, role } = useSelector((state: RootState) => state.auth);
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const role = useSelector((state: RootState) => state.auth.role); // 'dealer' or 'customer'
 
-  if (!isLoggedIn) return <AuthNavigator />;
-
-  return role === 'customer' ? <CustomerTabs /> : <DealerTabs />;
+  return (
+    <>
+      {!isLoggedIn && <AuthNavigator />}
+      {isLoggedIn && role === 'dealer' && <DealerTabs />}
+      {isLoggedIn && role === 'customer' && <CustomerTabs />}
+    </>
+  );
 };
 
 export default RootNavigator;
