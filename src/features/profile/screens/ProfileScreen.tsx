@@ -8,8 +8,8 @@ const ProfileScreen = () => {
   const userRole = 'Customer';
 
   const cars = [
-    { id: 1, name: 'Toyota Corolla', year: 2022, image: 'https://cdn.pixabay.com/photo/2016/03/27/22/22/car-1289165_1280.jpg' },
-    { id: 2, name: 'Honda Civic', year: 2021, image: 'https://cdn.pixabay.com/photo/2017/02/15/12/12/car-2064193_1280.jpg' },
+    { id: 1, name: 'Toyota Corolla', year: 2022, image: 'https://di-uploads-pod6.dealerinspire.com/savannahtoyota/uploads/2020/09/corolla-red.png' },
+    { id: 2, name: 'Honda Civic', year: 2021, image: 'https://images.prismic.io/carwow/ZpVHWx5LeNNTxKjo_2023HondaCivicfrontquarterdynamic.png?auto=format&cs=tinysrgb&fit=max&q=60' },
   ];
 
   return (
