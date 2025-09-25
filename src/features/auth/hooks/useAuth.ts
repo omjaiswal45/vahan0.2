@@ -1,53 +1,55 @@
-// src/features/auth/hooks/useAuth.ts
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { login } from '../../../store/slices/authslice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
+import {
+  setRole,
+  sendOtpStart,
+  sendOtpSuccess,
+  sendOtpFailure,
+  verifyOtpStart,
+  verifyOtpSuccess,
+  verifyOtpFailure,
+} from '../../../store/slices/authslice';
 
 export const useAuth = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [role, setRole] = useState<'customer' | 'dealer'>('customer');
-
   const dispatch = useDispatch();
+  const { role, phone, loading, error, isVerified } = useSelector((state: RootState) => state.auth);
 
-  const emailLoginHandler = async (email: string, password: string) => {
-    setLoading(true);
-    setError('');
+  const selectRole = (selectedRole: 'customer' | 'dealer') => {
+    dispatch(setRole(selectedRole));
+  };
+
+  const sendOtpHandler = async (phoneNumber: string) => {
     try {
-      // simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      if (!email || !password) throw new Error('Enter email & password');
-      // Dummy login: set token & role in Redux
-      dispatch(login({ role, token: 'dummy-token' }));
-      setLoading(false);
+      dispatch(sendOtpStart());
+      await new Promise(resolve => setTimeout(resolve, 1000)); // simulate API
+      console.log('OTP sent to', phoneNumber);
+      dispatch(sendOtpSuccess(phoneNumber));
+    } catch (err: any) {
+      dispatch(sendOtpFailure(err.message));
+    }
+  };
+
+  const verifyOtpHandler = async (phoneNumber: string, otp: string) => {
+    try {
+      dispatch(verifyOtpStart());
+      await new Promise(resolve => setTimeout(resolve, 1000)); // simulate API
+      console.log('OTP verified for', phoneNumber);
+      dispatch(verifyOtpSuccess());
       return true;
     } catch (err: any) {
-      setError(err.message);
-      setLoading(false);
+      dispatch(verifyOtpFailure(err.message));
       return false;
     }
   };
 
-  const sendOtpHandler = async (phone: string) => {
-    setLoading(true);
-    setError('');
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // simulate OTP sent
-      console.log('OTP sent to', phone);
-      setLoading(false);
-    } catch (err: any) {
-      setError(err.message);
-      setLoading(false);
-    }
-  };
-
   return {
-    emailLoginHandler,
-    sendOtpHandler,
+    role,
+    phone,
     loading,
     error,
-    role,
-    setRole,
+    isVerified,
+    selectRole,
+    sendOtpHandler,
+    verifyOtpHandler,
   };
 };

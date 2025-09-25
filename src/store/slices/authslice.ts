@@ -2,33 +2,71 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface AuthState {
-  isLoggedIn: boolean;
   role: 'customer' | 'dealer' | null;
-  token: string | null;
+  phone: string | null;
+  isVerified: boolean;
+  loading: boolean;
+  error: string;
 }
 
 const initialState: AuthState = {
-  isLoggedIn: false,
-  role: null,
-  token: null,
+  role: 'customer',
+  phone: null,
+  isVerified: false,
+  loading: false,
+  error: '',
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<{ role: 'customer' | 'dealer'; token: string }>) => {
-      state.isLoggedIn = true;
-      state.role = action.payload.role;
-      state.token = action.payload.token;
+    setRole: (state, action: PayloadAction<'customer' | 'dealer'>) => {
+      state.role = action.payload;
     },
-    logout: state => {
-      state.isLoggedIn = false;
+    sendOtpStart: (state) => {
+      state.loading = true;
+      state.error = '';
+    },
+    sendOtpSuccess: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.phone = action.payload;
+    },
+    sendOtpFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    verifyOtpStart: (state) => {
+      state.loading = true;
+      state.error = '';
+    },
+    verifyOtpSuccess: (state) => {
+      state.loading = false;
+      state.isVerified = true;
+    },
+    verifyOtpFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    logout: (state) => {
       state.role = null;
-      state.token = null;
+      state.phone = null;
+      state.isVerified = false;
+      state.loading = false;
+      state.error = '';
     },
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const {
+  setRole,
+  sendOtpStart,
+  sendOtpSuccess,
+  sendOtpFailure,
+  verifyOtpStart,
+  verifyOtpSuccess,
+  verifyOtpFailure,
+  logout,
+} = authSlice.actions;
+
 export default authSlice.reducer;

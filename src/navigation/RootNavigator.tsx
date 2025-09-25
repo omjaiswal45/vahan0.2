@@ -1,21 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 import AuthNavigator from './AuthNavigator';
 import DealerTabs from './DealerTabs';
 import CustomerTabs from './CustomerTabs';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
+import SplashScreenComponent from '../features/auth/screens/SplashScreen';
 
 const RootNavigator = () => {
-  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
-  const role = useSelector((state: RootState) => state.auth.role); // 'dealer' or 'customer'
+  const { role, isVerified } = useSelector((state: RootState) => state.auth);
+  const [showSplash, setShowSplash] = useState(true);
 
-  return (
-    <>
-      {!isLoggedIn && <AuthNavigator />}
-      {isLoggedIn && role === 'dealer' && <DealerTabs />}
-      {isLoggedIn && role === 'customer' && <CustomerTabs />}
-    </>
-  );
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showSplash) return <SplashScreenComponent />;
+
+  if (isVerified && role === 'dealer') return <DealerTabs />;
+  if (isVerified && role === 'customer') return <CustomerTabs />;
+  return <AuthNavigator />;
 };
 
 export default RootNavigator;

@@ -1,23 +1,30 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useRef } from 'react';
 import { useRoute } from '@react-navigation/native';
-import { useAuth } from '../hooks/useAuth';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  verifyOtpStart,
+  verifyOtpSuccess,
+  verifyOtpFailure,
+} from '../../../store/slices/authslice';
+import { RootState } from '../../../store/store';
 
 const OTPScreen = () => {
   const route = useRoute();
   const { phone } = route.params as { phone: string };
-  const { verifyOtpHandler, loading, error, role } = useAuth();
-  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const { role, loading, error } = useSelector((state: RootState) => state.auth);
+
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputsRef = useRef<Array<TextInput | null>>([]);
-
-  // Autofill simulation for dev/testing
-  useEffect(() => {
-    const fakeOtp = '123456';
-    setOtp(fakeOtp.split(''));
-    fakeOtp.split('').forEach((digit, i) => inputsRef.current[i]?.setNativeProps({ text: digit }));
-  }, []);
 
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
@@ -30,14 +37,21 @@ const OTPScreen = () => {
 
   const handleSubmit = async () => {
     const enteredOtp = otp.join('');
-    const success = await verifyOtpHandler(phone, enteredOtp);
-    if (success) {
-      (navigation as any).reset({ index: 0, routes: [{ name: role === 'customer' ? 'CustomerTabs' : 'DealerTabs' }] });
+    dispatch(verifyOtpStart());
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000)); // simulate API
+      console.log('OTP verified for', phone);
+      dispatch(verifyOtpSuccess()); // This triggers RootNavigator to switch screen
+    } catch (err: any) {
+      dispatch(verifyOtpFailure(err.message || 'Failed to verify OTP'));
     }
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#F9FAFB' }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: '#F9FAFB' }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
       <View style={styles.container}>
         <Text style={styles.title}>Enter OTP</Text>
         <Text style={styles.subtitle}>OTP sent to {phone}</Text>
@@ -46,7 +60,7 @@ const OTPScreen = () => {
           {otp.map((digit, i) => (
             <TextInput
               key={i}
-              ref={el => { inputsRef.current[i] = el; }}
+              ref={el => { inputsRef.current[i] = el!; }}
               style={styles.otpInput}
               keyboardType="numeric"
               maxLength={1}
@@ -57,14 +71,20 @@ const OTPScreen = () => {
           ))}
         </View>
 
-        <TouchableOpacity style={[styles.button, loading && styles.buttonDisabled]} onPress={handleSubmit} disabled={loading}>
+        <TouchableOpacity
+          style={[styles.button, loading && styles.buttonDisabled]}
+          onPress={handleSubmit}
+          disabled={loading}
+        >
           <Text style={styles.buttonText}>{loading ? 'Verifying...' : 'Verify OTP'}</Text>
         </TouchableOpacity>
-        {error && <Text style={styles.error}>{error}</Text>}
+
+        {error ? <Text style={styles.error}>{error}</Text> : null}
       </View>
     </KeyboardAvoidingView>
   );
 };
+
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', paddingHorizontal: 25 },
   title: { fontSize: 28, fontWeight: '700', textAlign: 'center', marginBottom: 8, color: '#1E88E5' },
@@ -80,7 +100,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   button: {
-    backgroundColor: '#ff880aff',
+    backgroundColor: '#1E88E5',
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: 'center',
