@@ -42,4 +42,10 @@ export const GlobalStyles = StyleSheet.create({
     borderRadius: 8,
     marginVertical: Spacing.sm,
   },
+  label: {               // ← Added this
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 6,
+    color: Colors.text,   // assuming you have a Colors.text defined
+  },
 });

@@ -53,7 +53,7 @@ const DealerTabs = () => (
           <Ionicons
             name={iconName}
             size={focused ? 30 : 24}
-            color={focused ? '#2378f0ff' : '#7f8c8d'}
+            color={focused ? '#ff1ea5ff' : '#7f8c8d'}
             style={{ transform: [{ scale: focused ? 1.2 : 1 }] }} // interactive scaling
           />
         );
