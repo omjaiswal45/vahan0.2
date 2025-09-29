@@ -1,32 +1,35 @@
-import React from "react";
-import { View, TextInput, Button } from "react-native";
+// src/features/dealer/components/RegistrationInput.tsx
+import React, { useState } from "react";
+import { View, TextInput, Button, StyleSheet, Text } from "react-native";
 
-// Props type define करो
-type RegistrationInputProps = {
+interface RegistrationInputProps {
   regNo: string;
   setRegNo: (val: string) => void;
   onFetch: () => void;
-};
+}
 
-export default function RegistrationInput({
-  regNo,
-  setRegNo,
-  onFetch,
-}: RegistrationInputProps) {
+export default function RegistrationInput({ regNo, setRegNo, onFetch }: RegistrationInputProps) {
   return (
-    <View style={{ marginVertical: 12 }}>
+    <View style={{ marginBottom: 16 }}>
+      <Text style={styles.label}>Enter Car Registration Number</Text>
       <TextInput
-        placeholder="Enter Registration Number"
         value={regNo}
         onChangeText={setRegNo}
-        style={{
-          borderWidth: 1,
-          borderRadius: 6,
-          padding: 10,
-          marginBottom: 8,
-        }}
+        placeholder="Enter registration number"
+        style={styles.input}
       />
-      <Button title="Fetch Car Details" onPress={onFetch} />
+      <Button title="Fetch Details" onPress={onFetch} />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  label: { marginBottom: 4, fontWeight: "bold" },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 6,
+    padding: 8,
+    marginBottom: 8,
+  },
+});

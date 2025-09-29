@@ -1,87 +1,101 @@
-`MyStartupApp/
-├── src/
-│   ├── assets/               # Static assets
-│   │   ├── fonts/
-│   │   ├── icons/
-│   │   └── images/
-│   │
-│   ├── features/                # Feature-first architecture
-│   │   ├── auth/                # Authentication feature
-│   │   │   ├── components/      # Auth-specific UI components
-│   │   │   │   ├── AuthButton.tsx
-│   │   │   │   └── AuthInput.tsx
-│   │   │   ├── screens/         # Auth screens
-│   │   │   │   ├── LoginScreen.tsx
-│   │   │   │   ├── SignupScreen.tsx
-│   │   │   │   └── OTPScreen.tsx
-│   │   │   ├── services/        # Auth services
-│   │   │   │   ├── authAPI.ts
-│   │   │   │   ├── authService.ts
-│   │   │   │   ├── googleAuth.ts
-│   │   │   │   └── otpService.ts
-│   │   │   ├── hooks/           # Auth-specific hooks
-│   │   │   │   └── useAuth.ts
-│   │   │   └── types.ts          # Auth-related types
-│   │   │
-│   │   ├── home/                # Home feature
-│   │   │   ├── components/
-│   │   │   ├── screens/
-│   │   │   ├── services/
-│   │   │   └── types.ts
-│   │   │
-│   │   └── profile/             # Profile feature
-│   │       ├── components/
-│   │       ├── screens/
-│   │       ├── services/
-│   │       └── types.ts
-│   │   └── location/             # location feature
-│   │       ├── components/
-│   │       ├── screens/
-│   │       ├── services/
-│   │       └── types.ts
-│   │
-│   ├── common/                  # Shared components across feat
-│   │   ├── Button.tsx
-│   │   ├── Input.tsx
-│   │   └── Modal.tsx
-│   │
-│   ├── navigation/              # Navigation
-│   │   ├── AppNavigator.tsx
-│   │   ├── AuthNavigator.tsx
-│   │   └── RootNavigator.tsx
-        └── CustomerTabs.tsx
-        └── DealerTabs.tsx
-│   │
-│   ├── store/                   # Redux state management
-│   │   ├── slices/
-│   │   │   ├── authSlice.ts
-│   │   │   └── userSlice.ts
-            |---locationSlice.ts
-│   │   └── store.ts
-│   │
-│   ├── hooks/                   # Global custom hooks
-│   │   ├── useAPI.ts
-│   │   └── useValidation.ts
-│   │
-│   ├── utils/                   # Helper functions
-│   │   ├── constants.ts
-│   │   ├── formatters.ts
-│   │   ├── helpers.ts
-│   │   └── validators.ts
-│   │
-│   ├── styles/                  # Global styles & themes
-│   │   ├── colors.ts
-│   │   ├── globalStyles.ts
-│   │   ├── spacing.ts
-│   │   └── typography.ts
-│   │
-│   └── types/                   # Global/shared TypeScript types
-│       ├── api.d.ts
-│       ├── navigation.d.ts
-│       └── store.d.ts
-│
-├── App.tsx                      # Entry point
-├── app.json                      # Expo config
-├── package.json
-├── tsconfig.json                 # TypeScript config
-└── README.md`
+vahan0.2-main (1)/
+└── vahan0.2-main/
+    ├── assets/
+    │   ├── adaptive-icon.png
+    │   ├── favicon.png
+    │   ├── icon.png
+    │   └── splash-icon.png
+    ├── src/
+    │   ├── @types/
+    │   │   ├── react-native-snap-carousel.d.ts
+    │   │   └── react-native-vector-icons.d.ts
+    │   ├── assets/
+    │   │   └── animations/
+    │   │       └── splash.json
+    │   ├── common/
+    │   │   ├── AppHeader.tsx
+    │   │   ├── Button.tsx
+    │   │   └── Input.tsx
+    │   ├── features/
+    │   │   ├── auth/
+    │   │   │   ├── components/
+    │   │   │   │   ├── AuthButton.tsx
+    │   │   │   │   ├── AuthInput.tsx
+    │   │   │   │   ├── OTPInput.tsx
+    │   │   │   │   └── SocialLoginButton.tsx
+    │   │   │   ├── hooks/
+    │   │   │   │   └── useAuth.ts
+    │   │   │   ├── screens/
+    │   │   │   │   ├── LoginScreen.tsx
+    │   │   │   │   ├── OTPScreen.tsx
+    │   │   │   │   ├── SignupScreen.tsx
+    │   │   │   │   └── SplashScreen.tsx
+    │   │   │   ├── services/
+    │   │   │   │   └── authAPI.ts
+    │   │   │   └── types.ts
+    │   │   ├── dealer/
+    │   │   │   ├── components/
+    │   │   │   │   ├── CarForm.tsx
+    │   │   │   │   ├── KPIBox.tsx
+    │   │   │   │   ├── LeadItem.tsx
+    │   │   │   │   ├── ListingCard.tsx
+    │   │   │   │   ├── ListingCarousel.tsx
+    │   │   │   │   └── RegistrationInput.tsx
+    │   │   │   ├── hooks/
+    │   │   │   │   └── useListing.ts
+    │   │   │   ├── screens/
+    │   │   │   │   ├── AddListingScreen.tsx
+    │   │   │   │   ├── ChatScreen.tsx
+    │   │   │   │   ├── DashboardScreen.tsx
+    │   │   │   │   ├── DealerProfileScreen.tsx
+    │   │   │   │   ├── LeadsScreen.tsx
+    │   │   │   │   ├── ListingDetailScreen.tsx
+    │   │   │   │   └── ListingsScreen.tsx
+    │   │   │   ├── services/
+    │   │   │   │   └── dealerAPI.ts
+    │   │   │   └── types.ts/
+    │   │   │       └── types.ts
+    │   │   ├── home/
+    │   │   │   └── screens/
+    │   │   │       └── HomeScreen.tsx
+    │   │   ├── location/
+    │   │   │   └── hooks/
+    │   │   │       └── useLocation.ts
+    │   │   └── profile/
+    │   │       └── screens/
+    │   │           └── ProfileScreen.tsx
+    │   ├── hooks/
+    │   │   ├── useAPI.ts
+    │   │   └── useValidation.ts
+    │   ├── navigation/
+    │   │   ├── AppNavigator.tsx
+    │   │   ├── AuthNavigator.tsx
+    │   │   ├── CustomerTabs.tsx
+    │   │   ├── DealerTabs.tsx
+    │   │   └── RootNavigator.tsx
+    │   ├── store/
+    │   │   ├── slices/
+    │   │   │   ├── authslice.ts
+    │   │   │   ├── dealerSlice.ts
+    │   │   │   ├── locationSlice.ts
+    │   │   │   └── userslice.ts
+    │   │   └── store.ts
+    │   ├── styles/
+    │   │   ├── colors.ts
+    │   │   ├── globalStyles.ts
+    │   │   ├── index.ts
+    │   │   ├── spacing.ts
+    │   │   └── typography.ts
+    │   └── utils/
+    │       ├── constants.ts
+    │       ├── formatters.ts
+    │       ├── helpers.ts
+    │       └── validators.ts
+    ├── .gitignore
+    ├── app.json
+    ├── App.tsx
+    ├── folder-structure.txt
+    ├── index.ts
+    ├── package-lock.json
+    ├── package.json
+    └── tsconfig.json

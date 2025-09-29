@@ -1,60 +1,91 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, Button } from "react-native";
-import { Car } from "../types.ts/types";
+// src/features/dealer/components/CarForm.tsx
+import React from "react";
+import { View, Text, TextInput, StyleSheet } from "react-native";
 
-// Define props type
-type CarFormProps = {
-  car: Car;
-  onSubmit: (data: { price: number; km: number; city: string }) => void | Promise<void>;
-  loading: boolean;
-};
+interface CarFormProps {
+  brand: string;
+  setBrand: (val: string) => void;
+  model: string;
+  setModel: (val: string) => void;
+  makeYear: string;
+  setMakeYear: (val: string) => void;
+  fuel: string;
+  setFuel: (val: string) => void;
+  additionalFuel: string;
+  setAdditionalFuel: (val: string) => void;
+  ownership: string;
+  setOwnership: (val: string) => void;
+  mileage: string;
+  setMileage: (val: string) => void;
+  color: string;
+  setColor: (val: string) => void;
+  price: string;
+  setPrice: (val: string) => void;
+  location: string;
+  setLocation: (val: string) => void;
+}
 
-export default function CarForm({ car, onSubmit, loading }: CarFormProps) {
-  const [price, setPrice] = useState("");
-  const [km, setKm] = useState("");
-  const [city, setCity] = useState("");
-
-  return (
-    <View>
-      <Text style={{ fontWeight: "bold", fontSize: 18, marginBottom: 8 }}>
-        {car.make} {car.model} ({car.year})
-      </Text>
-      <Text>Fuel: {car.fuel}</Text>
-      <Text>Transmission: {car.transmission}</Text>
-
+export default function CarForm({
+  brand,
+  setBrand,
+  model,
+  setModel,
+  makeYear,
+  setMakeYear,
+  fuel,
+  setFuel,
+  additionalFuel,
+  setAdditionalFuel,
+  ownership,
+  setOwnership,
+  mileage,
+  setMileage,
+  color,
+  setColor,
+  price,
+  setPrice,
+  location,
+  setLocation,
+}: CarFormProps) {
+  const renderInput = (
+    label: string,
+    value: string,
+    onChange: (val: string) => void,
+    placeholder?: string
+  ) => (
+    <View style={{ marginBottom: 12 }}>
+      <Text style={styles.label}>{label}</Text>
       <TextInput
-        placeholder="Enter Price"
-        value={price}
-        onChangeText={setPrice}
-        keyboardType="numeric"
-        style={{ borderWidth: 1, marginVertical: 8, padding: 8 }}
-      />
-
-      <TextInput
-        placeholder="Enter KM Driven"
-        value={km}
-        onChangeText={setKm}
-        keyboardType="numeric"
-        style={{ borderWidth: 1, marginVertical: 8, padding: 8 }}
-      />
-
-      <TextInput
-        placeholder="Enter City"
-        value={city}
-        onChangeText={setCity}
-        style={{ borderWidth: 1, marginVertical: 8, padding: 8 }}
-      />
-
-      <Button
-        title={loading ? "Saving..." : "Save Listing"}
-        onPress={() =>
-          onSubmit({
-            price: Number(price),
-            km: Number(km),
-            city,
-          })
-        }
+        value={value}
+        onChangeText={onChange}
+        placeholder={placeholder || label}
+        style={styles.input}
       />
     </View>
   );
+
+  return (
+    <View>
+      {renderInput("Brand", brand, setBrand)}
+      {renderInput("Model", model, setModel)}
+      {renderInput("Make / Year", makeYear, setMakeYear)}
+      {renderInput("Fuel Type", fuel, setFuel)}
+      {renderInput("Additional Fuel", additionalFuel, setAdditionalFuel)}
+      {renderInput("Ownership", ownership, setOwnership)}
+      {renderInput("Mileage (KM)", mileage, setMileage)}
+      {renderInput("Color", color, setColor)}
+      {renderInput("Price", price, setPrice)}
+      {renderInput("Location", location, setLocation)}
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  label: { marginBottom: 4, fontWeight: "bold" },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 6,
+    padding: 8,
+  },
+});
