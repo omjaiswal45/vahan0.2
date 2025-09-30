@@ -1,6 +1,6 @@
-// src/features/dealer/components/CarForm.tsx
-import React from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import React, { useRef } from "react";
+import { View, StyleSheet, ScrollView, findNodeHandle } from "react-native";
+import AttributeCard from "./AttributeCard";
 
 interface CarFormProps {
   brand: string;
@@ -47,45 +47,52 @@ export default function CarForm({
   location,
   setLocation,
 }: CarFormProps) {
-  const renderInput = (
-    label: string,
-    value: string,
-    onChange: (val: string) => void,
-    placeholder?: string
-  ) => (
-    <View style={{ marginBottom: 12 }}>
-      <Text style={styles.label}>{label}</Text>
-      <TextInput
-        value={value}
-        onChangeText={onChange}
-        placeholder={placeholder || label}
-        style={styles.input}
-      />
-    </View>
-  );
+  const scrollRef = useRef<ScrollView>(null);
+  const cardRefs = useRef<any[]>([]);
+
+const scrollToNext = (index: number) => {
+  if (cardRefs.current[index + 1]) {
+    cardRefs.current[index + 1].measureLayout(
+      findNodeHandle(scrollRef.current),
+      (_x: number, y: number) => {
+        scrollRef.current?.scrollTo({ y: y - 16, animated: true });
+      },
+      () => {}
+    );
+  }
+};
+
+
+  const attributes = [
+    { label: "Brand", value: brand, onChange: setBrand, required: true },
+    { label: "Model", value: model, onChange: setModel, required: true },
+    { label: "Make Year", value: makeYear, onChange: setMakeYear, required: true },
+    { label: "Fuel Type", value: fuel, onChange: setFuel, required: true },
+    { label: "Additional Fuel", value: additionalFuel, onChange: setAdditionalFuel, required: false },
+    { label: "Ownership", value: ownership, onChange: setOwnership, required: true },
+    { label: "Mileage (1000km)", value: mileage, onChange: setMileage, required: false },
+    { label: "Color", value: color, onChange: setColor, required: true },
+    { label: "Price", value: price, onChange: setPrice, required: true },
+    { label: "Location", value: location, onChange: setLocation, required: true },
+  ];
 
   return (
-    <View>
-      {renderInput("Brand", brand, setBrand)}
-      {renderInput("Model", model, setModel)}
-      {renderInput("Make / Year", makeYear, setMakeYear)}
-      {renderInput("Fuel Type", fuel, setFuel)}
-      {renderInput("Additional Fuel", additionalFuel, setAdditionalFuel)}
-      {renderInput("Ownership", ownership, setOwnership)}
-      {renderInput("Mileage (KM)", mileage, setMileage)}
-      {renderInput("Color", color, setColor)}
-      {renderInput("Price", price, setPrice)}
-      {renderInput("Location", location, setLocation)}
-    </View>
+    <ScrollView ref={scrollRef} style={styles.container}>
+      {attributes.map((attr, index) => (
+        <AttributeCard
+          key={index}
+          ref={(el: any) => (cardRefs.current[index] = el)}
+          label={attr.label}
+          value={attr.value}
+          required={attr.required}
+          onChange={attr.onChange}
+          onComplete={() => scrollToNext(index)}
+        />
+      ))}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  label: { marginBottom: 4, fontWeight: "bold" },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 6,
-    padding: 8,
-  },
+  container: { marginTop: 16 },
 });

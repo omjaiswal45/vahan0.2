@@ -1,155 +1,207 @@
-// src/features/dealer/screens/AddListingScreen.tsx
-import React, { useState } from "react";
-import { View, Text, ScrollView, Button } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React, { useRef, useState } from "react";
+import { View, FlatList, StyleSheet, Dimensions, ScrollView } from "react-native";
+
+// Attribute components
 import RegistrationInput from "../components/RegistrationInput";
-import CarForm from "../components/CarForm";
-import BrandGrid from "../components/BrandGrid";
+import BrandSelect from "../components/BrandSelect";
+import ModelSelect from "../components/ModelSelect";
+import YearSelect from "../components/YearSelect";
+import FuelSelect from "../components/FuelSelect";
+import ColorSelect from "../components/ColorSelect";
+import PriceInput from "../components/PriceInput";
+import LocationSelect from "../components/LocationSelect";
+import AttributeBreadcrumb from "../components/AttributeBreadcrumb";
+
+const { width } = Dimensions.get("window");
 
 export default function AddListingScreen() {
-  const navigation = useNavigation<any>();
+  const flatListRef = useRef<FlatList>(null);
+  const breadcrumbScrollRef = useRef<ScrollView>(null);
 
-  // -----------------------------
-  // States for all car attributes
-  // -----------------------------
-  const [regNo, setRegNo] = useState("");
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const [registration, setRegistration] = useState("");
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
-  const [makeYear, setMakeYear] = useState("");
+  const [year, setYear] = useState("");
   const [fuel, setFuel] = useState("");
-  const [additionalFuel, setAdditionalFuel] = useState("");
-  const [ownership, setOwnership] = useState("");
-  const [mileage, setMileage] = useState("");
   const [color, setColor] = useState("");
   const [price, setPrice] = useState("");
   const [location, setLocation] = useState("");
 
-  // -----------------------------
-  // Dummy API fetch function
-  // -----------------------------
-  const handleFetch = () => {
-    const dummyData = {
-      brand: "Maruti",
-      model: "Swift",
-      makeYear: "2020",
-      fuel: "Petrol",
-      additionalFuel: "",
-      ownership: "1st",
-      mileage: "15000",
-      color: "Red",
-      price: "500000",
-      location: "Delhi",
-    };
+  const steps = [
+    "Registration",
+    "Brand",
+    "Model",
+    "Year",
+    "Fuel",
+    "Color",
+    "Price",
+    "Location",
+  ];
 
-    setBrand(dummyData.brand);
-    setModel(dummyData.model);
-    setMakeYear(dummyData.makeYear);
-    setFuel(dummyData.fuel);
-    setAdditionalFuel(dummyData.additionalFuel);
-    setOwnership(dummyData.ownership);
-    setMileage(dummyData.mileage);
-    setColor(dummyData.color);
-    setPrice(dummyData.price);
-    setLocation(dummyData.location);
+  const scrollToIndex = (index: number) => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToIndex({ index, animated: true });
+      setCurrentStep(index);
+
+      // scroll breadcrumb automatically
+      setTimeout(() => {
+        if (breadcrumbScrollRef.current) {
+          breadcrumbScrollRef.current.scrollTo({ x: index * 80, animated: true });
+        }
+      }, 100);
+    }
   };
 
-  // -----------------------------
-  // Dummy car brands
-  // -----------------------------
-  const carBrands = [
+  const attributes = [
     {
-      id: "1",
-      name: "Maruti",
-      logo:
-        "https://upload.wikimedia.org/wikipedia/en/2/29/Maruti_Suzuki_logo.png",
+      key: "registration",
+      component: (
+        <RegistrationInput
+          value={registration}
+          onComplete={(val: string) => {
+            setRegistration(val);
+            scrollToIndex(1); // go to BrandSelect
+          }}
+          onChooseBrand={(brandName) => {
+            if (brandName === "more") {
+              scrollToIndex(1); // go to full BrandSelect
+            } else {
+              setBrand(brandName);
+              scrollToIndex(2); // go directly to ModelSelect
+            }
+          }}
+        />
+      ),
     },
     {
-      id: "2",
-      name: "Hyundai",
-      logo: "https://1000logos.net/wp-content/uploads/2018/02/Hyundai-Logo.png",
+      key: "brand",
+      component: (
+        <BrandSelect
+          value={brand}
+          onComplete={(val: string) => {
+            setBrand(val);
+            scrollToIndex(2); // move to ModelSelect
+          }}
+        />
+      ),
     },
     {
-      id: "3",
-      name: "Honda",
-      logo: "https://1000logos.net/wp-content/uploads/2018/02/Honda-logo.png",
+      key: "model",
+      component: (
+        <ModelSelect
+          value={model}
+          onComplete={(val: string) => {
+            setModel(val);
+            scrollToIndex(3);
+          }}
+        />
+      ),
+    },
+    {
+      key: "year",
+      component: (
+        <YearSelect
+          value={year}
+          onComplete={(val: string) => {
+            setYear(val);
+            scrollToIndex(4);
+          }}
+        />
+      ),
+    },
+    {
+      key: "fuel",
+      component: (
+        <FuelSelect
+          value={fuel}
+          onComplete={(val: string) => {
+            setFuel(val);
+            scrollToIndex(5);
+          }}
+        />
+      ),
+    },
+    {
+      key: "color",
+      component: (
+        <ColorSelect
+          value={color}
+          onComplete={(val: string) => {
+            setColor(val);
+            scrollToIndex(6);
+          }}
+        />
+      ),
+    },
+    {
+      key: "price",
+      component: (
+        <PriceInput
+          value={price}
+          onComplete={(val: string) => {
+            setPrice(val);
+            scrollToIndex(7);
+          }}
+        />
+      ),
+    },
+    {
+      key: "location",
+      component: (
+        <LocationSelect
+          value={location}
+          onComplete={(val: string) => {
+            setLocation(val);
+            console.log("✅ Final Data:", {
+              registration,
+              brand,
+              model,
+              year,
+              fuel,
+              color,
+              price,
+              location,
+            });
+          }}
+        />
+      ),
     },
   ];
 
-  // -----------------------------
-  // Save / Publish Handlers
-  // -----------------------------
-  const handleSaveDraft = () => {
-    console.log("Draft Saved:", {
-      regNo,
-      brand,
-      model,
-      makeYear,
-      fuel,
-      additionalFuel,
-      ownership,
-      mileage,
-      color,
-      price,
-      location,
-    });
-    alert("Draft Saved (Dummy)");
-  };
-
-  const handlePublish = () => {
-    console.log("Published:", {
-      regNo,
-      brand,
-      model,
-      makeYear,
-      fuel,
-      additionalFuel,
-      ownership,
-      mileage,
-      color,
-      price,
-      location,
-    });
-    alert("Listing Published (Dummy)");
-  };
-
   return (
-    <ScrollView contentContainerStyle={{ padding: 16 }}>
-      <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 12 }}>
-        Add New Car Listing
-      </Text>
+    <View style={styles.container}>
+      {/* Breadcrumb at top */}
+      <ScrollView
+        ref={breadcrumbScrollRef}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ maxHeight: 60 }}
+        contentContainerStyle={{ alignItems: "center", paddingHorizontal: 8 }}
+      >
+        <AttributeBreadcrumb
+          steps={steps}
+          currentIndex={currentStep}
+          onStepPress={scrollToIndex}
+        />
+      </ScrollView>
 
-      {/* Registration Number Input */}
-      <RegistrationInput
-        regNo={regNo}
-        setRegNo={setRegNo}
-        onFetch={handleFetch}
+      {/* Horizontal cards for each attribute */}
+      <FlatList
+        ref={flatListRef}
+        data={attributes}
+        keyExtractor={(item) => item.key}
+        renderItem={({ item }) => <View style={{ width }}>{item.component}</View>}
+        horizontal
+        pagingEnabled
+        scrollEnabled={false} // auto scroll only
+        showsHorizontalScrollIndicator={false}
       />
-
-      {/* Brand Selection */}
-      <Text style={{ marginVertical: 12, fontWeight: "bold" }}>
-        Or Select Car Brand
-      </Text>
-      <BrandGrid brands={carBrands} onSelect={setBrand} />
-
-      {/* Car Form */}
-      <CarForm
-        brand={brand} setBrand={setBrand}
-        model={model} setModel={setModel}
-        makeYear={makeYear} setMakeYear={setMakeYear}
-        fuel={fuel} setFuel={setFuel}
-        additionalFuel={additionalFuel} setAdditionalFuel={setAdditionalFuel}
-        ownership={ownership} setOwnership={setOwnership}
-        mileage={mileage} setMileage={setMileage}
-        color={color} setColor={setColor}
-        price={price} setPrice={setPrice}
-        location={location} setLocation={setLocation}
-      />
-
-      {/* Save / Publish Buttons */}
-      <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 16 }}>
-        <Button title="Save Draft" onPress={handleSaveDraft} />
-        <Button title="Publish" onPress={handlePublish} />
-      </View>
-    </ScrollView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#fff" },
+});

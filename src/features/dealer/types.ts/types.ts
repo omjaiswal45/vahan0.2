@@ -1,35 +1,47 @@
-
-export type Car = {
-  make: string;
+export interface CarDetails {
+  id?: string;
+  registrationNumber: string;
+  brand: string;
   model: string;
-  year: number;
-  fuel: "Petrol" | "Diesel" | "CNG" | "EV" | "Hybrid";
-  transmission: "Manual" | "Automatic";
-};
-
-export type Listing = {
-  id: string;
-  regNo: string;
-  title: string;
+  makeYear: number;
+  fuelType: 'Petrol' | 'Diesel' | 'CNG' | 'Electric' | 'Hybrid';
+  ownership: number;
+  mileage: number;
+  color: string;
   price: number;
-  km: number;
-  city: string;
-  images: string[];
-  car: Car;
-};
-
-export type Dealer = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
   location: string;
-};
+  transmission?: 'Manual' | 'Automatic';
+  variant?: string;
+  additionalFuel?: string;
+}
 
-export type Lead = {
+export interface ListingFormState {
+  registrationNumber: string;
+  autoFilledData: Partial<CarDetails>;
+  manualEntries: Partial<CarDetails>;
+  currentStep: number;
+  completedSteps: Set<string>;
+  draftData: Partial<CarDetails>;
+  errors: Record<string, string>;
+  isLoading: boolean;
+}
+
+export interface Brand {
   id: string;
   name: string;
-  contact: string;
-  inquiry: string;
-  listingId: string;
-};
+  logo: string;
+  popular: boolean;
+}
+
+export interface Model {
+  id: string;
+  brandId: string;
+  name: string;
+  popular: boolean;
+}
+
+export interface VehicleAPIResponse {
+  success: boolean;
+  data: Partial<CarDetails>;
+  message?: string;
+}
