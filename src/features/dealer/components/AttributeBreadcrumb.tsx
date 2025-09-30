@@ -68,6 +68,6 @@ const styles = StyleSheet.create({
   stepText: { fontSize: 14, color: "#999" },
   activeText: { color: "#fff", fontWeight: "bold" },
   label: { marginLeft: 6, marginRight: 12, fontSize: 12, color: "#555" },
-  activeLabel: { color: "blue", fontWeight: "bold" },
+  activeLabel: { color: "#ff1ea5ff", fontWeight: "bold" },
   line: { width: 20, height: 1, backgroundColor: "#ccc" },
 });

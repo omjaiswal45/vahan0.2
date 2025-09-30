@@ -148,16 +148,17 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: "#e5e5ea",
   },
-  selectedChip: {
-    backgroundColor: "#007AFF",
-    borderColor: "#007AFF",
-    transform: [{ scale: 1.05 }],
-    shadowColor: "#007AFF",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
-  },
+ selectedChip: {
+  backgroundColor: "#ff1ea5",
+  borderColor: "#ff1ea5",      
+  transform: [{ scale: 1.05 }],
+  shadowColor: "#ff1ea5",     
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.3,
+  shadowRadius: 8,
+  elevation: 6,
+},
+
   yearText: {
     fontSize: 16,
     color: "#1a1a1a",

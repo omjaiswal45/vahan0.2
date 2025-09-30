@@ -7,10 +7,12 @@ import BrandSelect from "../components/BrandSelect";
 import ModelSelect from "../components/ModelSelect";
 import YearSelect from "../components/YearSelect";
 import FuelSelect from "../components/FuelSelect";
-import ColorSelect from "../components/ColorSelect";
 import PriceInput from "../components/PriceInput";
 import LocationSelect from "../components/LocationSelect";
 import AttributeBreadcrumb from "../components/AttributeBreadcrumb";
+import KmInput from "../components/KmInput";
+import OwnerSelect from "../components/OwnerNumberSelect";
+import TransmissionSelect from "../components/TransmissionSelect";
 
 const { width } = Dimensions.get("window");
 
@@ -25,7 +27,9 @@ export default function AddListingScreen() {
   const [model, setModel] = useState("");
   const [year, setYear] = useState("");
   const [fuel, setFuel] = useState("");
-  const [color, setColor] = useState("");
+  const [km, setKm] = useState("");
+  const [owner, setOwner] = useState("");
+  const [transmission, setTransmission] = useState("");
   const [price, setPrice] = useState("");
   const [location, setLocation] = useState("");
 
@@ -35,7 +39,9 @@ export default function AddListingScreen() {
     "Model",
     "Year",
     "Fuel",
-    "Color",
+    "KM",
+    "Owner",
+    "Transmission",
     "Price",
     "Location",
   ];
@@ -62,14 +68,14 @@ export default function AddListingScreen() {
           value={registration}
           onComplete={(val: string) => {
             setRegistration(val);
-            scrollToIndex(1); // go to BrandSelect
+            scrollToIndex(1);
           }}
           onChooseBrand={(brandName) => {
             if (brandName === "more") {
-              scrollToIndex(1); // go to full BrandSelect
+              scrollToIndex(1);
             } else {
               setBrand(brandName);
-              scrollToIndex(2); // go directly to ModelSelect
+              scrollToIndex(2);
             }
           }}
         />
@@ -82,7 +88,7 @@ export default function AddListingScreen() {
           value={brand}
           onComplete={(val: string) => {
             setBrand(val);
-            scrollToIndex(2); // move to ModelSelect
+            scrollToIndex(2);
           }}
         />
       ),
@@ -124,13 +130,37 @@ export default function AddListingScreen() {
       ),
     },
     {
-      key: "color",
+      key: "km",
       component: (
-        <ColorSelect
-          value={color}
+        <KmInput
+          value={km}
           onComplete={(val: string) => {
-            setColor(val);
+            setKm(val);
             scrollToIndex(6);
+          }}
+        />
+      ),
+    },
+    {
+      key: "owner",
+      component: (
+        <OwnerSelect
+          value={owner}
+          onComplete={(val: string) => {
+            setOwner(val);
+            scrollToIndex(7);
+          }}
+        />
+      ),
+    },
+    {
+      key: "transmission",
+      component: (
+        <TransmissionSelect
+          value={transmission}
+          onComplete={(val: string) => {
+            setTransmission(val);
+            scrollToIndex(8);
           }}
         />
       ),
@@ -142,32 +172,35 @@ export default function AddListingScreen() {
           value={price}
           onComplete={(val: string) => {
             setPrice(val);
-            scrollToIndex(7);
+            scrollToIndex(9);
           }}
         />
       ),
     },
-    {
-      key: "location",
-      component: (
-        <LocationSelect
-          value={location}
-          onComplete={(val: string) => {
-            setLocation(val);
-            console.log("✅ Final Data:", {
-              registration,
-              brand,
-              model,
-              year,
-              fuel,
-              color,
-              price,
-              location,
-            });
-          }}
-        />
-      ),
-    },
+   {
+  key: "location",
+  component: (
+    <LocationSelect
+      value={location}
+      onComplete={(loc: { state: string; city: string }) => {
+        setLocation(`${loc.city}, ${loc.state}`);
+        console.log("✅ Final Data:", {
+          registration,
+          brand,
+          model,
+          year,
+          fuel,
+          km,
+          owner,
+          transmission,
+          price,
+          location: `${loc.city}, ${loc.state}`,
+        });
+      }}
+    />
+  ),
+}
+
   ];
 
   return (
@@ -195,7 +228,7 @@ export default function AddListingScreen() {
         renderItem={({ item }) => <View style={{ width }}>{item.component}</View>}
         horizontal
         pagingEnabled
-        scrollEnabled={false} // auto scroll only
+        scrollEnabled={false}
         showsHorizontalScrollIndicator={false}
       />
     </View>

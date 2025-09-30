@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import Slider from '@react-native-community/slider';
 
-
 interface PriceInputProps {
   value: string;
   onComplete: (val: string) => void;
@@ -24,61 +23,41 @@ export default function PriceInput({ value, onComplete }: PriceInputProps) {
   const MIN_PRICE = 50000;
   const MAX_PRICE = 10000000;
 
-  // Format number with Indian comma system (lakhs)
   const formatIndianPrice = (num: number) => {
     const numStr = Math.round(num).toString();
     let lastThree = numStr.substring(numStr.length - 3);
     const otherNumbers = numStr.substring(0, numStr.length - 3);
-    if (otherNumbers !== '') {
-      lastThree = ',' + lastThree;
-    }
+    if (otherNumbers !== '') lastThree = ',' + lastThree;
     return otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
   };
 
-  // Convert price to lakhs for display
   const formatLakhs = (num: number) => {
     const lakhs = num / 100000;
-    if (lakhs >= 100) {
-      return `₹${(lakhs / 100).toFixed(2)} Cr`;
-    }
+    if (lakhs >= 100) return `₹${(lakhs / 100).toFixed(2)} Cr`;
     return `₹${lakhs.toFixed(2)} L`;
   };
 
-  // Update slider when text input changes
   const handleTextChange = (text: string) => {
     const numericValue = text.replace(/[^0-9]/g, '');
     setPrice(numericValue);
     const parsedValue = parseFloat(numericValue) || MIN_PRICE;
-    if (parsedValue >= MIN_PRICE && parsedValue <= MAX_PRICE) {
-      setSliderValue(parsedValue);
-    }
+    if (parsedValue >= MIN_PRICE && parsedValue <= MAX_PRICE) setSliderValue(parsedValue);
   };
 
-  // Update text input when slider changes
   const handleSliderChange = (val: number) => {
     setSliderValue(val);
     setPrice(Math.round(val).toString());
   };
 
   const handleSubmit = () => {
-    // Animate button press
     Animated.sequence([
-      Animated.timing(scaleAnim, {
-        toValue: 0.95,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }),
+      Animated.timing(scaleAnim, { toValue: 0.95, duration: 100, useNativeDriver: true }),
+      Animated.timing(scaleAnim, { toValue: 1, duration: 100, useNativeDriver: true }),
     ]).start();
 
     onComplete(price);
   };
 
-  // Quick price presets
   const pricePresets = [
     { label: "₹2L", value: 200000 },
     { label: "₹5L", value: 500000 },
@@ -153,9 +132,9 @@ export default function PriceInput({ value, onComplete }: PriceInputProps) {
           maximumValue={MAX_PRICE}
           value={sliderValue}
           onValueChange={handleSliderChange}
-          minimumTrackTintColor="#007AFF"
+          minimumTrackTintColor="#ff1ea5"
           maximumTrackTintColor="#E5E5EA"
-          thumbTintColor="#007AFF"
+          thumbTintColor="#ff1ea5"
           step={10000}
         />
         <View style={styles.sliderTicks}>
@@ -188,166 +167,58 @@ export default function PriceInput({ value, onComplete }: PriceInputProps) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FAFAFA",
-    paddingHorizontal: 20,
-    paddingTop: 24,
-  },
-  header: {
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: "#1a1a1a",
-    marginBottom: 8,
-    letterSpacing: -0.5,
-  },
-  subtitle: {
-    fontSize: 15,
-    color: "#666",
-    fontWeight: "400",
-  },
+  container: { flex: 1, backgroundColor: "#FAFAFA", paddingHorizontal: 20, paddingTop: 24 },
+  header: { marginBottom: 32 },
+  title: { fontSize: 28, fontWeight: "700", color: "#1a1a1a", marginBottom: 8, letterSpacing: -0.5 },
+  subtitle: { fontSize: 15, color: "#666", fontWeight: "400" },
   priceCard: {
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 24,
     alignItems: "center",
     marginBottom: 24,
-    shadowColor: "#000",
+    shadowColor: "#ff1ea5",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 5,
     borderWidth: 1,
-    borderColor: "#E5E5EA",
+    borderColor: "#ffe5f4",
   },
-  currencyLabel: {
-    fontSize: 14,
-    color: "#666",
-    fontWeight: "500",
-    marginBottom: 8,
-  },
-  priceInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  rupeeSymbol: {
-    fontSize: 36,
-    fontWeight: "700",
-    color: "#1a1a1a",
-    marginRight: 8,
-  },
-  priceInput: {
-    fontSize: 40,
-    fontWeight: "700",
-    color: "#1a1a1a",
-    minWidth: 200,
-    textAlign: "left",
-    padding: 0,
-  },
-  priceInputFocused: {
-    color: "#007AFF",
-  },
-  priceInWords: {
-    fontSize: 16,
-    color: "#007AFF",
-    fontWeight: "600",
-  },
-  presetsContainer: {
-    marginBottom: 32,
-  },
-  presetsTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1a1a1a",
-    marginBottom: 12,
-  },
-  presetsRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  presetButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: "#F5F5F7",
-    borderWidth: 1.5,
-    borderColor: "#E5E5EA",
-  },
-  presetButtonActive: {
-    backgroundColor: "#007AFF",
-    borderColor: "#007AFF",
-  },
-  presetText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#1a1a1a",
-  },
-  presetTextActive: {
-    color: "#fff",
-  },
-  sliderContainer: {
-    marginBottom: 32,
-  },
-  sliderLabels: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-  sliderLabel: {
-    fontSize: 13,
-    color: "#666",
-    fontWeight: "500",
-  },
-  slider: {
-    width: "100%",
-    height: 40,
-  },
-  sliderTicks: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 8,
-    marginTop: -12,
-  },
-  tick: {
-    width: 2,
-    height: 8,
-    backgroundColor: "#E5E5EA",
-    borderRadius: 1,
-  },
+  currencyLabel: { fontSize: 14, color: "#666", fontWeight: "500", marginBottom: 8 },
+  priceInputContainer: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
+  rupeeSymbol: { fontSize: 36, fontWeight: "700", color: "#1a1a1a", marginRight: 8 },
+  priceInput: { fontSize: 40, fontWeight: "700", color: "#1a1a1a", minWidth: 200, textAlign: "left", padding: 0 },
+  priceInputFocused: { color: "#ff1ea5" },
+  priceInWords: { fontSize: 16, color: "#ff1ea5", fontWeight: "600" },
+  presetsContainer: { marginBottom: 32 },
+  presetsTitle: { fontSize: 16, fontWeight: "600", color: "#1a1a1a", marginBottom: 12 },
+  presetsRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  presetButton: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10, backgroundColor: "#F5F5F7", borderWidth: 1.5, borderColor: "#E5E5EA" },
+  presetButtonActive: { backgroundColor: "#ff1ea5", borderColor: "#ff1ea5" },
+  presetText: { fontSize: 14, fontWeight: "600", color: "#1a1a1a" },
+  presetTextActive: { color: "#fff" },
+  sliderContainer: { marginBottom: 32 },
+  sliderLabels: { flexDirection: "row", justifyContent: "space-between", marginBottom: 8 },
+  sliderLabel: { fontSize: 13, color: "#666", fontWeight: "500" },
+  slider: { width: "100%", height: 40 },
+  sliderTicks: { flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 8, marginTop: -12 },
+  tick: { width: 2, height: 8, backgroundColor: "#E5E5EA", borderRadius: 1 },
   submitButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#ff1ea5",
     borderRadius: 14,
     paddingVertical: 16,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#007AFF",
+    shadowColor: "#ff1ea5",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 6,
     marginBottom: 16,
   },
-  submitText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "700",
-    marginRight: 8,
-  },
-  arrow: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  infoText: {
-    textAlign: "center",
-    fontSize: 13,
-    color: "#999",
-    fontStyle: "italic",
-  },
+  submitText: { color: "#fff", fontSize: 18, fontWeight: "700", marginRight: 8 },
+  arrow: { color: "#fff", fontSize: 20, fontWeight: "700" },
+  infoText: { textAlign: "center", fontSize: 13, color: "#999", fontStyle: "italic" },
 });
