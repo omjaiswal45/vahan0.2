@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { View, StyleSheet, ScrollView, findNodeHandle } from "react-native";
 import AttributeCard from "./AttributeCard";
+import ImagePickerCard from "./ImagePickerCard";
 
 interface CarFormProps {
   brand: string;
@@ -23,6 +24,8 @@ interface CarFormProps {
   setPrice: (val: string) => void;
   location: string;
   setLocation: (val: string) => void;
+  images: string[];
+  setImages: (val: string[]) => void;
 }
 
 export default function CarForm({
@@ -46,22 +49,23 @@ export default function CarForm({
   setPrice,
   location,
   setLocation,
+  images,
+  setImages,
 }: CarFormProps) {
   const scrollRef = useRef<ScrollView>(null);
   const cardRefs = useRef<any[]>([]);
 
-const scrollToNext = (index: number) => {
-  if (cardRefs.current[index + 1]) {
-    cardRefs.current[index + 1].measureLayout(
-      findNodeHandle(scrollRef.current),
-      (_x: number, y: number) => {
-        scrollRef.current?.scrollTo({ y: y - 16, animated: true });
-      },
-      () => {}
-    );
-  }
-};
-
+  const scrollToNext = (index: number) => {
+    if (cardRefs.current[index + 1]) {
+      cardRefs.current[index + 1].measureLayout(
+        findNodeHandle(scrollRef.current),
+        (_x: number, y: number) => {
+          scrollRef.current?.scrollTo({ y: y - 16, animated: true });
+        },
+        () => {}
+      );
+    }
+  };
 
   const attributes = [
     { label: "Brand", value: brand, onChange: setBrand, required: true },
@@ -89,6 +93,13 @@ const scrollToNext = (index: number) => {
           onComplete={() => scrollToNext(index)}
         />
       ))}
+
+      {/* Image Upload Card */}
+     <ImagePickerCard
+  images={images}
+  setImages={setImages}
+  onComplete={() => scrollToNext(attributes.length)}
+/>
     </ScrollView>
   );
 }

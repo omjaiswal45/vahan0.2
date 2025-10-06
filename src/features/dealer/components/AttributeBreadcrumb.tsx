@@ -19,7 +19,8 @@ export default function AttributeBreadcrumb({
         const isActive = index === currentIndex;
 
         return (
-          <View key={index} style={styles.stepContainer}>
+          <View key={index} style={styles.stepWrapper}>
+            {/* Step circle */}
             <TouchableOpacity
               onPress={() => {
                 if (onStepPress && index <= currentIndex) {
@@ -35,14 +36,30 @@ export default function AttributeBreadcrumb({
                 ]}
               >
                 <Text
-                  style={[styles.stepText, (isCompleted || isActive) && styles.activeText]}
+                  style={[
+                    styles.stepText,
+                    (isCompleted || isActive) && styles.activeText,
+                  ]}
                 >
                   {index + 1}
                 </Text>
               </View>
             </TouchableOpacity>
-            <Text style={[styles.label, isActive && styles.activeLabel]}>{step}</Text>
-            {index < steps.length - 1 && <View style={styles.line} />}
+
+            {/* Step label */}
+            <Text style={[styles.label, isActive && styles.activeLabel]}>
+              {step}
+            </Text>
+
+            {/* Connector line */}
+            {index < steps.length - 1 && (
+              <View
+                style={[
+                  styles.line,
+                  isCompleted && styles.completedLine,
+                ]}
+              />
+            )}
           </View>
         );
       })}
@@ -51,8 +68,16 @@ export default function AttributeBreadcrumb({
 }
 
 const styles = StyleSheet.create({
-  container: { flexDirection: "row", alignItems: "center", padding: 12, flexWrap: "nowrap" },
-  stepContainer: { flexDirection: "row", alignItems: "center" },
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+  },
+  stepWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   circle: {
     width: 28,
     height: 28,
@@ -63,11 +88,40 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
   },
-  completedCircle: { backgroundColor: "green" },
-  activeCircle: { borderColor: "blue" },
-  stepText: { fontSize: 14, color: "#999" },
-  activeText: { color: "#fff", fontWeight: "bold" },
-  label: { marginLeft: 6, marginRight: 12, fontSize: 12, color: "#555" },
-  activeLabel: { color: "#ff1ea5ff", fontWeight: "bold" },
-  line: { width: 20, height: 1, backgroundColor: "#ccc" },
+  completedCircle: {
+    backgroundColor: "#10B981",
+    borderColor: "#10B981",
+  },
+  activeCircle: {
+    borderColor: "#FF1EA5",
+    backgroundColor: "#FF1EA5",
+  },
+  stepText: {
+    fontSize: 14,
+    color: "#999",
+    fontWeight: "600",
+  },
+  activeText: {
+    color: "#fff",
+    fontWeight: "700",
+  },
+  label: {
+    marginLeft: 6,
+    marginRight: 12,
+    fontSize: 12,
+    color: "#555",
+  },
+  activeLabel: {
+    color: "#FF1EA5",
+    fontWeight: "700",
+  },
+  line: {
+    width: 20,
+    height: 2,
+    backgroundColor: "#ccc",
+    marginHorizontal: 4,
+  },
+  completedLine: {
+    backgroundColor: "#10B981",
+  },
 });

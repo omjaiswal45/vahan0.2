@@ -13,7 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "VahanHelp needs access to your camera to take photos of your car.",
+        "NSPhotoLibraryUsageDescription": "VahanHelp needs access to your photo library to select car images."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -21,13 +25,26 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_MEDIA_IMAGES"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "VahanHelp needs access to your photos to upload car images.",
+          "cameraPermission": "VahanHelp needs access to your camera to take photos of your car."
+        }
+      ]
     ]
   }
 }

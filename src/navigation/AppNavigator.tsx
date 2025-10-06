@@ -7,7 +7,7 @@ const Tab = createBottomTabNavigator();
 
 export type RootStackParamList = {
   Login: undefined;
-  Signup: undefined;
+
   OTP: { phone: string };
   CustomerTabs: undefined;
   DealerTabs: undefined;

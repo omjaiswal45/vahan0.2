@@ -28,6 +28,7 @@ const popularBrands = [
   { id: "5", name: "Kia", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6LXHdTPrqcQ3cXNbfD9c4gg3J2IHCR54jfg&s" },
 ];
 
+
 export default function RegistrationInput({
   value,
   onComplete,

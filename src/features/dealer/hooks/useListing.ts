@@ -17,6 +17,11 @@ export function useListing() {
         year: 2021,
         fuel: "Petrol",
         transmission: "Manual",
+        mileage: 15000,
+        color: "White",
+        engine: "1.5L",
+        vin: "MH12AB1234",
+        registrationDate: "2021-05-10",
       });
     } finally {
       setLoading(false);
