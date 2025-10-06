@@ -21,6 +21,11 @@ const ListingsStack = () => (
     <Stack.Screen name="ListingsHome" component={ListingsScreen} options={{ title: 'Listings' }} />
     <Stack.Screen name="AddListing" component={AddListingScreen} options={{ title: 'Add Listing' }} />
     <Stack.Screen name="ListingDetail" component={ListingDetailScreen} options={{ title: 'Listing Detail' }} />
+      <Stack.Screen
+      name="ImagePickerScreen"
+      component={require('../features/dealer/screens/ImagePickerScreen').default}
+      options={{ title: 'Upload Images' }}
+    />
   </Stack.Navigator>
 );
 

@@ -177,30 +177,29 @@ export default function AddListingScreen() {
         />
       ),
     },
-   {
-  key: "location",
-  component: (
-    <LocationSelect
-      value={location}
-      onComplete={(loc: { state: string; city: string }) => {
-        setLocation(`${loc.city}, ${loc.state}`);
-        console.log("✅ Final Data:", {
-          registration,
-          brand,
-          model,
-          year,
-          fuel,
-          km,
-          owner,
-          transmission,
-          price,
-          location: `${loc.city}, ${loc.state}`,
-        });
-      }}
-    />
-  ),
-}
-
+    {
+      key: "location",
+      component: (
+        <LocationSelect
+          tabBarHeight={60}
+          carData={{
+            registration,
+            brand,
+            model,
+            year,
+            fuel,
+            km,
+            owner,
+            transmission,
+            price,
+            location,
+          }}
+          onComplete={(finalCarData) => {
+            console.log("✅ Final Data from LocationSelect:", finalCarData);
+          }}
+        />
+      ),
+    },
   ];
 
   return (
