@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getDashboard, getListings, getLeads, getProfile } from '../../features/dealer/services/dealerAPI';
+import { getDashboard, getListings, getLeads, getprofile } from '../../features/dealer/services/dealerAPI';
 
 // --- Async Thunks ---
 export const fetchDashboard = createAsyncThunk('dealer/fetchDashboard', async () => {
@@ -17,8 +17,8 @@ export const fetchLeads = createAsyncThunk('dealer/fetchLeads', async () => {
   return response.data;
 });
 
-export const fetchProfile = createAsyncThunk('dealer/fetchProfile', async () => {
-  const response = await getProfile();
+export const fetchprofile = createAsyncThunk('dealer/fetchprofile', async () => {
+  const response = await getprofile();
   return response.data;
 });
 
@@ -65,10 +65,10 @@ const dealerSlice = createSlice({
       .addCase(fetchLeads.fulfilled, (state, action) => { state.leads = action.payload; state.loading = false; })
       .addCase(fetchLeads.rejected, (state, action) => { state.loading = false; state.error = action.error.message || 'Failed to fetch leads'; })
 
-      // --- Profile ---
-      .addCase(fetchProfile.pending, (state) => { state.loading = true; state.error = null; })
-      .addCase(fetchProfile.fulfilled, (state, action) => { state.profile = action.payload; state.loading = false; })
-      .addCase(fetchProfile.rejected, (state, action) => { state.loading = false; state.error = action.error.message || 'Failed to fetch profile'; });
+      // --- profile ---
+      .addCase(fetchprofile.pending, (state) => { state.loading = true; state.error = null; })
+      .addCase(fetchprofile.fulfilled, (state, action) => { state.profile = action.payload; state.loading = false; })
+      .addCase(fetchprofile.rejected, (state, action) => { state.loading = false; state.error = action.error.message || 'Failed to fetch profile'; });
   },
 });
 
@@ -80,7 +80,7 @@ export default dealerSlice.reducer;
 // Dummy data and APIs for frontend testing without backend
 // src/store/slices/dealerSlice.ts
 // import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-// import { getDashboard, getListings, getLeads, getProfile, DashboardData, Listing, Lead, Profile } from '../../features/dealer/services/dealerAPI';
+// import { getDashboard, getListings, getLeads, getprofile, DashboardData, Listing, Lead, profile } from '../../features/dealer/services/dealerAPI';
 
 // // --- Async Thunks ---
 // export const fetchDashboard = createAsyncThunk('dealer/fetchDashboard', async () => {
@@ -95,8 +95,8 @@ export default dealerSlice.reducer;
 //   return await getLeads();
 // });
 
-// export const fetchProfile = createAsyncThunk('dealer/fetchProfile', async () => {
-//   return await getProfile();
+// export const fetchprofile = createAsyncThunk('dealer/fetchprofile', async () => {
+//   return await getprofile();
 // });
 
 // // --- Initial State ---
@@ -104,7 +104,7 @@ export default dealerSlice.reducer;
 //   dashboard: DashboardData | null;
 //   listings: Listing[];
 //   leads: Lead[];
-//   profile: Profile | null;
+//   profile: profile | null;
 //   loading: boolean;
 //   error: string | null;
 // }
@@ -140,10 +140,10 @@ export default dealerSlice.reducer;
 //       .addCase(fetchLeads.fulfilled, (state, action) => { state.leads = action.payload; state.loading = false; })
 //       .addCase(fetchLeads.rejected, (state, action) => { state.loading = false; state.error = action.error.message || 'Failed to fetch leads'; })
 
-//       // Profile
-//       .addCase(fetchProfile.pending, (state) => { state.loading = true; state.error = null; })
-//       .addCase(fetchProfile.fulfilled, (state, action) => { state.profile = action.payload; state.loading = false; })
-//       .addCase(fetchProfile.rejected, (state, action) => { state.loading = false; state.error = action.error.message || 'Failed to fetch profile'; });
+//       // profile
+//       .addCase(fetchprofile.pending, (state) => { state.loading = true; state.error = null; })
+//       .addCase(fetchprofile.fulfilled, (state, action) => { state.profile = action.payload; state.loading = false; })
+//       .addCase(fetchprofile.rejected, (state, action) => { state.loading = false; state.error = action.error.message || 'Failed to fetch profile'; });
 //   },
 // });
 

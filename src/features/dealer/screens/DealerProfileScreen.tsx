@@ -5,11 +5,11 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProfile } from '../../../store/slices/dealerSlice';
-import { updateProfile } from '../services/dealerAPI';
+import { fetchprofile } from '../../../store/slices/dealerSlice';
+import { updateprofile } from '../services/dealerAPI';
 import { RootState, AppDispatch } from '../../../store/store';
 
-const DealerProfileScreen = () => {
+const DealerprofileScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { profile, loading, error } = useSelector((state: RootState) => state.dealer);
 
@@ -25,7 +25,7 @@ const DealerProfileScreen = () => {
   const [avatar, setAvatar] = useState<string | null>(null);
 
   useEffect(() => {
-    dispatch(fetchProfile());
+    dispatch(fetchprofile());
   }, [dispatch]);
 
   useEffect(() => {
@@ -60,8 +60,8 @@ const DealerProfileScreen = () => {
     ]).start();
 
     try {
-      await updateProfile({ ...form, avatar });
-      Alert.alert('Success', 'Profile updated!');
+      await updateprofile({ ...form, avatar });
+      Alert.alert('Success', 'profile updated!');
     } catch (err) {
       Alert.alert('Error', 'Failed to update profile.');
     }
@@ -84,7 +84,7 @@ const DealerProfileScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Dealer Profile</Text>
+        <Text style={styles.title}>Dealer profile</Text>
 
         {/* Avatar */}
         <TouchableOpacity style={styles.avatarWrapper} onPress={pickAvatar}>
@@ -109,7 +109,7 @@ const DealerProfileScreen = () => {
         {/* Save Button */}
         <Animated.View style={{ transform: [{ scale: scaleAnim }], width: '100%' }}>
           <TouchableOpacity style={styles.saveButton} onPress={handleSave} activeOpacity={0.8}>
-            <Text style={styles.saveText}>Save Profile</Text>
+            <Text style={styles.saveText}>Save profile</Text>
           </TouchableOpacity>
         </Animated.View>
       </ScrollView>
@@ -199,4 +199,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DealerProfileScreen;
+export default DealerprofileScreen;

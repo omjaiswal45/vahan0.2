@@ -18,8 +18,8 @@ const realAPI = {
   getLeads: () => api.get("/dealer/leads"),
   sendMessage: (leadId: string, message: string) =>
     api.post(`/dealer/lead/${leadId}/message`, { message }),
-  getProfile: () => api.get("/dealer/profile"),
-  updateProfile: (data: any) => api.put("/dealer/profile", data),
+  getprofile: () => api.get("/dealer/profile"),
+  updateprofile: (data: any) => api.put("/dealer/profile", data),
 };
 
 // Mock API
@@ -175,7 +175,7 @@ getCarByRegNo: async (regNo: string) => {
     };
   },
 
-  getProfile: async () => {
+  getprofile: async () => {
     await fakeDelay(1000);
     return {
       data: {
@@ -188,7 +188,7 @@ getCarByRegNo: async (regNo: string) => {
     };
   },
 
-  updateProfile: async (data: any) => {
+  updateprofile: async (data: any) => {
     await fakeDelay(1000);
     return {
       data: { ...data },
@@ -206,8 +206,8 @@ export const {
   updateListing,
   getLeads,
   sendMessage,
-  getProfile,
-  updateProfile,
+  getprofile,
+  updateprofile,
 } = USE_MOCK ? mockAPI : realAPI;
 
 
@@ -241,7 +241,7 @@ export const {
 //   timestamp: string;
 // }
 
-// export interface Profile {
+// export interface profile {
 //   id: string;
 //   name: string;
 //   businessName: string;
@@ -304,7 +304,7 @@ export const {
 //     setTimeout(() => resolve({ id: leadId, customerName: 'Alice', message, timestamp: new Date().toISOString() }), 300)
 //   );
 
-// export const getProfile = (): Promise<Profile> =>
+// export const getprofile = (): Promise<profile> =>
 //   new Promise((resolve) =>
 //     setTimeout(
 //       () =>
@@ -319,5 +319,5 @@ export const {
 //     )
 //   );
 
-// export const updateProfile = (data: Partial<Profile>): Promise<Profile> =>
-//   new Promise((resolve) => setTimeout(() => resolve({ ...data, id: 'p1' } as Profile), 500));
+// export const updateprofile = (data: Partial<profile>): Promise<profile> =>
+//   new Promise((resolve) => setTimeout(() => resolve({ ...data, id: 'p1' } as profile), 500));

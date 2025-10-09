@@ -10,7 +10,7 @@ import AddListingScreen from '../features/dealer/screens/AddListingScreen';
 import ListingDetailScreen from '../features/dealer/screens/ListingDetailScreen';
 import LeadsScreen from '../features/dealer/screens/LeadsScreen';
 import ChatScreen from '../features/dealer/screens/ChatScreen';
-import DealerProfileScreen from '../features/dealer/screens/DealerProfileScreen';
+import DealerprofileScreen from '../features/dealer/screens/DealerProfileScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -50,7 +50,7 @@ const DealerTabs = () => (
           iconName = focused ? 'car' : 'car-outline';
         } else if (route.name === 'Leads') {
           iconName = focused ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline';
-        } else if (route.name === 'Profile') {
+        } else if (route.name === 'profile') {
           iconName = focused ? 'person' : 'person-outline';
         }
 
@@ -89,7 +89,7 @@ const DealerTabs = () => (
     <Tab.Screen name="Dashboard" component={DashboardScreen} />
     <Tab.Screen name="Listings" component={ListingsStack} />
     <Tab.Screen name="Leads" component={LeadsStack} />
-    <Tab.Screen name="Profile" component={DealerProfileScreen} />
+    <Tab.Screen name="profile" component={DealerprofileScreen} />
   </Tab.Navigator>
 );
 

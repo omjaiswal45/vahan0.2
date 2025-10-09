@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../features/home/screens/HomeScreen';
-import ProfileScreen from '../features/profile/screens/ProfileScreen';
+import profileScreen from '../features/profile/screens/profileScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -16,7 +16,7 @@ export type RootStackParamList = {
 const AppNavigator = () => (
   <Tab.Navigator screenOptions={{ headerShown: false }}>
     <Tab.Screen name="Home" component={HomeScreen} />
-    <Tab.Screen name="Profile" component={ProfileScreen} />
+    <Tab.Screen name="profile" component={profileScreen} />
   </Tab.Navigator>
 );
 
