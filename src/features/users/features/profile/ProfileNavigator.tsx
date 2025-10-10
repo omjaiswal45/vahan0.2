@@ -1,56 +1,73 @@
-import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import profileScreen from "./screens/ProfileScreen";
-import EditprofileScreen from './screens/EditProfileScreen';
-import MyListingsScreen from "./screens/MyListingsScreen";
-import SavedCarsScreen from "./screens/SavedCarsScreen";
-import SettingsScreen from "./screens/SettingsScreen";
+// src/features/users/features/profile/ProfileNavigator.tsx
 
-export type profileStackParamList = {
-  profileMain: undefined;
-  Editprofile: undefined;
-  MyListings: undefined;
+import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { ProfileScreen } from './screens/ProfileScreen';
+import { EditProfileScreen } from './screens/EditProfileScreen';
+import { SavedCarsScreen } from './screens/SavedCarsScreen';
+import { MyListingsScreen } from './screens/MyListingsScreen';
+import { SettingsScreen } from './screens/SettingsScreen';
+import { Colors, Typography } from '../../../../styles';
+import { Ionicons } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native';
+
+export type ProfileStackParamList = {
+  ProfileMain: undefined;
+  EditProfile: undefined;
   SavedCars: undefined;
+  MyListings: undefined;
   Settings: undefined;
 };
 
-const Stack = createNativeStackNavigator<profileStackParamList>();
+const Stack = createNativeStackNavigator<ProfileStackParamList>();
 
-const profileNavigator = () => {
+const ProfileNavigator: React.FC = () => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerBackTitleVisible: false,
-        headerTitleAlign: "center",
+        headerShown: true,
+        animation: 'slide_from_right',
+        headerStyle: { backgroundColor: Colors.card },
+        headerTintColor: Colors.text,
+        headerTitleStyle: { fontFamily: (Typography as any).fontFamily?.semiBold, fontSize: 16 },
+        contentStyle: { backgroundColor: Colors.background },
       }}
     >
       <Stack.Screen
-        name="profileMain"
-        component={profileScreen}
-        options={{ headerShown: false }}
+        name="ProfileMain"
+        component={ProfileScreen}
+        options={{ title: 'Profile', headerShown: false }}
       />
       <Stack.Screen
-        name="Editprofile"
-        component={EditprofileScreen}
-        options={{ title: "Edit profile" }}
-      />
-      <Stack.Screen
-        name="MyListings"
-        component={MyListingsScreen}
-        options={{ title: "My Listings" }}
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{ title: 'Edit Profile' }}
       />
       <Stack.Screen
         name="SavedCars"
         component={SavedCarsScreen}
-        options={{ title: "Saved Cars" }}
+        options={{ title: 'Saved Cars' }}
+      />
+      <Stack.Screen
+        name="MyListings"
+        component={MyListingsScreen}
+        options={({ navigation }) => ({
+          title: 'My Listings',
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('AddListing' as never)}>
+              <Ionicons name="add" size={22} color={Colors.primary} />
+            </TouchableOpacity>
+          ),
+        })}
       />
       <Stack.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{ title: "Settings" }}
+        options={{ title: 'Settings' }}
       />
     </Stack.Navigator>
   );
 };
 
-export default profileNavigator;
+export { ProfileNavigator };
+export default ProfileNavigator;

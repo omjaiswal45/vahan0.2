@@ -1,5 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle } from 'react-native';
+import { Colors } from '../styles';
 
 interface Props {
   title: string;
@@ -48,20 +49,20 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   primary: {
-    backgroundColor: '#1E88E5', // Blue
+    backgroundColor: Colors.primary,
   },
   secondary: {
-    backgroundColor: '#FB8C00', // Orange
+    backgroundColor: Colors.primaryLight,
   },
   disabled: {
-    backgroundColor: '#f44607ff',
+    backgroundColor: Colors.primaryLighter,
     opacity: 0.7,
   },
   text: {
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
-    
+
   },
 });
 

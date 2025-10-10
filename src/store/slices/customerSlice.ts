@@ -5,6 +5,8 @@ import {
   updateprofileApi,
   getSavedCarsApi,
   getMyListingsApi,
+  saveCarApi,
+  unsaveCarApi,
 } from '../../features/users/features/profile/services/profileAPI';
 import { Userprofile, CarListing } from '../../features/users/features/profile/types';
 
@@ -17,14 +19,70 @@ type CustomerState = {
 };
 
 const initialState: CustomerState = {
-  profile: undefined,
-  savedCars: [],
-  myListings: [],
+  profile: {
+    id: 'dummy-user-1',
+    name: 'Om Jaiswal',
+    email: 'omjai11022000@gmail.com',
+    phone: '+91 75710 74720',
+    avatar: undefined,
+    role: 'customer',
+    location: { city: 'Noida', state: 'UP', pincode: '560001' },
+    dealerInfo: undefined,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  savedCars: [
+    {
+      id: 'car-1',
+      brand: 'Maruti',
+      model: 'Swift',
+      variant: 'VXi',
+      year: 2019,
+      price: 525000,
+      kmDriven: 32000,
+      fuelType: 'Petrol',
+      transmission: 'Manual',
+      ownerNumber: 1,
+      registrationNumber: 'KA01AB1234',
+      color: 'Red',
+      location: { city: 'Bengaluru', state: 'Karnataka' },
+      images: ['https://picsum.photos/seed/swift/600/400'],
+      status: 'active',
+      views: 124,
+      leads: 7,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+  ],
+  myListings: [
+    {
+      id: 'listing-1',
+      brand: 'Hyundai',
+      model: 'i20',
+      variant: 'Sportz',
+      year: 2020,
+      price: 735000,
+      kmDriven: 21000,
+      fuelType: 'Diesel',
+      transmission: 'Manual',
+      ownerNumber: 1,
+      registrationNumber: 'KA03CD5678',
+      color: 'White',
+      location: { city: 'Bengaluru', state: 'Karnataka' },
+      images: ['https://picsum.photos/seed/i20/600/400'],
+      status: 'active',
+      views: 320,
+      leads: 15,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+  ],
   loading: false,
   error: null,
 };
 
-// Thunks
+// ============ EXISTING THUNKS ============
+
 export const fetchprofile = createAsyncThunk(
   'customer/fetchprofile',
   async (_, { getState, rejectWithValue }) => {
@@ -77,6 +135,38 @@ export const fetchMyListings = createAsyncThunk(
   }
 );
 
+// ============ ADDITIONAL THUNKS ============
+
+export const saveCar = createAsyncThunk(
+  'customer/saveCar',
+  async (carId: string, { getState, rejectWithValue }) => {
+    try {
+      const token = (getState() as any).auth?.token;
+      await saveCarApi(carId, token);
+      // Refetch saved cars after saving
+      const res = await getSavedCarsApi(token);
+      return res.data as CarListing[];
+    } catch (err: any) {
+      return rejectWithValue(err?.response?.data?.message || err.message);
+    }
+  }
+);
+
+export const unsaveCar = createAsyncThunk(
+  'customer/unsaveCar',
+  async (carId: string, { getState, rejectWithValue }) => {
+    try {
+      const token = (getState() as any).auth?.token;
+      await unsaveCarApi(carId, token);
+      // Refetch saved cars after unsaving
+      const res = await getSavedCarsApi(token);
+      return res.data as CarListing[];
+    } catch (err: any) {
+      return rejectWithValue(err?.response?.data?.message || err.message);
+    }
+  }
+);
+
 const customerSlice = createSlice({
   name: 'customer',
   initialState,
@@ -87,39 +177,101 @@ const customerSlice = createSlice({
       state.myListings = [];
       state.error = null;
     },
+    clearError(state) {
+      state.error = null;
+    },
+    // Optimistic update for saved cars
+    toggleSavedCarOptimistic(state, action: PayloadAction<string>) {
+      const carId = action.payload;
+      const index = state.savedCars.findIndex(car => car.id === carId);
+      if (index !== -1) {
+        state.savedCars.splice(index, 1);
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
+      // Fetch Profile
       .addCase(fetchprofile.pending, (s) => ({ ...s, loading: true, error: null }))
       .addCase(fetchprofile.fulfilled, (s, a: PayloadAction<Userprofile>) => ({
         ...s,
         loading: false,
         profile: a.payload,
       }))
-      .addCase(fetchprofile.rejected, (s, a) => ({ ...s, loading: false, error: String(a.payload) }))
+      .addCase(fetchprofile.rejected, (s, a) => ({
+        ...s,
+        loading: false,
+        error: String(a.payload)
+      }))
+
+      // Update Profile
       .addCase(updateprofile.pending, (s) => ({ ...s, loading: true, error: null }))
       .addCase(updateprofile.fulfilled, (s, a: PayloadAction<Userprofile>) => ({
         ...s,
         loading: false,
         profile: a.payload,
       }))
-      .addCase(updateprofile.rejected, (s, a) => ({ ...s, loading: false, error: String(a.payload) }))
+      .addCase(updateprofile.rejected, (s, a) => ({
+        ...s,
+        loading: false,
+        error: String(a.payload)
+      }))
+
+      // Fetch Saved Cars
       .addCase(fetchSavedCars.pending, (s) => ({ ...s, loading: true }))
       .addCase(fetchSavedCars.fulfilled, (s, a: PayloadAction<CarListing[]>) => ({
         ...s,
         loading: false,
         savedCars: a.payload,
       }))
-      .addCase(fetchSavedCars.rejected, (s, a) => ({ ...s, loading: false, error: String(a.payload) }))
+      .addCase(fetchSavedCars.rejected, (s, a) => ({
+        ...s,
+        loading: false,
+        error: String(a.payload)
+      }))
+
+      // Fetch My Listings
       .addCase(fetchMyListings.pending, (s) => ({ ...s, loading: true }))
       .addCase(fetchMyListings.fulfilled, (s, a: PayloadAction<CarListing[]>) => ({
         ...s,
         loading: false,
         myListings: a.payload,
       }))
-      .addCase(fetchMyListings.rejected, (s, a) => ({ ...s, loading: false, error: String(a.payload) }));
+      .addCase(fetchMyListings.rejected, (s, a) => ({
+        ...s,
+        loading: false,
+        error: String(a.payload)
+      }))
+
+     
+
+      // Save Car
+      .addCase(saveCar.pending, (s) => ({ ...s, loading: true }))
+      .addCase(saveCar.fulfilled, (s, a: PayloadAction<CarListing[]>) => ({
+        ...s,
+        loading: false,
+        savedCars: a.payload,
+      }))
+      .addCase(saveCar.rejected, (s, a) => ({
+        ...s,
+        loading: false,
+        error: String(a.payload)
+      }))
+
+      // Unsave Car
+      .addCase(unsaveCar.pending, (s) => ({ ...s, loading: true }))
+      .addCase(unsaveCar.fulfilled, (s, a: PayloadAction<CarListing[]>) => ({
+        ...s,
+        loading: false,
+        savedCars: a.payload,
+      }))
+      .addCase(unsaveCar.rejected, (s, a) => ({
+        ...s,
+        loading: false,
+        error: String(a.payload)
+      }));
   },
 });
 
-export const { logoutCustomer } = customerSlice.actions;
+export const { logoutCustomer, clearError, toggleSavedCarOptimistic } = customerSlice.actions;
 export default customerSlice.reducer;

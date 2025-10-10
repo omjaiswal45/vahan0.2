@@ -1,5 +1,6 @@
 import React from 'react';
 import { TextInput, StyleSheet, TextInputProps } from 'react-native';
+import { Colors, Spacing } from '../styles';
 
 interface Props extends TextInputProps {
   value: string;
@@ -19,11 +20,12 @@ const Input = ({ value, onChangeText, style, ...props }: Props) => (
 const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
-    borderColor: '#1E88E5',
-    padding: 12,
+    borderColor: Colors.border,
+    padding: Spacing.md,
     borderRadius: 10,
-    marginBottom: 15,
+    marginBottom: Spacing.md,
     fontSize: 16,
+    backgroundColor: Colors.card,
   },
 });
 

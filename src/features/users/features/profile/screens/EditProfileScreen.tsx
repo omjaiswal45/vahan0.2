@@ -1,29 +1,73 @@
-// EditprofileScreen.tsx
+// src/features/users/features/profile/screens/EditProfileScreen.tsx
+
 import React from 'react';
-import { View, Alert } from 'react-native';
-import EditprofileForm from '../components/EditProfileForm';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../../../../../src/store/store';
-import { updateprofile } from '../../../../../../src/store/slices/customerSlice';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import AvatarUploader from '../components/AvatarUploader';
+import EditProfileForm from '../components/EditProfileForm';
+import { useProfile } from '../hooks/useProfile';
+import { ProfileUpdatePayload } from '../types';
+import { Colors } from '../../../../../styles/colors';
+import { Spacing } from '../../../../../styles/spacing';
 
-const EditprofileScreen: React.FC = () => {
-  const dispatch = useDispatch();
-  const profile = useSelector((s: RootState) => s.customer.profile);
+export const EditProfileScreen: React.FC = () => {
+  const navigation = useNavigation();
+  const { profile, loading, updateProfile, uploadAvatar } = useProfile();
 
-  const onSubmit = async (formData: FormData) => {
-    try {
-      await dispatch(updateprofile({ formData }) as any);
-      Alert.alert('Success', 'profile updated.');
-    } catch (e) {
-      Alert.alert('Error', 'Failed to update profile.');
-    }
+  if (!profile) {
+    return null;
+  }
+
+  const handleUpdateProfile = async (data: ProfileUpdatePayload) => {
+    await updateProfile(data);
+    navigation.goBack();
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <EditprofileForm initial={profile} onSubmit={onSubmit} />
+    <View style={styles.container}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Avatar Upload */}
+        <AvatarUploader
+          imageUri={profile.avatar}
+          onImagePicked={async (file) => {
+            await uploadAvatar({
+              uri: file.uri,
+              fileName: file.name,
+              mimeType: file.type,
+              fileSize: 0,
+            });
+          }}
+        />
+
+        {/* Edit Form */}
+        <EditProfileForm
+          profile={profile}
+          onSubmit={handleUpdateProfile}
+          loading={loading}
+        />
+      </ScrollView>
     </View>
   );
 };
 
-export default EditprofileScreen;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: Spacing.xl,
+  },
+});

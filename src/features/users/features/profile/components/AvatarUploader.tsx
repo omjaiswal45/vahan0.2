@@ -1,62 +1,65 @@
 // AvatarUploader.tsx
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Image, Text, ActivityIndicator, Alert } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import * as ImageManipulator from 'expo-image-manipulator';
+import { View, TouchableOpacity, Image, Text, ActivityIndicator, ActionSheetIOS, Platform } from 'react-native';
+import { pickImageFromCamera, pickImageFromLibrary, PickedImageFile } from '../../../../../common/MediaPicker';
+import { colors, spacing, typography } from '../../../../../styles';
+import { Ionicons } from '@expo/vector-icons';
 
 type Props = {
   imageUri?: string | null;
-  onImagePicked: (file: { uri: string; name: string; type: string }) => void;
+  onImagePicked: (file: PickedImageFile) => void;
   size?: number;
 };
 
-const AvatarUploader: React.FC<Props> = ({ imageUri, onImagePicked, size = 96 }) => {
+const AvatarUploader: React.FC<Props> = ({ imageUri, onImagePicked, size = 112 }) => {
   const [loading, setLoading] = useState(false);
 
-  const pickImage = async () => {
-    try {
-      const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!perm.granted) {
-        Alert.alert('Permission required', 'We need access to your photo library to update avatar.');
-        return;
-      }
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.7,
-        allowsEditing: true,
-        aspect: [1, 1],
-      });
-      if (result.cancelled) return;
+  const presentPicker = async () => {
+    const chooseLibrary = async () => {
       setLoading(true);
-      const manip = await ImageManipulator.manipulateAsync(result.uri, [{ resize: { width: 800 } }], {
-        compress: 0.8,
-        format: ImageManipulator.SaveFormat.JPEG,
-      });
-
-      // create file object
-      const fileName = manip.uri.split('/').pop() || `avatar.jpg`;
-      const file = { uri: manip.uri, name: fileName, type: 'image/jpeg' };
-      onImagePicked(file);
-    } catch (e) {
-      console.warn(e);
-    } finally {
+      const file = await pickImageFromLibrary();
+      if (file) onImagePicked(file);
       setLoading(false);
+    };
+    const chooseCamera = async () => {
+      setLoading(true);
+      const file = await pickImageFromCamera();
+      if (file) onImagePicked(file);
+      setLoading(false);
+    };
+
+    if (Platform.OS === 'ios') {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: ['Cancel', 'Take Photo', 'Choose from Library'],
+          cancelButtonIndex: 0,
+        },
+        (buttonIndex) => {
+          if (buttonIndex === 1) chooseCamera();
+          if (buttonIndex === 2) chooseLibrary();
+        }
+      );
+    } else {
+      // Simple fallback sheet for Android via inline buttons
+      chooseLibrary();
     }
   };
 
   return (
     <View style={{ alignItems: 'center' }}>
-      <TouchableOpacity onPress={pickImage} style={{ width: size, height: size, borderRadius: size / 2, overflow: 'hidden', justifyContent: 'center', alignItems: 'center' }}>
+      <TouchableOpacity onPress={presentPicker} activeOpacity={0.85} style={{ width: size, height: size, borderRadius: size / 2, overflow: 'hidden', justifyContent: 'center', alignItems: 'center', backgroundColor: colors.border }}>
         {loading ? (
-          <ActivityIndicator />
+          <ActivityIndicator color={colors.primary} />
         ) : imageUri ? (
           <Image source={{ uri: imageUri }} style={{ width: size, height: size }} resizeMode="cover" />
         ) : (
-          <View style={{ width: size, height: size, backgroundColor: '#eee', justifyContent: 'center', alignItems: 'center' }}>
-            <Text>Upload</Text>
+          <View style={{ alignItems: 'center' }}>
+            <Ionicons name="camera" size={22} color={colors.textSecondary} />
+            <Text style={{ marginTop: spacing.xs, fontFamily: typography.fontFamily.medium, color: colors.textSecondary }}>Add photo</Text>
           </View>
         )}
       </TouchableOpacity>
+      <Text style={{ marginTop: spacing.xs, fontSize: 12, color: colors.textSecondary }}>Tap to upload</Text>
     </View>
   );
 };

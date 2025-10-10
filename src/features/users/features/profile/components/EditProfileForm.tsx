@@ -1,11 +1,14 @@
 // EditprofileForm.tsx
 import React, { useState } from 'react';
-import { View, TextInput, Button, Alert } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import AvatarUploader from './AvatarUploader';
 import { Userprofile } from '../types';
+import Input from '../../../../../common/Input';
+import PrimaryButton from '../../../../../common/Button';
+import { Colors, Spacing, Typography } from '../../../../../styles';
 
 type FormValues = {
   name: string;
@@ -28,7 +31,7 @@ type Props = {
 
 const EditprofileForm: React.FC<Props> = ({ initial, onSubmit }) => {
   const { control, handleSubmit } = useForm<FormValues>({
-    defaultValues: { name: initial?.name ?? '', email: initial?.email ?? '', phone: initial?.phone ?? '', city: initial?.city ?? '' },
+    defaultValues: { name: initial?.name ?? '', email: initial?.email ?? '', phone: initial?.phone ?? '', city: initial?.location?.city ?? '' },
     resolver: yupResolver(schema),
   });
 
@@ -59,14 +62,43 @@ const EditprofileForm: React.FC<Props> = ({ initial, onSubmit }) => {
   };
 
   return (
-    <View style={{ padding: 16 }}>
-      <AvatarUploader imageUri={initial?.avatarUrl} onImagePicked={(f) => setAvatarFile(f)} size={110} />
-      <Controller control={control} name="name" render={({ field }) => <TextInput value={field.value} onChangeText={field.onChange} placeholder="Name" style={{ borderBottomWidth: 1, marginTop: 16 }} />} />
-      <Controller control={control} name="email" render={({ field }) => <TextInput value={field.value} onChangeText={field.onChange} placeholder="Email" keyboardType="email-address" style={{ borderBottomWidth: 1, marginTop: 16 }} />} />
-      <Controller control={control} name="phone" render={({ field }) => <TextInput value={field.value} onChangeText={field.onChange} placeholder="Phone" keyboardType="phone-pad" style={{ borderBottomWidth: 1, marginTop: 16 }} />} />
-      <Controller control={control} name="city" render={({ field }) => <TextInput value={field.value} onChangeText={field.onChange} placeholder="City" style={{ borderBottomWidth: 1, marginTop: 16 }} />} />
-      <View style={{ marginTop: 20 }}>
-        <Button title={loading ? 'Updating...' : 'Update profile'} onPress={handleSubmit(submit)} disabled={loading} />
+    <View style={{ padding: Spacing.lg }}>
+      <AvatarUploader imageUri={initial?.avatar} onImagePicked={(f) => setAvatarFile(f)} size={120} />
+
+      <Text style={{ marginTop: Spacing.lg, marginBottom: Spacing.xs, color: Colors.text, fontFamily: (Typography as any).fontFamily?.medium }}>Name</Text>
+      <Controller control={control} name="name" render={({ field, fieldState }) => (
+        <>
+          <Input value={field.value} onChangeText={field.onChange} placeholder="Your name" />
+          {fieldState.error && <Text style={{ color: Colors.error }}>{fieldState.error.message}</Text>}
+        </>
+      )} />
+
+      <Text style={{ marginTop: Spacing.md, marginBottom: Spacing.xs, color: Colors.text, fontFamily: (Typography as any).fontFamily?.medium }}>Email</Text>
+      <Controller control={control} name="email" render={({ field, fieldState }) => (
+        <>
+          <Input value={field.value} onChangeText={field.onChange} placeholder="you@example.com" keyboardType="email-address" />
+          {fieldState.error && <Text style={{ color: Colors.error }}>{fieldState.error.message}</Text>}
+        </>
+      )} />
+
+      <Text style={{ marginTop: Spacing.md, marginBottom: Spacing.xs, color: Colors.text, fontFamily: (Typography as any).fontFamily?.medium }}>Phone</Text>
+      <Controller control={control} name="phone" render={({ field, fieldState }) => (
+        <>
+          <Input value={field.value || ''} onChangeText={field.onChange} placeholder="Phone number" keyboardType="phone-pad" />
+          {fieldState.error && <Text style={{ color: Colors.error }}>{fieldState.error.message}</Text>}
+        </>
+      )} />
+
+      <Text style={{ marginTop: Spacing.md, marginBottom: Spacing.xs, color: Colors.text, fontFamily: (Typography as any).fontFamily?.medium }}>City</Text>
+      <Controller control={control} name="city" render={({ field, fieldState }) => (
+        <>
+          <Input value={field.value || ''} onChangeText={field.onChange} placeholder="City" />
+          {fieldState.error && <Text style={{ color: Colors.error }}>{fieldState.error.message}</Text>}
+        </>
+      )} />
+
+      <View style={{ marginTop: Spacing.lg }}>
+        <PrimaryButton title={loading ? 'Updating...' : 'Update profile'} onPress={handleSubmit(submit)} disabled={loading} />
       </View>
     </View>
   );

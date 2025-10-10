@@ -1,37 +1,117 @@
 // src/features/users/features/profile/services/profileAPI.ts
-import axios from 'axios';
-import { Userprofile, CarListing } from '../types';
 
-const BASE_URL = 'https://api.example.com'; // <- update
+import axios, { AxiosResponse } from 'axios';
 
-const api = axios.create({
-  baseURL: BASE_URL,
-  timeout: 15000,
-});
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.yourapp.com';
 
-export async function getprofileApi(token: string) {
-  return api.get<Userprofile>('/api/customer/profile', {
+// ============ EXISTING API FUNCTIONS (from your customerSlice) ============
+
+export const getprofileApi = async (token: string): Promise<AxiosResponse> => {
+  return axios.get(`${API_BASE_URL}/profile`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-}
+};
 
-export async function updateprofileApi(formData: FormData, token: string) {
-  return api.put<Userprofile>('/api/customer/profile', formData, {
+export const updateprofileApi = async (
+  formData: FormData,
+  token: string
+): Promise<AxiosResponse> => {
+  return axios.put(`${API_BASE_URL}/profile`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'multipart/form-data',
     },
   });
-}
+};
 
-export async function getSavedCarsApi(token: string) {
-  return api.get<CarListing[]>('/api/customer/saved-cars', {
+export const getSavedCarsApi = async (token: string): Promise<AxiosResponse> => {
+  return axios.get(`${API_BASE_URL}/profile/saved-cars`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-}
+};
 
-export async function getMyListingsApi(token: string) {
-  return api.get<CarListing[]>('/api/customer/listings', {
+export const getMyListingsApi = async (token: string): Promise<AxiosResponse> => {
+  return axios.get(`${API_BASE_URL}/profile/listings`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-}
+};
+
+// ============ ADDITIONAL API FUNCTIONS ============
+
+export const uploadAvatarApi = async (
+  formData: FormData,
+  token: string
+): Promise<AxiosResponse> => {
+  return axios.post(`${API_BASE_URL}/profile/avatar`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+
+export const getProfileStatsApi = async (token: string): Promise<AxiosResponse> => {
+  return axios.get(`${API_BASE_URL}/profile/stats`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export const saveCarApi = async (carId: string, token: string): Promise<AxiosResponse> => {
+  return axios.post(
+    `${API_BASE_URL}/profile/saved-cars`,
+    { carId },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+};
+
+export const unsaveCarApi = async (carId: string, token: string): Promise<AxiosResponse> => {
+  return axios.delete(`${API_BASE_URL}/profile/saved-cars/${carId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export const updateListingStatusApi = async (
+  listingId: string,
+  status: 'active' | 'sold' | 'inactive',
+  token: string
+): Promise<AxiosResponse> => {
+  return axios.patch(
+    `${API_BASE_URL}/listings/${listingId}/status`,
+    { status },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+};
+
+export const deleteListingApi = async (
+  listingId: string,
+  token: string
+): Promise<AxiosResponse> => {
+  return axios.delete(`${API_BASE_URL}/listings/${listingId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export const getSettingsApi = async (token: string): Promise<AxiosResponse> => {
+  return axios.get(`${API_BASE_URL}/profile/settings`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export const updateSettingsApi = async (
+  settings: any,
+  token: string
+): Promise<AxiosResponse> => {
+  return axios.put(`${API_BASE_URL}/profile/settings`, settings, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export const deleteAccountApi = async (token: string): Promise<AxiosResponse> => {
+  return axios.delete(`${API_BASE_URL}/profile`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
