@@ -1,9 +1,14 @@
+// ============================================
+// src/navigation/CustomerTabs.tsx
+// ============================================
+
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "../features/home/screens/HomeScreen";
-import ProfileNavigator from '../features/users/features/profile/ProfileNavigator';
-import { Colors } from "../styles";
+import ProfileNavigator from "../features/users/features/profile/ProfileNavigator";
+import { BuyUsedCarNavigator } from "../features/users/features/buyUsedCar/BuyUsedCarNavigator";
+import { Colors } from "../styles/colors";
 
 const Tab = createBottomTabNavigator();
 
@@ -18,6 +23,8 @@ const CustomerTabs = () => {
 
           if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "BuyUsedCar") {
+            iconName = focused ? "car-sport" : "car-sport-outline";
           } else if (route.name === "Profile") {
             iconName = focused ? "person" : "person-outline";
           }
@@ -26,10 +33,14 @@ const CustomerTabs = () => {
         },
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.textSecondary,
-        tabBarStyle: { height: 60, paddingBottom: 5 },
+        tabBarStyle: {
+          height: 60,
+          paddingBottom: 5,
+        },
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="BuyUsedCar" component={BuyUsedCarNavigator} />
       <Tab.Screen name="Profile" component={ProfileNavigator} />
     </Tab.Navigator>
   );

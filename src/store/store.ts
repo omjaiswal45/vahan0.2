@@ -4,12 +4,14 @@ import userReducer from './slices/userslice';
 import locationReducer from './slices/locationSlice';
 import dealerReducer from './slices/dealerSlice';
 import customerReducer from './slices/customerSlice';
+import buyUsedCarReducer from './slices/buyUsedCarSlice';
 const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
   location: locationReducer,
   dealer: dealerReducer,
   customer: customerReducer,
+  buyUsedCar: buyUsedCarReducer,
 });
 
 export const store = configureStore({
