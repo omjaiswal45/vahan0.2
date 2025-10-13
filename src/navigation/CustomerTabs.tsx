@@ -5,7 +5,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-import HomeScreen from "../features/home/screens/HomeScreen";
+import HomeScreen from "../features/users/features/home/screens/HomeScreen";
 import ProfileNavigator from "../features/users/features/profile/ProfileNavigator";
 import { BuyUsedCarNavigator } from "../features/users/features/buyUsedCar/BuyUsedCarNavigator";
 import { Colors } from "../styles/colors";
