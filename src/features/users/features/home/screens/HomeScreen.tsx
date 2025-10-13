@@ -90,13 +90,13 @@ const HomeScreen = () => {
       image:
         'https://cdn.shriramgi.com/webassets/blogs/1f496a36-1409-4ea5-b969-3d534d72f108_chennai-traffic-challan-status-guide.webp',
     },
-    {
-      id: 5,
-      title: 'RC Check',
-      screen: 'AccessoriesScreen',
-      image:
-        'https://vehicleinfo.app/rtoinfo/vehicle-registration.png',
-    },
+  {
+  id: 5,
+  title: 'RC Check',
+  screen: 'RCCheckNavigator',
+  image: 'https://vehicleinfo.app/rtoinfo/vehicle-registration.png',
+},
+
     {
       id: 6,
       title: 'Car Insurance',

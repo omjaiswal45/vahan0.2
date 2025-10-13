@@ -5,6 +5,7 @@ import AuthNavigator from './AuthNavigator';
 import DealerTabs from './DealerTabs';
 import CustomerTabs from './CustomerTabs';
 import SplashScreenComponent from '../features/auth/screens/SplashScreen';
+import RCCheckNavigator from '../features/users/features/rcCheck/RCCheckNavigator';
 
 const RootNavigator = () => {
   const { role, isVerified } = useSelector((state: RootState) => state.auth);
@@ -18,7 +19,7 @@ const RootNavigator = () => {
   if (showSplash) return <SplashScreenComponent />;
 
   if (isVerified && role === 'dealer') return <DealerTabs />;
-  if (isVerified && role === 'customer') return <CustomerTabs />;
+  if (isVerified && role === 'customer') return <CustomerTabs />;1
   return <AuthNavigator />;
 };
 

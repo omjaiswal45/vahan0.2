@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     padding,
     justifyContent: "center",
   },
-  title: { fontSize: 22, fontWeight: "700", marginBottom: 12 },
+  title: { fontSize: 18, fontWeight: "500", marginBottom: 12 },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
