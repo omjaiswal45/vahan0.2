@@ -72,7 +72,7 @@ const HomeScreen = () => {
     {
       id: 2,
       title: 'Buy Used Car',
-      screen: 'UsedCarsScreen',
+      screen: 'BuyUsedCar',
       image:
         'https://www.shutterstock.com/image-vector/happy-man-dressed-suit-next-600nw-515454121.jpg',
     },
