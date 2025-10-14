@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   price: {
-    fontSize: typography.sizes.xxxl,
+    fontSize: typography.sizes.xxl,
     fontWeight: typography.weights.bold,
     color: colors.primary,
   },
