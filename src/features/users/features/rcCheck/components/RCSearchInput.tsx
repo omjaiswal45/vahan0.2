@@ -108,11 +108,11 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 16,
     fontWeight: '600',
-    color: colors.gray[900],
+    color: colors.gray[700],
     letterSpacing: 1,
   },
   searchButton: {
-    backgroundColor: colors.blue[600],
+    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 14,
     justifyContent: 'center',
