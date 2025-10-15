@@ -4,7 +4,6 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   ImageBackground,
   TouchableOpacity,
   Dimensions,
@@ -109,73 +108,81 @@ const recommendedCars = useMemo(() => ([ { id: 'c1', thumbnail: 'https://images.
   };
 
   /** ---------------- RENDER ---------------- */
+  const renderGridItem = ({ item }: any) => (
+    <TouchableOpacity
+      style={{ width: GRID_ITEM_SIZE, height: GRID_ITEM_SIZE, borderRadius: 12, overflow: 'hidden' }}
+      onPress={() => handleNavigate(item)}
+    >
+      <ImageBackground source={{ uri: item.image }} style={{ flex: 1, justifyContent: 'flex-end' }} imageStyle={{ borderRadius: 12 }}>
+        <LinearGradient colors={['transparent', 'rgba(0,0,0,0.6)']} style={{ ...StyleSheet.absoluteFillObject, borderRadius: 12 }} />
+        <View style={{ position: 'absolute', bottom: 0, width: '100%', alignItems: 'center', paddingVertical: 6 }}>
+          <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14, textAlign: 'center', textShadowColor: 'rgba(0,0,0,0.6)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3 }}>
+            {item.title}
+          </Text>
+        </View>
+      </ImageBackground>
+    </TouchableOpacity>
+  );
+
+  const ListHeader = () => (
+    <>
+      <View style={styles.locationContainer}>
+        <Ionicons name="location-outline" size={24} color="#eb259cff" />
+        <Text style={styles.locationText}>{location.city || 'Fetching location...'}</Text>
+        <TouchableOpacity onPress={getLocation} style={styles.refreshButton}>
+          <Ionicons name="refresh-outline" size={20} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.searchContainer}>
+        <Ionicons name="search-outline" size={20} color="#6B7280" />
+        <TextInput placeholder="Search cars, brands..." style={styles.searchInput} />
+      </View>
+    </>
+  );
+
+  const ListFooter = () => (
+    <>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Recommended cars</Text>
+        <TouchableOpacity onPress={handleBuyCarsPress} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+          <Text style={styles.sectionAction}>Buy Cars</Text>
+        </TouchableOpacity>
+      </View>
+
+      <FlatList
+        data={recommendedCars}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingHorizontal: 16 }}
+        renderItem={({ item }) => (
+          <View style={{ marginRight: 12 }}>
+            <CarCard
+              car={item as any}
+              onPress={() => handleCarPress(item)}
+              onSavePress={() => handleSavePress(item)}
+              compact
+            />
+          </View>
+        )}
+      />
+    </>
+  );
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 20 }} showsVerticalScrollIndicator={false}>
-        {/* Location */}
-        <View style={styles.locationContainer}>
-          <Ionicons name="location-outline" size={24} color="#2563EB" />
-          <Text style={styles.locationText}>{location.city || 'Fetching location...'}</Text>
-          <TouchableOpacity onPress={getLocation} style={styles.refreshButton}>
-            <Ionicons name="refresh-outline" size={20} color="#fff" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Search Box */}
-        <View style={styles.searchContainer}>
-          <Ionicons name="search-outline" size={20} color="#6B7280" />
-          <TextInput placeholder="Search cars, brands..." style={styles.searchInput} />
-        </View>
-
-        {/* ---------------- GRID ---------------- */}
-        <FlatList
-          data={gridItems}
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={3}
-          columnWrapperStyle={{ justifyContent: 'space-between', marginHorizontal: 16, marginBottom: 16 }}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={{ width: GRID_ITEM_SIZE, height: GRID_ITEM_SIZE, borderRadius: 12, overflow: 'hidden' }}
-              onPress={() => handleNavigate(item)}
-            >
-              <ImageBackground source={{ uri: item.image }} style={{ flex: 1, justifyContent: 'flex-end' }} imageStyle={{ borderRadius: 12 }}>
-                <LinearGradient colors={['transparent', 'rgba(0,0,0,0.6)']} style={{ ...StyleSheet.absoluteFillObject, borderRadius: 12 }} />
-                <View style={{ position: 'absolute', bottom: 0, width: '100%', alignItems: 'center', paddingVertical: 6 }}>
-                  <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14, textAlign: 'center', textShadowColor: 'rgba(0,0,0,0.6)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3 }}>
-                    {item.title}
-                  </Text>
-                </View>
-              </ImageBackground>
-            </TouchableOpacity>
-          )}
-        />
-
-        {/* Recommended Cars */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Recommended cars</Text>
-          <TouchableOpacity onPress={handleBuyCarsPress} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Text style={styles.sectionAction}>Buy Cars</Text>
-          </TouchableOpacity>
-        </View>
-
-        <FlatList
-          data={recommendedCars}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ paddingHorizontal: 16 }}
-          renderItem={({ item }) => (
-            <View style={{ marginRight: 12 }}>
-              <CarCard
-                car={item as any}
-                onPress={() => handleCarPress(item)}
-                onSavePress={() => handleSavePress(item)}
-                compact
-              />
-            </View>
-          )}
-        />
-      </ScrollView>
+      <FlatList
+        data={gridItems}
+        keyExtractor={(item) => item.id.toString()}
+        numColumns={3}
+        columnWrapperStyle={{ justifyContent: 'space-between', marginHorizontal: 16, marginBottom: 16 }}
+        renderItem={renderGridItem}
+        ListHeaderComponent={ListHeader}
+        ListFooterComponent={ListFooter}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        showsVerticalScrollIndicator={false}
+      />
     </SafeAreaView>
   );
 };
