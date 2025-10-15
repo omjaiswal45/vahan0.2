@@ -61,7 +61,8 @@ const HomeScreen = () => {
     {
       id: 4,
       title: 'Challan Check',
-      stack: 'ServicesScreen',
+      stack: 'ChallanCheckStack',
+      target: 'ChallanCheckHome',
       image: 'https://cdn.shriramgi.com/webassets/blogs/1f496a36-1409-4ea5-b969-3d534d72f108_chennai-traffic-challan-status-guide.webp',
     },
     {

@@ -1,78 +1,161 @@
 export const Colors = {
-  // Brand (updated)
-  primary: '#ff1ea5',
-  primaryLight: '#ff6cc6',
-  primaryLighter: '#ffa3dc',
-  primaryDark: '#d01888',
-  primaryDarker: '#a5126b',
-  secondary: '#ff6cc6',
+  // Brand Colors - Vibrant Pink (kept as requested)
+  // Using your primary as the base, created proper tints and shades
+  primary: '#ff1ea5',        // Base - Vibrant magenta-pink
+  primaryLight: '#ff52b8',   // 30% lighter - Better contrast
+  primaryLighter: '#ff8fce', // 50% lighter - Soft accents
+  primaryDark: '#cc1884',    // 20% darker - Hover states
+  primaryDarker: '#99125e',  // 40% darker - Pressed states
+  secondary: '#7c3aed',      // Complementary purple - Better harmony
 
-  // Surface
-  background: '#F5F5F5',
-  card: '#FFFFFF',
+  // Surface & Background - Improved neutrals
+  background: '#fafafa',     // Slightly warmer white
+  card: '#ffffff',           // Pure white for contrast
+  surface: '#f8f9fa',        // Subtle gray with warmth
 
-  // Text
-  text: '#333333',
-  textSecondary: '#777777',
+  // Text Colors - Better readability
+  text: '#1a1a1a',          // Near black - Better contrast
+  textSecondary: '#6b7280',  // Mid gray - More readable
 
   // Utility
-  border: '#DDDDDD',
+  border: '#e5e7eb',         // Softer, modern gray
   black: '#000000',
+  white: '#ffffff',
 
-  // States
-  success: '#2E7D32',
-  warning: '#F9A825',
-  error: '#E53935',
+  // State Colors - Semantically meaningful
+  success: '#10b981',        // Emerald green - universally recognized
+  successLight: '#d1fae5',   // Tint for backgrounds
+  warning: '#f59e0b',        // Amber - attention without alarm
+  warningLight: '#fef3c7',   // Subtle warning background
+  error: '#ef4444',          // Red - clear danger signal
+  errorLight: '#fee2e2',     // Error background
+  info: '#3b82f6',           // Blue - informational
+  infoLight: '#dbeafe',   
+  result: '#5c53feff',  // Info background
 
- white: '#FFFFFF',
+  // UI Elements
+  shadow: '#000000',
+  disabled: '#d8dbe0ff',
+
+  // Extended Gray Scale - For sophisticated UI depth
   gray: {
-    50: '#F9FAFB',
-    100: '#F3F4F6',
-    200: '#E5E7EB',
-    400: '#9CA3AF',
-    500: '#6B7280',
-    600: '#4B5563',
-    700: '#374151',
-    900: '#111827',
+    50: '#f9fafb',   // Almost white
+    100: '#f3f4f6',  // Very light
+    200: '#e5e7eb',  // Light borders
+    300: '#d1d5db',  // Disabled states
+    400: '#9ca3af',  // Placeholder text
+    500: '#6b7280',  // Secondary text
+    600: '#4b5563',  // Muted text
+    700: '#374151',  // Dark text
+    800: '#1f2937',  // Very dark
+    900: '#111827',  // Near black
   },
+
+  // Blue Scale - Trust, professionalism
   blue: {
-    50: '#EFF6FF',
-    600: '#2563EB',
-    700: '#1D4ED8',
+    50: '#eff6ff',
+    100: '#dbeafe',
+    200: '#bfdbfe',
+    500: '#3b82f6',
+    600: '#2563eb',
+    700: '#1d4ed8',
   },
+
+  // Green Scale - Success, positive actions
   green: {
-    50: '#F0FDF4',
-    100: '#DCFCE7',
-    500: '#10B981',
+    50: '#f0fdf4',
+    100: '#dcfce7',
+    200: '#bbf7d0',
+    500: '#10b981',
     600: '#059669',
     700: '#047857',
   },
+
+  // Red Scale - Errors, destructive actions
   red: {
-    50: '#FEF2F2',
-    100: '#FEE2E2',
-    200: '#FECACA',
-    500: '#EF4444',
-    600: '#DC2626',
-    700: '#B91C1C',
+    50: '#fef2f2',
+    100: '#fee2e2',
+    200: '#fecaca',
+    500: '#ef4444',
+    600: '#dc2626',
+    700: '#b91c1c',
   },
+
+  // Amber Scale - Warnings, caution
   amber: {
-    50: '#FFFBEB',
-    100: '#FEF3C7',
-    200: '#FDE68A',
-    500: '#F59E0B',
-    600: '#D97706',
-    700: '#B45309',
+    50: '#fffbeb',
+    100: '#fef3c7',
+    200: '#fde68a',
+    500: '#f59e0b',
+    600: '#d97706',
+    700: '#b45309',
   },
+
+  // Orange Scale - Highlight, energy
   orange: {
-    50: '#FFF7ED',
-    200: '#FED7AA',
-    500: '#F97316',
-    600: '#EA580C',
-    700: '#C2410C',
+    50: '#fff7ed',
+    100: '#ffedd5',
+    200: '#fed7aa',
+    500: '#f97316',
+    600: '#ea580c',
+    700: '#c2410c',
   },
+
+  // Yellow Scale - Attention, emphasis
   yellow: {
-    200: '#FDE047',
+    50: '#fefce8',
+    100: '#fef9c3',
+    200: '#fde047',
+    500: '#eab308',
+  },
+
+  // Purple Scale - Premium, creative
+  purple: {
+    50: '#faf5ff',
+    100: '#f3e8ff',
+    500: '#a855f7',
+    600: '#9333ea',
+    700: '#7c3aed',
+  },
+
+  // Pink Scale - Based on your primary brand color
+  pink: {
+    50: '#fff1f9',
+    100: '#ffe4f3',
+    200: '#ffcce8',
+    500: '#ff1ea5',  // Your primary
+    600: '#cc1884',
+    700: '#99125e',
   },
 };
+
 // Backward compatible aliases for existing imports
 export const colors = Colors;
+
+// Semantic color mappings for easier usage
+export const SemanticColors = {
+  // Feedback colors
+  positive: Colors.green[500],
+  negative: Colors.red[500],
+  cautionary: Colors.amber[500],
+  informative: Colors.blue[500],
+
+  // Interactive states
+  hover: Colors.gray[100],
+  active: Colors.primary,
+  focus: Colors.blue[500],
+  
+  // Text hierarchy
+  textPrimary: Colors.text,
+  textSecondary: Colors.textSecondary,
+  textTertiary: Colors.gray[400],
+  textDisabled: Colors.gray[300],
+
+  // Backgrounds
+  bgPrimary: Colors.background,
+  bgSecondary: Colors.surface,
+  bgElevated: Colors.card,
+  bgOverlay: 'rgba(0, 0, 0, 0.5)',
+};
+
+export default Colors;

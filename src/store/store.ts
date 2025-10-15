@@ -6,6 +6,7 @@ import dealerReducer from './slices/dealerSlice';
 import customerReducer from './slices/customerSlice';
 import buyUsedCarReducer from './slices/buyUsedCarSlice';
 import rcCheckReducer from './slices/rcCheckSlice'
+import challanCheckReducer from './slices/challanCheckSlice';
 const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   customer: customerReducer,
   buyUsedCar: buyUsedCarReducer,
   rcCheck: rcCheckReducer,
+   challanCheck: challanCheckReducer,
 });
 
 export const store = configureStore({

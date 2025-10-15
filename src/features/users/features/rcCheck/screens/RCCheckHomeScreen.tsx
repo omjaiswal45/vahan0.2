@@ -46,7 +46,7 @@ const RCCheckHomeScreen: React.FC<RCCheckHomeScreenProps> = ({ navigation }) => 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>🚗 RC Check</Text>
+          <Text style={styles.headerTitle}> RC Check</Text>
           <Text style={styles.headerSubtitle}>
             Complete vehicle history & analysis
           </Text>

@@ -11,10 +11,12 @@ export type RCCheckStackParamList = {
 export type HomeStackParamList = {
   HomeMain: undefined;                // Main Home Screen
   RCCheckStack: { screen: 'RCCheckHome' | 'RCCheckReport' | 'SavedRCReports' } | undefined;
+    ChallanCheckStack: { screen: 'ChallanCheckHome' | 'ChallanCheckReport' | 'SavedChallanReports' }
+    | undefined;
   BuyUsedCarStack: { screen: 'CarFeedScreen' | 'CarDetailScreen' | 'SavedCarsScreen' } | undefined;
   DealsScreen: undefined;
   ServicesScreen: undefined;
   FinanceScreen: undefined;
   NewCarsScreen: undefined;
-  // Add more feature stacks or screens here
+  
 };
