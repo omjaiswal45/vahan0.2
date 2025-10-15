@@ -21,6 +21,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   activeFiltersCount = 0,
 }) => {
   const [query, setQuery] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleSearch = useCallback(() => {
     onSearch(query);
@@ -33,7 +34,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
+      <View style={[
+        styles.searchContainer,
+        isFocused && styles.searchContainerFocused
+      ]}>
         <Ionicons name="search" size={20} color={colors.textSecondary} style={styles.searchIcon} />
         <TextInput
           style={styles.input}
@@ -42,6 +46,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           placeholder={placeholder}
           placeholderTextColor={colors.textSecondary}
           onSubmitEditing={handleSearch}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           returnKeyType="search"
         />
         {query.length > 0 && (
@@ -79,6 +85,13 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: spacing.md,
     height: 48,
+    borderWidth: 1,
+    borderColor: colors.border || '#E5E7EB',
+  },
+  searchContainerFocused: {
+    borderColor: colors.primary,
+    borderWidth: 2,
+    backgroundColor: colors.white,
   },
   searchIcon: {
     marginRight: spacing.sm,
@@ -99,6 +112,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    borderWidth: 1,
+    borderColor: colors.border || '#E5E7EB',
   },
   badge: {
     position: 'absolute',

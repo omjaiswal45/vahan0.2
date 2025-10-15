@@ -85,6 +85,7 @@ export const ChallanCheckReportScreen: React.FC<ChallanCheckReportScreenProps> =
           <ChallanLoadingSkeleton />
         </ScrollView>
       </SafeAreaView>
+      
     );
   }
 

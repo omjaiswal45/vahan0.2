@@ -1,104 +1,205 @@
-vahan0.2-main (1)/
-└── vahan0.2-main/
-    ├── assets/
-    │   ├── adaptive-icon.png
-    │   ├── favicon.png
-    │   ├── icon.png
-    │   └── splash-icon.png
-    ├── src/
-    │   ├── @types/
-    │   │   ├── react-native-snap-carousel.d.ts
-    │   │   └── react-native-vector-icons.d.ts
-    │   ├── assets/
-    │   │   └── animations/
-    │   │       └── splash.json
-    │   ├── common/
-    │   │   ├── AppHeader.tsx
-    │   │   ├── Button.tsx
-    │   │   └── Input.tsx
-    │   ├── features/
-    │   │   ├── auth/
-    │   │   │   ├── components/
-    │   │   │   │   ├── AuthButton.tsx
-    │   │   │   │   ├── AuthInput.tsx
-    │   │   │   │   ├── OTPInput.tsx
-    │   │   │   │   └── SocialLoginButton.tsx
-    │   │   │   ├── hooks/
-    │   │   │   │   └── useAuth.ts
-    │   │   │   ├── screens/
-    │   │   │   │   ├── LoginScreen.tsx
-    │   │   │   │   ├── OTPScreen.tsx
-    │   │   │   │   ├── SignupScreen.tsx
-    │   │   │   │   └── SplashScreen.tsx
-    │   │   │   ├── services/
-    │   │   │   │   └── authAPI.ts
-    │   │   │   └── types.ts
-    │   │   ├── dealer/
-    │   │   │   ├── components/
-    │   │   │   │   ├── BrandGrid.tsx
-    │   │   │   │   ├── CarForm.tsx
-    │   │   │   │   ├── KPIBox.tsx
-    │   │   │   │   ├── LeadItem.tsx
-    │   │   │   │   ├── ListingCard.tsx
-    │   │   │   │   ├── ListingCarousel.tsx
-    │   │   │   │   └── RegistrationInput.tsx
-    │   │   │   │   ├── AttributeBreadcrumb.tsx.
-    │   │   │   │   └── AttributeCard.tsx    
-    │   │   │   ├── hooks/
-    │   │   │   │   └── useListing.ts
-    │   │   │   ├── screens/
-    │   │   │   │   ├── AddListingScreen.tsx
-    │   │   │   │   ├── ChatScreen.tsx
-    │   │   │   │   ├── DashboardScreen.tsx
-    │   │   │   │   ├── DealerprofileScreen.tsx
-    │   │   │   │   ├── LeadsScreen.tsx
-    │   │   │   │   ├── ListingDetailScreen.tsx
-    │   │   │   │   └── ListingsScreen.tsx
-    │   │   │   ├── services/
-    │   │   │   │   └── dealerAPI.ts
-    │   │   │   └── types.ts/
-    │   │   │       └── types.ts
-    │   │   ├── home/
-    │   │   │   └── screens/
-    │   │   │       └── HomeScreen.tsx
-    │   │   ├── location/
-    │   │   │   └── hooks/
-    │   │   │       └── useLocation.ts
-    │   │   └── profile/
-    │   │       └── screens/
-    │   │           └── profileScreen.tsx
-    │   ├── hooks/
-    │   │   ├── useAPI.ts
-    │   │   └── useValidation.ts
-    │   ├── navigation/
-    │   │   ├── AppNavigator.tsx
-    │   │   ├── AuthNavigator.tsx
-    │   │   ├── CustomerTabs.tsx
-    │   │   ├── DealerTabs.tsx
-    │   │   └── RootNavigator.tsx
-    │   ├── store/
-    │   │   ├── slices/
-    │   │   │   ├── authslice.ts
-    │   │   │   ├── dealerSlice.ts
-    │   │   │   ├── locationSlice.ts
-    │   │   │   └── userslice.ts
-    │   │   └── store.ts
-    │   ├── styles/
-    │   │   ├── colors.ts
-    │   │   ├── globalStyles.ts
-    │   │   ├── index.ts
-    │   │   ├── spacing.ts
-    │   │   └── typography.ts
-    │   └── utils/
-    │       ├── constants.ts
-    │       ├── formatters.ts
-    │       ├── helpers.ts
-    │       └── validators.ts
-    ├── .gitignore
-    ├── app.json
-    ├── App.tsx
-    ├── folder-structure.txt
-    ├── index.ts
-    ├── package-lock.json
-    ├── package.json
-    └── tsconfig.json
+vahan0.2/
+├── .gitignore
+├── app.json
+├── App.tsx
+├── assets/
+│   ├── adaptive-icon.png
+│   ├── favicon.png
+│   ├── icon.png
+│   └── splash-icon.png
+├── babel.config.js
+├── folder-structure.txt
+├── index.ts
+├── package-lock.json
+├── package.json
+├── src/
+│   ├── @types/
+│   │   ├── react-native-snap-carousel.d.ts
+│   │   └── react-native-vector-icons.d.ts
+│   ├── assets/
+│   │   └── animations/
+│   │       └── splash.json
+│   ├── common/
+│   │   ├── AppHeader.tsx
+│   │   ├── Button.tsx
+│   │   ├── Input.tsx
+│   │   └── MediaPicker.ts
+│   ├── features/
+│   │   ├── auth/
+│   │   │   ├── components/
+│   │   │   │   ├── AuthButton.tsx
+│   │   │   │   ├── AuthInput.tsx
+│   │   │   │   ├── OTPInput.tsx
+│   │   │   │   └── SocialLoginButton.tsx
+│   │   │   ├── hooks/
+│   │   │   │   └── useAuth.ts
+│   │   │   ├── screens/
+│   │   │   │   ├── LoginScreen.tsx
+│   │   │   │   ├── OTPScreen.tsx
+│   │   │   │   └── SplashScreen.tsx
+│   │   │   ├── services/
+│   │   │   │   └── authAPI.ts
+│   │   │   └── types.ts
+│   │   ├── dealer/
+│   │   │   ├── components/
+│   │   │   │   ├── AttributeBreadcrumb.tsx
+│   │   │   │   ├── AttributeCard.tsx
+│   │   │   │   ├── BrandSelect.tsx
+│   │   │   │   ├── CarForm.tsx
+│   │   │   │   ├── ColorSelect.tsx
+│   │   │   │   ├── FuelSelect.tsx
+│   │   │   │   ├── ImagePickerCard.tsx
+│   │   │   │   ├── KmInput.tsx
+│   │   │   │   ├── KPIBox.tsx
+│   │   │   │   ├── LeadItem.tsx
+│   │   │   │   ├── ListingCard.tsx
+│   │   │   │   ├── ListingCarousel.tsx
+│   │   │   │   ├── LocationSelect.tsx
+│   │   │   │   ├── ModelSelect.tsx
+│   │   │   │   ├── OwnerNumberSelect.tsx
+│   │   │   │   ├── PriceInput.tsx
+│   │   │   │   ├── RegistrationInput.tsx
+│   │   │   │   ├── TransmissionSelect.tsx
+│   │   │   │   └── YearSelect.tsx
+│   │   │   ├── hooks/
+│   │   │   │   └── useListing.ts
+│   │   │   ├── screens/
+│   │   │   │   ├── AddListingScreen.tsx
+│   │   │   │   ├── ChatScreen.tsx
+│   │   │   │   ├── DashboardScreen.tsx
+│   │   │   │   ├── DealerProfileScreen.tsx
+│   │   │   │   ├── ImagePickerScreen.tsx
+│   │   │   │   ├── LeadsScreen.tsx
+│   │   │   │   ├── ListingDetailScreen.tsx
+│   │   │   │   └── ListingsScreen.tsx
+│   │   │   ├── services/
+│   │   │   │   └── dealerAPI.ts
+│   │   │   └── types.ts/
+│   │   │       └── types.ts
+│   │   ├── location/
+│   │   │   └── hooks/
+│   │   │       └── useLocation.ts
+│   │   └── users/
+│   │       └── features/
+│   │           ├── buyUsedCar/
+│   │           │   ├── BuyUsedCarNavigator.tsx
+│   │           │   ├── components/
+│   │           │   │   ├── CarCard.tsx
+│   │           │   │   ├── EmptyState.tsx
+│   │           │   │   ├── FilterModal.tsx
+│   │           │   │   ├── LoadingSkeleton.tsx
+│   │           │   │   ├── QuickFilters.tsx
+│   │           │   │   ├── SearchBar.tsx
+│   │           │   │   └── SortDropdown.tsx
+│   │           │   ├── hooks/
+│   │           │   │   └── useBuyUsedCar.ts
+│   │           │   ├── screens/
+│   │           │   │   ├── CarDetailScreen.tsx
+│   │           │   │   ├── CarFeedScreen.tsx
+│   │           │   │   └── SavedCarsScreen.tsx
+│   │           │   ├── services/
+│   │           │   │   ├── buyUsedCarAPI.ts
+│   │           │   │   └── mockCarData.ts
+│   │           │   └── types.ts
+│   │           ├── challanCheck/
+│   │           │   ├── ChallanCheckNavigator.tsx
+│   │           │   ├── components/
+│   │           │   │   ├── ChallanEmptyState.tsx
+│   │           │   │   ├── ChallanHeroCard.tsx
+│   │           │   │   ├── ChallanLoadingSkeleton.tsx
+│   │           │   │   ├── ChallanRecordCard.tsx
+│   │           │   │   ├── ChallanSearchInput.tsx
+│   │           │   │   ├── ChallanStatsCard.tsx
+│   │           │   │   ├── ChallanWarningBanner.tsx
+│   │           │   │   ├── QuickActionCard.tsx
+│   │           │   │   ├── RecentChallanSearchesCard.tsx
+│   │           │   │   └── VehicleChallanInfoCard.tsx
+│   │           │   ├── hooks/
+│   │           │   │   └── useChallanCheck.ts
+│   │           │   ├── screens/
+│   │           │   │   ├── ChallanCheckHomeScreen.tsx
+│   │           │   │   ├── ChallanCheckReportScreen.tsx
+│   │           │   │   └── SavedChallanReportsScreen.tsx
+│   │           │   ├── services/
+│   │           │   │   ├── challanCheckAPI.ts
+│   │           │   │   └── mockChallanData.ts
+│   │           │   └── types.ts
+│   │           ├── home/
+│   │           │   ├── HomeStack.tsx
+│   │           │   └── screens/
+│   │           │       └── HomeScreen.tsx
+│   │           ├── profile/
+│   │           │   ├── components/
+│   │           │   │   ├── AvatarUploader.tsx
+│   │           │   │   ├── EditProfileForm.tsx
+│   │           │   │   ├── ProfileHeader.tsx
+│   │           │   │   └── ProfileOptionCard.tsx
+│   │           │   ├── hooks/
+│   │           │   │   └── useProfile.ts
+│   │           │   ├── ProfileNavigator.tsx
+│   │           │   ├── screens/
+│   │           │   │   ├── EditProfileScreen.tsx
+│   │           │   │   ├── MyListingsScreen.tsx
+│   │           │   │   ├── ProfileScreen.tsx
+│   │           │   │   ├── SavedCarsScreen.tsx
+│   │           │   │   └── SettingsScreen.tsx
+│   │           │   ├── services/
+│   │           │   │   └── profileAPI.ts
+│   │           │   └── types.ts
+│   │           └── rcCheck/
+│   │               ├── components/
+│   │               │   ├── InspectionReportCard.tsx
+│   │               │   ├── PriceEstimationCard.tsx
+│   │               │   ├── RCCheckLoadingSkeleton.tsx
+│   │               │   ├── RCSearchInput.tsx
+│   │               │   ├── RecentSearchesCard.tsx
+│   │               │   ├── TrustScoreCard.tsx
+│   │               │   ├── VehicleInfoCard.tsx
+│   │               │   └── WarningBanner.tsx
+│   │               ├── hooks/
+│   │               │   └── useRCCheck.ts
+│   │               ├── RCCheckNavigator.tsx
+│   │               ├── screens/
+│   │               │   ├── RCCheckHomeScreen.tsx
+│   │               │   ├── RCCheckReportScreen.tsx
+│   │               │   └── SavedRCReportsScreen.tsx
+│   │               ├── services/
+│   │               │   ├── mockRCData.ts
+│   │               │   └── rcCheckAPI.ts
+│   │               └── types.ts
+│   ├── hooks/
+│   │   ├── useAPI.ts
+│   │   └── useValidation.ts
+│   ├── navigation/
+│   │   ├── AppNavigator.tsx
+│   │   ├── AuthNavigator.tsx
+│   │   ├── components/
+│   │   │   └── AnimatedTabBar.tsx
+│   │   ├── CustomerTabs.tsx
+│   │   ├── DealerTabs.tsx
+│   │   ├── RootNavigator.tsx
+│   │   └── types.ts
+│   ├── store/
+│   │   ├── slices/
+│   │   │   ├── authslice.ts
+│   │   │   ├── buyUsedCarSlice.ts
+│   │   │   ├── challanCheckSlice.ts
+│   │   │   ├── customerSlice.ts
+│   │   │   ├── dealerSlice.ts
+│   │   │   ├── locationSlice.ts
+│   │   │   ├── rcCheckSlice.ts
+│   │   │   └── userslice.ts
+│   │   └── store.ts
+│   ├── styles/
+│   │   ├── colors.ts
+│   │   ├── globalStyles.ts
+│   │   ├── index.ts
+│   │   ├── spacing.ts
+│   │   └── typography.ts
+│   └── utils/
+│       ├── constants.ts
+│       ├── formatters.ts
+│       ├── helpers.ts
+│       ├── Indian_Cities_In_States.json
+│       └── validators.ts
+└── tsconfig.json
