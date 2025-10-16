@@ -428,12 +428,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   
-  // Animated Header (Location + Search)
-animatedHeaderContainer: {
-  paddingTop: Platform.OS === 'ios' ? 8 : (StatusBar.currentHeight || 64),
-  backgroundColor: '#F9FAFB', // optional, if you want it visible under status bar
-}
-  ,
+  // Animated Header (Location + Search) - FIXED FOR ANDROID
+  animatedHeaderContainer: {
+    paddingTop: Platform.OS === 'ios' ? 8 : (StatusBar.currentHeight || 0) + 8,
+    backgroundColor: '#F9FAFB',
+  },
   locationContainer: { 
     flexDirection: 'row', 
     alignItems: 'center', 
@@ -447,7 +446,7 @@ animatedHeaderContainer: {
     shadowRadius: 5, 
     shadowOffset: { width: 0, height: 2 }, 
     elevation: 2, 
-    marginTop: 24,
+    marginTop: 8,
   },
   locationText: { 
     marginLeft: 8, 
@@ -499,7 +498,7 @@ animatedHeaderContainer: {
     elevation: 8,
   },
   floatingHeaderGradient: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 8,
+    paddingTop: Platform.OS === 'ios' ? 50 : (StatusBar.currentHeight || 0) + 8,
     paddingBottom: 12,
   },
   floatingHeaderContent: {
