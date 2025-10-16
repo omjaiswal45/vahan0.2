@@ -22,6 +22,7 @@ import { HomeStackParamList } from '../../../../../navigation/types';
 import { CarCard } from '../../buyUsedCar/components/CarCard';
 import { colors } from '../../../../../styles/colors';
 import { spacing } from '../../../../../styles/spacing';
+import { MOCK_CARS } from '../../buyUsedCar/services/mockCarData';
 
 const { width } = Dimensions.get('window');
 const GRID_ITEM_SIZE = (width - 64) / 3; // 3 items per row
@@ -81,7 +82,7 @@ const HomeScreen = () => {
 
   ];
 
-  /** ---------------- GENERIC NAVIGATION ---------------- */
+  /** ------------------ GENERIC NAVIGATION -------------------- */
   const handleNavigate = (item: typeof gridItems[0]) => {
     if (item.target) {
       navigation.navigate(item.stack as any, { screen: item.target } as any);
@@ -91,18 +92,39 @@ const HomeScreen = () => {
   };
 
   /** ---------------- MOCK / Recommended Cars ---------------- */
-const recommendedCars = useMemo(() => ([ { id: 'c1', thumbnail: 'https://images.financialexpressdigital.com/2020/05/maruti-suzuki-swift.jpg?w=660', isSaved: false, isVerified: true, brand: 'Maruti', model: 'Swift', year: 2018, variant: 'VXI', km: 45000, fuelType: 'Petrol', transmission: 'Manual', ownerNumber: 1, location: { city: 'Gurgaon', state: 'Haryana' }, price: 450000, }, { id: 'c2', thumbnail: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPKv5m5AIqKXIb5tvvNtWJun2F1-u9h8kpdA&s', isSaved: true, isVerified: false, brand: 'Hyundai', model: 'i20', year: 2017, variant: 'Asta', km: 52000, fuelType: 'Petrol', transmission: 'Manual', ownerNumber: 2, location: { city: 'Noida', state: 'Uttar Pradesh' }, price: 530000, }, { id: 'c3', thumbnail: 'https://m.media-amazon.com/images/I/61W6YPlEx9L._UF1000,1000_QL80_.jpg', isSaved: false, isVerified: true, brand: 'Honda', model: 'City', year: 2016, variant: 'VX', km: 72000, fuelType: 'Diesel', transmission: 'Manual', ownerNumber: 1, location: { city: 'Lucknow', state: 'Uttar Pradesh' }, price: 780000, }, { id: 'c4', thumbnail: 'https://m.media-amazon.com/images/I/61W6YPlEx9L._UF1000,1000_QL80_.jpg', isSaved: false, isVerified: true, brand: 'Ford', model: 'Figo', year: 2015, variant: 'Titanium', km: 90000, fuelType: 'Diesel', transmission: 'Manual', ownerNumber: 2, location: { city: 'Kanpur', state: 'Uttar Pradesh' }, price: 320000, }, { id: 'c5', thumbnail: 'https://cdn.pixabay.com/photo/2017/08/06/18/56/speed-2599079_1280.jpg', isSaved: true, isVerified: false, brand: 'Toyota', model: 'Etios', year: 2014, variant: 'G', km: 102000, fuelType: 'Petrol', transmission: 'Manual', ownerNumber: 3, location: { city: 'Agra', state: 'Uttar Pradesh' }, price: 290000, }, { id: 'c6', thumbnail: 'https://cdn.pixabay.com/photo/2020/04/11/18/33/buggy-5027957_1280.jpg', isSaved: false, isVerified: true, brand: 'Tata', model: 'Tiago', year: 2019, variant: 'XT', km: 30000, fuelType: 'Petrol', transmission: 'Manual', ownerNumber: 1, location: { city: 'Allahabad', state: 'Uttar Pradesh' }, price: 445000, }, ]), []);
+const recommendedCars = useMemo(() => {
+  // take first 6 (or whichever) from MOCK_CARS so ids line up with CarDetail lookup
+  return MOCK_CARS.slice(0, 6).map(car => ({
+    id: car.id, // ensures id matches mock data
+    thumbnail: car.thumbnail,
+    isSaved: car.isSaved,
+    isVerified: car.isVerified,
+    brand: car.brand,
+    model: car.model,
+    year: car.year,
+    variant: car.variant,
+    km: car.km,
+    fuelType: car.fuelType,
+    transmission: car.transmission,
+    ownerNumber: car.ownerNumber,
+    location: car.location,
+    price: car.price,
+    // you can include extra fields if CarCard expects them
+  }));
+}, []);
 
   const handleBuyCarsPress = () => {
     navigation.navigate('BuyUsedCar' as any, { screen: 'CarFeed' } as any);
   };
 
-  const handleCarPress = (car: any) => {
-    navigation.navigate('BuyUsedCar' as any, {
-      screen: 'CarDetail',
-      params: { carId: car.id },
-    } as any);
-  };
+const handleCarPress = (car: any) => {
+  console.log('HomeScreen -> navigating to car id:', car.id);
+  navigation.navigate('BuyUsedCar' as any, {
+    screen: 'CarDetail',
+    params: { carId: car.id },
+  } as any);
+};
+
 
   const handleSavePress = (car: any) => {
     console.log('save clicked', car.id);
@@ -124,7 +146,6 @@ const recommendedCars = useMemo(() => ([ { id: 'c1', thumbnail: 'https://images.
       </ImageBackground>
     </TouchableOpacity>
   );
-
   const ListHeader = () => (
     <>
       <View style={styles.locationContainer}>
