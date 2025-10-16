@@ -10,6 +10,8 @@ import {
   TextInput,
   FlatList,
   Animated,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
@@ -26,9 +28,12 @@ import { spacing } from '../../../../../styles/spacing';
 import { MOCK_CARS } from '../../buyUsedCar/services/mockCarData';
 import LottieView from 'lottie-react-native';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 const GRID_ITEM_SIZE = (width - 64) / 3;
 const BANNER_HEIGHT = 200;
+const HEADER_MAX_HEIGHT = 140;
+const HEADER_MIN_HEIGHT = 60;
+const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 type NavigationProp = NativeStackNavigationProp<HomeStackParamList>;
 
@@ -37,6 +42,7 @@ const HomeScreen = () => {
   const { getLocation } = useLocation();
   const navigation = useNavigation<NavigationProp>();
   const bannerAnimation = useRef(new Animated.Value(0)).current;
+  const scrollY = useRef(new Animated.Value(0)).current;
   const lottieRef = useRef<LottieView>(null);
 
   useEffect(() => {
@@ -58,6 +64,31 @@ const HomeScreen = () => {
       ])
     ).start();
   }, []);
+
+  // Scroll-based animations
+  const headerTranslateY = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [0, -HEADER_SCROLL_DISTANCE],
+    extrapolate: 'clamp',
+  });
+
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
+    outputRange: [1, 0.5, 0],
+    extrapolate: 'clamp',
+  });
+
+  const floatingHeaderTranslateY = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE],
+    outputRange: [-HEADER_MIN_HEIGHT, 0],
+    extrapolate: 'clamp',
+  });
+
+  const floatingHeaderOpacity = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
+    outputRange: [0, 0.5, 1],
+    extrapolate: 'clamp',
+  });
 
   const bannerScale = bannerAnimation.interpolate({
     inputRange: [0, 1],
@@ -159,28 +190,21 @@ const HomeScreen = () => {
   /** ---------------- RENDER ---------------- */
   const renderGridItem = ({ item }: any) => (
     <TouchableOpacity
-      style={{ width: GRID_ITEM_SIZE, height: GRID_ITEM_SIZE, borderRadius: 12, overflow: 'hidden' }}
+      style={styles.gridItemContainer}
       onPress={() => handleNavigate(item)}
+      activeOpacity={0.8}
     >
       <ImageBackground 
         source={{ uri: item.image }} 
-        style={{ flex: 1, justifyContent: 'flex-end' }} 
-        imageStyle={{ borderRadius: 12 }}
+        style={styles.gridItemBackground} 
+        imageStyle={styles.gridItemImage}
       >
         <LinearGradient 
           colors={['transparent', 'rgba(0,0,0,0.6)']} 
-          style={{ ...StyleSheet.absoluteFillObject, borderRadius: 12 }} 
+          style={styles.gridItemGradient} 
         />
-        <View style={{ position: 'absolute', bottom: 0, width: '100%', alignItems: 'center', paddingVertical: 6 }}>
-          <Text style={{ 
-            color: '#fff', 
-            fontWeight: '700', 
-            fontSize: 14, 
-            textAlign: 'center', 
-            textShadowColor: 'rgba(0,0,0,0.6)', 
-            textShadowOffset: { width: 0, height: 1 }, 
-            textShadowRadius: 3 
-          }}>
+        <View style={styles.gridItemTextContainer}>
+          <Text style={styles.gridItemText}>
             {item.title}
           </Text>
         </View>
@@ -190,20 +214,35 @@ const HomeScreen = () => {
 
   const ListHeader = () => (
     <>
-      {/* Location Bar */}
-      <View style={styles.locationContainer}>
-        <Ionicons name="location-outline" size={24} color="#eb259cff" />
-        <Text style={styles.locationText}>{location.city || 'Fetching location...'}</Text>
-        <TouchableOpacity onPress={getLocation} style={styles.refreshButton}>
-          <Ionicons name="refresh-outline" size={20} color="#fff" />
-        </TouchableOpacity>
-      </View>
+      {/* Animated Location + Search Container */}
+      <Animated.View 
+        style={[
+          styles.animatedHeaderContainer,
+          {
+            transform: [{ translateY: headerTranslateY }],
+            opacity: headerOpacity,
+          }
+        ]}
+      >
+        {/* Location Bar */}
+        <View style={styles.locationContainer}>
+          <Ionicons name="location-outline" size={24} color="#eb259cff" />
+          <Text style={styles.locationText}>{location.city || 'Fetching location...'}</Text>
+          <TouchableOpacity onPress={getLocation} style={styles.refreshButton}>
+            <Ionicons name="refresh-outline" size={20} color="#fff" />
+          </TouchableOpacity>
+        </View>
 
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <Ionicons name="search-outline" size={20} color="#6B7280" />
-        <TextInput placeholder="Search cars, brands..." style={styles.searchInput} />
-      </View>
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <Ionicons name="search-outline" size={20} color="#6B7280" />
+          <TextInput 
+            placeholder="Search cars, brands..." 
+            style={styles.searchInput}
+            placeholderTextColor="#9CA3AF"
+          />
+        </View>
+      </Animated.View>
 
       {/* Interactive Banner with Lottie Animation */}
       <Animated.View style={[styles.bannerContainer, { transform: [{ scale: bannerScale }] }]}>
@@ -318,35 +357,88 @@ const HomeScreen = () => {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <FlatList
-        data={gridItems}
-        keyExtractor={(item) => item.id.toString()}
-        numColumns={3}
-        columnWrapperStyle={{ 
-          justifyContent: 'space-between', 
-          marginHorizontal: 16, 
-          marginBottom: 16 
-        }}
-        renderItem={renderGridItem}
-        ListHeaderComponent={ListHeader}
-        ListFooterComponent={ListFooter}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        showsVerticalScrollIndicator={false}
-      />
-    </SafeAreaView>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#F9FAFB" />
+      
+      {/* Floating Pink Header */}
+      <Animated.View 
+        style={[
+          styles.floatingHeader,
+          {
+            transform: [{ translateY: floatingHeaderTranslateY }],
+            opacity: floatingHeaderOpacity,
+          }
+        ]}
+      >
+        <LinearGradient
+          colors={['#ff0088f3', '#ff2592ff']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.floatingHeaderGradient}
+        >
+          <View style={styles.floatingHeaderContent}>
+            <TouchableOpacity onPress={getLocation} style={styles.floatingLocationButton}>
+              <Ionicons name="location" size={20} color="#fff" />
+              <Text style={styles.floatingLocationText} numberOfLines={1}>
+                {location.city || 'Location'}
+              </Text>
+            </TouchableOpacity>
+
+            <View style={styles.floatingSearchContainer}>
+              <Ionicons name="search-outline" size={18} color="#6B7280" />
+              <TextInput 
+                placeholder="Search cars..." 
+                style={styles.floatingSearchInput}
+                placeholderTextColor="#9CA3AF"
+              />
+            </View>
+          </View>
+        </LinearGradient>
+      </Animated.View>
+
+      {/* Main Content */}
+      <SafeAreaView style={styles.safeArea} edges={['left', 'right']}>
+        <Animated.FlatList
+          data={gridItems}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={3}
+          columnWrapperStyle={styles.columnWrapper}
+          renderItem={renderGridItem}
+          ListHeaderComponent={ListHeader}
+          ListFooterComponent={ListFooter}
+          contentContainerStyle={styles.contentContainer}
+          showsVerticalScrollIndicator={false}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true }
+          )}
+          scrollEventThrottle={16}
+        />
+      </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: { 
-    flex: 1, 
-    backgroundColor: '#F9FAFB' 
+  container: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
   },
+  safeArea: { 
+    flex: 1,
+  },
+  
+  // Animated Header (Location + Search)
+animatedHeaderContainer: {
+  paddingTop: Platform.OS === 'ios' ? 8 : (StatusBar.currentHeight || 64),
+  backgroundColor: '#F9FAFB', // optional, if you want it visible under status bar
+}
+  ,
   locationContainer: { 
     flexDirection: 'row', 
     alignItems: 'center', 
-    margin: 16, 
+    marginHorizontal: 16,
+    marginBottom: 12,
     backgroundColor: '#fff', 
     padding: 12, 
     borderRadius: 12, 
@@ -354,13 +446,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05, 
     shadowRadius: 5, 
     shadowOffset: { width: 0, height: 2 }, 
-    elevation: 2 
+    elevation: 2, 
+    marginTop: 24,
   },
   locationText: { 
     marginLeft: 8, 
     color: '#111827', 
     flex: 1, 
-    fontWeight: '600' 
+    fontWeight: '600',
+    fontSize: 15,
   },
   refreshButton: { 
     backgroundColor: '#ef2d97ff', 
@@ -371,8 +465,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     alignItems: 'center', 
     backgroundColor: colors.white, 
-    marginHorizontal: spacing.lg, 
-    marginBottom: spacing.lg, 
+    marginHorizontal: 16, 
+    marginBottom: 16, 
     paddingHorizontal: spacing.md, 
     borderRadius: 12, 
     borderWidth: 1, 
@@ -387,8 +481,62 @@ const styles = StyleSheet.create({
     flex: 1, 
     marginLeft: 8, 
     height: 40, 
-    fontSize: 16, 
+    fontSize: 15, 
     color: '#111827' 
+  },
+
+  // Floating Header
+  floatingHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
+    shadowColor: '#FF1493',
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 8,
+  },
+  floatingHeaderGradient: {
+    paddingTop: Platform.OS === 'ios' ? 50 : 8,
+    paddingBottom: 12,
+  },
+  floatingHeaderContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  floatingLocationButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 20,
+    maxWidth: 120,
+  },
+  floatingLocationText: {
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: '600',
+    marginLeft: 4,
+  },
+  floatingSearchContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    height: 40,
+  },
+  floatingSearchInput: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 14,
+    color: '#111827',
   },
   
   // Banner Styles
@@ -535,6 +683,46 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E7EB',
   },
 
+  // Grid Items
+  gridItemContainer: {
+    width: GRID_ITEM_SIZE,
+    height: GRID_ITEM_SIZE,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  gridItemBackground: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  gridItemImage: {
+    borderRadius: 12,
+  },
+  gridItemGradient: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 12,
+  },
+  gridItemTextContainer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 6,
+  },
+  gridItemText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 14,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0,0,0,0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  columnWrapper: {
+    justifyContent: 'space-between',
+    marginHorizontal: 16,
+    marginBottom: 16,
+  },
+
   // Section Header
   sectionHeader: { 
     flexDirection: 'row', 
@@ -554,6 +742,11 @@ const styles = StyleSheet.create({
     fontWeight: '600', 
     color: '#f23aa2ff', 
     opacity: 0.8 
+  },
+
+  // Content Container
+  contentContainer: {
+    paddingBottom: 20,
   },
 });
 

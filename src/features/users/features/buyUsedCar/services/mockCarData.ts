@@ -7,7 +7,7 @@ export const MOCK_CARS: Car[] = [
     id: '1',
     dealerId: 'd1',
     dealerName: 'Premium Auto Dealers',
-    dealerPhone: '+917571074720',
+    dealerPhone: '+917393076785',
     dealerLocation: 'Connaught Place, Delhi',
     brand: 'Maruti Suzuki',
     model: 'Swift',
