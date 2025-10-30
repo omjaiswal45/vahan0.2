@@ -138,14 +138,25 @@ const HomeScreen = () => {
     },
   ];
 
-  /** ------------------ GENERIC NAVIGATION -------------------- */
-  const handleNavigate = (item: typeof gridItems[0]) => {
-    if (item.target) {
-      navigation.navigate(item.stack as any, { screen: item.target } as any);
-    } else {
-      navigation.navigate(item.stack as any);
-    }
-  };
+/** ------------------ GENERIC NAVIGATION -------------------- */
+const handleNavigate = (item: typeof gridItems[0]) => {
+  // Special case for "Sell Your Car"
+  if (item.title === 'Sell Your Car') {
+    // Navigate to dealer AddListing flow
+    navigation.navigate('SellCarStack' as any, { screen: 'AddListing' } as any);
+    return;
+  }
+
+  // If screen is nested (has target)
+  if (item.target) {
+    navigation.navigate(item.stack as any, { screen: item.target } as any);
+  } 
+  // If it's a standalone screen (no target)
+  else {
+    navigation.navigate(item.stack as any);
+  }
+};
+
 
   /** ---------------- MOCK / Recommended Cars ---------------- */
   const recommendedCars = useMemo(() => {

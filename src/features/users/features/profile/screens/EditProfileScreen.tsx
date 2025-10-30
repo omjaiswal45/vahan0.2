@@ -4,26 +4,23 @@ import React from 'react';
 import {
   View,
   StyleSheet,
-  TouchableOpacity,
   ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import AvatarUploader from '../components/AvatarUploader';
 import EditProfileForm from '../components/EditProfileForm';
 import { useProfile } from '../hooks/useProfile';
-import { ProfileUpdatePayload } from '../types';
 import { Colors } from '../../../../../styles/colors';
 import { Spacing } from '../../../../../styles/spacing';
 
 export const EditProfileScreen: React.FC = () => {
   const navigation = useNavigation();
-  const { profile, loading, updateProfile, uploadAvatar } = useProfile();
+  const { profile, loading, updateProfile } = useProfile();
 
   if (!profile) {
     return null;
   }
 
-  const handleUpdateProfile = async (data: ProfileUpdatePayload) => {
+  const handleUpdateProfile = async (data: FormData) => {
     await updateProfile(data);
     navigation.goBack();
   };
@@ -35,24 +32,10 @@ export const EditProfileScreen: React.FC = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Avatar Upload */}
-        <AvatarUploader
-          imageUri={profile.avatar}
-          onImagePicked={async (file) => {
-            await uploadAvatar({
-              uri: file.uri,
-              fileName: file.name,
-              mimeType: file.type,
-              fileSize: 0,
-            });
-          }}
-        />
-
-        {/* Edit Form */}
+        {/* Edit Form with integrated Avatar Upload */}
         <EditProfileForm
-          profile={profile}
+          initial={profile}
           onSubmit={handleUpdateProfile}
-          loading={loading}
         />
       </ScrollView>
     </View>

@@ -17,8 +17,10 @@ vahan0.2/
 │   │   ├── react-native-snap-carousel.d.ts
 │   │   └── react-native-vector-icons.d.ts
 │   ├── assets/
-│   │   └── animations/
-│   │       └── splash.json
+│   │   ├── animations/
+│   │   │   ├── carsearchLottie.json
+│   │   │   └── splash.json
+│   │   └── trafficConcept.json
 │   ├── common/
 │   │   ├── AppHeader.tsx
 │   │   ├── Button.tsx

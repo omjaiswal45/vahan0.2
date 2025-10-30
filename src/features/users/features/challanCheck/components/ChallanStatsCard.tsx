@@ -8,7 +8,6 @@ import { ChallanStats } from '../types';
 interface ChallanStatsCardProps {
   stats: ChallanStats;
 }
-
 export const ChallanStatsCard: React.FC<ChallanStatsCardProps> = ({ stats }) => {
   return (
     <View style={styles.container}>
@@ -25,8 +24,7 @@ export const ChallanStatsCard: React.FC<ChallanStatsCardProps> = ({ stats }) => 
         <View style={[styles.statBox, styles.pendingBox]}>
           <Text style={styles.statValue}>{stats.pendingChallans}</Text>
           <Text style={styles.statLabel}>Pending</Text>
-        </View>
-
+        </View> 
         <View style={[styles.statBox, styles.overdueBox]}>
           <Text style={styles.statValue}>{stats.overdueChallans}</Text>
           <Text style={styles.statLabel}>Overdue</Text>

@@ -11,6 +11,8 @@ import ListingDetailScreen from '../features/dealer/screens/ListingDetailScreen'
 import LeadsScreen from '../features/dealer/screens/LeadsScreen';
 import ChatScreen from '../features/dealer/screens/ChatScreen';
 import DealerprofileScreen from '../features/dealer/screens/DealerProfileScreen';
+import AddListingNavigator from '../features/dealer/navigators/AddListingNavigator';
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -18,17 +20,18 @@ const Stack = createNativeStackNavigator();
 // Listings Stack
 const ListingsStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: true }}>
-    <Stack.Screen name="ListingsHome" component={ListingsScreen} options={{ title: 'Listings' }} />
-    <Stack.Screen name="AddListing" component={AddListingScreen} options={{ title: 'Add Listing' }} />
-    <Stack.Screen name="ListingDetail" component={ListingDetailScreen} options={{ title: 'Listing Detail' }} />
-      <Stack.Screen
-      name="ImagePickerScreen"
-      component={require('../features/dealer/screens/ImagePickerScreen').default}
-      options={{ title: 'Upload Images' }}
+    <Stack.Screen
+      name="ListingsHome"
+      component={ListingsScreen}
+      options={{ title: 'Listings' }}
+    />
+    <Stack.Screen
+      name="AddListingStack"
+      component={AddListingNavigator}
+      options={{ headerShown: false }}
     />
   </Stack.Navigator>
 );
-
 // Leads Stack
 const LeadsStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: true }}>
