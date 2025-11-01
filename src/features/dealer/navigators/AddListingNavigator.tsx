@@ -8,21 +8,20 @@ import { defaultNativeStackScreenOptions } from '../../../navigation/navigationO
 const Stack = createNativeStackNavigator();
 
 const AddListingNavigator = () => (
-  <Stack.Navigator screenOptions={defaultNativeStackScreenOptions}>
+  <Stack.Navigator screenOptions={{ ...defaultNativeStackScreenOptions, headerShown: false }}>
     <Stack.Screen
       name="AddListing"
       component={AddListingScreen}
-      options={{ title: 'Add Listing' }}
     />
     <Stack.Screen
       name="ListingDetail"
       component={ListingDetailScreen}
-      options={{ title: 'Listing Detail' }}
+      options={{ headerShown: true, title: 'Listing Detail' }}
     />
     <Stack.Screen
       name="ImagePickerScreen"
       component={ImagePickerScreen}
-      options={{ title: 'Upload Images' }}
+      options={{ headerShown: true, title: 'Upload Images' }}
     />
   </Stack.Navigator>
 );

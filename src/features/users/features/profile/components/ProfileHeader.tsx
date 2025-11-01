@@ -48,238 +48,229 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   };
 
   return (
-    <LinearGradient
-      colors={[colors.primary, colors.primaryDark]}
-      style={[styles.container, style]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-    >
+    <View style={[styles.container, style]}>
       <View style={styles.content}>
-        {/* Avatar Section */}
-        <TouchableOpacity
-          style={styles.avatarContainer}
-          onPress={onAvatarPress}
-          activeOpacity={0.8}
-        >
-          {renderAvatar()}
-          
-          {onAvatarPress && (
-            <View style={styles.cameraButton}>
-              <Ionicons name="camera" size={16} color={colors.white} />
-            </View>
-          )}
-          
-          {profile.dealerInfo?.verified && (
-            <View style={styles.verifiedBadge}>
-              <Ionicons
-                name="checkmark-circle"
-                size={24}
-                color={colors.success}
-              />
-            </View>
-          )}
-        </TouchableOpacity>
+        {/* Avatar Section - Centered */}
+        <View style={styles.avatarSection}>
+          <TouchableOpacity
+            style={styles.avatarContainer}
+            onPress={onAvatarPress}
+            activeOpacity={0.8}
+          >
+            {renderAvatar()}
 
-        {/* Profile Info */}
+            {onAvatarPress && (
+              <View style={styles.cameraButton}>
+                <Ionicons name="camera" size={18} color={colors.white} />
+              </View>
+            )}
+
+            {profile.dealerInfo?.verified && (
+              <View style={styles.verifiedBadge}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={28}
+                  color={colors.success}
+                />
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {/* Profile Info - Centered */}
         <View style={styles.infoContainer}>
           <View style={styles.nameRow}>
             <Text style={styles.name} numberOfLines={1}>
               {profile.name}
             </Text>
-            
-            {showEditButton && onEditPress && (
-              <TouchableOpacity
-                style={styles.editButton}
-                onPress={onEditPress}
-                activeOpacity={0.7}
-              >
-                <Ionicons name="create-outline" size={20} color={colors.white} />
-                <Text style={styles.editText}>Edit</Text>
-              </TouchableOpacity>
+
+            {profile.dealerInfo && (
+              <View style={styles.dealerBadge}>
+                <Ionicons name="business" size={12} color={colors.white} />
+                <Text style={styles.dealerText}>Dealer</Text>
+              </View>
             )}
           </View>
 
-          {profile.dealerInfo && (
-            <View style={styles.dealerBadge}>
-              <Ionicons name="business" size={14} color={colors.white} />
-              <Text style={styles.dealerText}>Dealer</Text>
-            </View>
-          )}
+          {/* Contact Info Row */}
+          <View style={styles.contactRow}>
+            {profile.phone && (
+              <View style={styles.infoChip}>
+                <Ionicons name="call" size={14} color={colors.white} />
+                <Text style={styles.infoText}>{profile.phone}</Text>
+              </View>
+            )}
 
-          {profile.phone && (
-            <View style={styles.infoRow}>
-              <Ionicons name="call-outline" size={16} color={colors.white} />
-              <Text style={styles.infoText}>{profile.phone}</Text>
-            </View>
-          )}
-
-          {profile.email && (
-            <View style={styles.infoRow}>
-              <Ionicons name="mail-outline" size={16} color={colors.white} />
-              <Text style={styles.infoText} numberOfLines={1}>
-                {profile.email}
-              </Text>
-            </View>
-          )}
-
-          {profile.location && (
-            <View style={styles.infoRow}>
-              <Ionicons name="location-outline" size={16} color={colors.white} />
-              <Text style={styles.infoText}>
-                {profile.location.city}, {profile.location.state}
-              </Text>
-            </View>
-          )}
-
-          {profile.dealerInfo?.rating && (
-            <View style={styles.ratingRow}>
-              <Ionicons name="star" size={16} color={colors.warning} />
-              <Text style={styles.ratingText}>
-                {profile.dealerInfo.rating.toFixed(1)}
-              </Text>
-              {profile.dealerInfo.totalSales && (
-                <Text style={styles.salesText}>
-                  • {profile.dealerInfo.totalSales} sales
+            {profile.location && (
+              <View style={styles.infoChip}>
+                <Ionicons name="location" size={14} color={colors.white} />
+                <Text style={styles.infoText}>
+                  {profile.location.city}
                 </Text>
-              )}
-            </View>
+              </View>
+            )}
+          </View>
+
+          {/* Edit Button - Full Width */}
+          {showEditButton && onEditPress && (
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={onEditPress}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="create-outline" size={20} color={colors.white} />
+              <Text style={styles.editButtonText}>Edit Profile</Text>
+            </TouchableOpacity>
           )}
         </View>
       </View>
-    </LinearGradient>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.lg,
+    paddingTop: spacing.xxl + 10,
+    paddingBottom: spacing.xl,
     paddingHorizontal: spacing.lg,
   },
   content: {
-    flexDirection: 'row',
     alignItems: 'center',
+  },
+  avatarSection: {
+    alignItems: 'center',
+    marginBottom: spacing.md,
   },
   avatarContainer: {
     position: 'relative',
-    marginRight: spacing.md,
   },
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 3,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 4,
     borderColor: colors.white,
   },
   avatarPlaceholder: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: colors.white + '30',
-    borderWidth: 3,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: colors.white + '25',
+    borderWidth: 4,
     borderColor: colors.white,
     justifyContent: 'center',
     alignItems: 'center',
   },
   avatarText: {
-    fontSize: 40,
+    fontSize: 48,
     fontFamily: typography.fontFamily.bold,
     color: colors.white,
   },
   cameraButton: {
     position: 'absolute',
-    right: 0,
-    bottom: 0,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    right: 2,
+    bottom: 2,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: colors.primary,
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: colors.white,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
   },
   verifiedBadge: {
     position: 'absolute',
-    right: -4,
-    top: -4,
+    right: -2,
+    top: 0,
     backgroundColor: colors.white,
-    borderRadius: 12,
+    borderRadius: 14,
+    padding: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   infoContainer: {
-    flex: 1,
+    width: '100%',
+    alignItems: 'center',
   },
   nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     marginBottom: spacing.xs,
+    gap: spacing.xs,
   },
   name: {
-    flex: 1,
-    fontSize: 22,
+    fontSize: 26,
     fontFamily: typography.fontFamily.bold,
     color: colors.white,
-    marginRight: spacing.sm,
-  },
-  editButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.white + '20',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: 20,
-  },
-  editText: {
-    fontSize: 14,
-    fontFamily: typography.fontFamily.medium,
-    color: colors.white,
-    marginLeft: 4,
+    textAlign: 'center',
+    letterSpacing: -0.5,
   },
   dealerBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: colors.white + '25',
+    backgroundColor: colors.white + '30',
     paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginBottom: spacing.xs,
+    paddingVertical: 3,
+    borderRadius: 10,
   },
   dealerText: {
-    fontSize: 12,
-    fontFamily: typography.fontFamily.semiBold,
+    fontSize: 11,
+    fontFamily: typography.fontFamily.bold,
     color: colors.white,
     marginLeft: 4,
+    textTransform: 'uppercase',
   },
-  infoRow: {
+  contactRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: spacing.xs,
+    justifyContent: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+    flexWrap: 'wrap',
+  },
+  infoChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.white + '20',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 6,
+    borderRadius: 16,
+    gap: 4,
   },
   infoText: {
-    fontSize: 14,
-    fontFamily: typography.fontFamily.regular,
+    fontSize: 13,
+    fontFamily: typography.fontFamily.medium,
     color: colors.white,
-    marginLeft: spacing.xs,
-    opacity: 0.9,
   },
-  ratingRow: {
+  editButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: spacing.xs,
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.sm,
+    borderRadius: 24,
+    width: '80%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  ratingText: {
-    fontSize: 14,
+  editButtonText: {
+    fontSize: 16,
     fontFamily: typography.fontFamily.semiBold,
-    color: colors.white,
-    marginLeft: 4,
-  },
-  salesText: {
-    fontSize: 14,
-    fontFamily: typography.fontFamily.regular,
-    color: colors.white,
-    marginLeft: 4,
-    opacity: 0.8,
+    color: colors.primary,
+    marginLeft: spacing.xs,
   },
 });

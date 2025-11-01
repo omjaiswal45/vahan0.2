@@ -7,6 +7,7 @@ import { EditProfileScreen } from './screens/EditProfileScreen';
 import { SavedCarsScreen } from './screens/SavedCarsScreen';
 import { MyListingsScreen } from './screens/MyListingsScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
+import AddListingNavigator from '../../../dealer/navigators/AddListingNavigator';
 import { colors } from '../../../../styles/colors';
 import { defaultNativeStackScreenOptions } from '../../../../navigation/navigationOptions';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,6 +19,7 @@ export type ProfileStackParamList = {
   SavedCars: undefined;
   MyListings: undefined;
   Settings: undefined;
+  SellCar: undefined;
 };
 
 const Stack = createNativeStackNavigator<ProfileStackParamList>();
@@ -66,6 +68,15 @@ const ProfileNavigator: React.FC = () => {
         name="Settings"
         component={SettingsScreen}
         options={{ title: 'Settings' }}
+      />
+      <Stack.Screen
+        name="SellCar"
+        component={AddListingNavigator}
+        options={{
+          ...defaultNativeStackScreenOptions,
+          title: 'Add Listing',
+          headerShown: true
+        }}
       />
     </Stack.Navigator>
   );

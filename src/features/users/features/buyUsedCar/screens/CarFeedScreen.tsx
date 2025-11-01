@@ -1,6 +1,6 @@
 // src/features/users/features/buyUsedCar/screens/CarFeedScreen.tsx
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   FlatList,
@@ -10,19 +10,25 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 import { CarCard } from '../components/CarCard';
 import { SearchBar } from '../components/SearchBar';
 import { FilterModal } from '../components/FilterModal';
 import { useBuyUsedCar } from '../hooks/useBuyUsedCar';
 import { useFilterOptions } from '../hooks/useBuyUsedCar';
 import { Car, CarFilters } from '../types';
-import { buyUsedCarAPI } from '../services/buyUsedCarAPI';
+import { toggleSaveCar } from '../../../../../store/slices/buyUsedCarSlice';
+import { RootState, AppDispatch } from '../../../../../store/store';
 import { colors } from '../../../../../styles/colors';
 import { spacing } from '../../../../../styles/spacing'
 import { typography } from '../../../../../styles/typography';
 
 export const CarFeedScreen: React.FC = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch<AppDispatch>();
+  const auth = useSelector((state: RootState) => state.auth);
+  const savedCarIds = useSelector((state: RootState) => state.buyUsedCar.savedCarIds);
+
   const {
     cars,
     loading,
@@ -38,7 +44,6 @@ export const CarFeedScreen: React.FC = () => {
   const { filterOptions } = useFilterOptions();
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [currentFilters, setCurrentFilters] = useState<CarFilters>({});
-  const [savedCarIds, setSavedCarIds] = useState<Set<string>>(new Set());
 
   const getActiveFiltersCount = useCallback((): number => {
     let count = 0;
@@ -56,22 +61,14 @@ export const CarFeedScreen: React.FC = () => {
     navigation.navigate('CarDetail' as never, { carId: car.id } as never);
   }, [navigation]);
 
-  const handleSavePress = useCallback(async (carId: string, userId: string) => {
+  const handleSavePress = useCallback(async (carId: string) => {
+    const userId = auth.phone || 'guest-user';
     try {
-      const result = await buyUsedCarAPI.toggleSaveCar({ carId, userId });
-      setSavedCarIds(prev => {
-        const newSet = new Set(prev);
-        if (result.isSaved) {
-          newSet.add(carId);
-        } else {
-          newSet.delete(carId);
-        }
-        return newSet;
-      });
+      await dispatch(toggleSaveCar({ carId, userId })).unwrap();
     } catch (error) {
       console.error('Failed to save car:', error);
     }
-  }, []);
+  }, [dispatch, auth.phone]);
 
   const handleSearch = useCallback((query: string) => {
     searchCars(query);
@@ -84,9 +81,9 @@ export const CarFeedScreen: React.FC = () => {
 
   const renderCarItem = useCallback(({ item }: { item: Car }) => (
     <CarCard
-      car={{ ...item, isSaved: savedCarIds.has(item.id) }}
+      car={{ ...item, isSaved: savedCarIds.includes(item.id) }}
       onPress={() => handleCarPress(item)}
-      onSavePress={() => handleSavePress(item.id, 'current-user-id')}
+      onSavePress={() => handleSavePress(item.id)}
     />
   ), [handleCarPress, handleSavePress, savedCarIds]);
 

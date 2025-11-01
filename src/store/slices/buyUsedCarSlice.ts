@@ -4,6 +4,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { buyUsedCarAPI } from '../../features/users/features/buyUsedCar/services/buyUsedCarAPI';
 import { Car, CarFilters, PaginationMeta } from '../../features/users/features/buyUsedCar/types';
+import { MOCK_CARS } from '../../features/users/features/buyUsedCar/services/mockCarData';
 
 interface BuyUsedCarState {
   cars: Car[];
@@ -17,9 +18,12 @@ interface BuyUsedCarState {
   refreshing: boolean;
 }
 
+// Initialize savedCarIds with cars that have isSaved: true in MOCK_CARS
+const initialSavedCarIds = MOCK_CARS.filter(car => car.isSaved).map(car => car.id);
+
 const initialState: BuyUsedCarState = {
   cars: [],
-  savedCarIds: [],
+  savedCarIds: initialSavedCarIds,
   filters: {},
   searchQuery: '',
   currentPage: 1,

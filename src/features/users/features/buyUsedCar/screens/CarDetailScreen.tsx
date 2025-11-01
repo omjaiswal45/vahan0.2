@@ -16,9 +16,12 @@ import {
   NativeSyntheticEvent,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { useCarDetails } from '../hooks/useBuyUsedCar';
 import { buyUsedCarAPI } from '../services/buyUsedCarAPI';
+import { toggleSaveCar } from '../../../../../store/slices/buyUsedCarSlice';
+import { RootState, AppDispatch } from '../../../../../store/store';
 import { colors } from '../../../../../styles/colors';
 import { spacing } from '../../../../../styles/spacing';
 import { typography } from '../../../../../styles/typography';
@@ -28,27 +31,30 @@ const { width } = Dimensions.get('window');
 export const CarDetailScreen: React.FC = () => {
   const route = useRoute();
   const navigation = useNavigation();
+  const dispatch = useDispatch<AppDispatch>();
+  const auth = useSelector((state: RootState) => state.auth);
+  const savedCarIds = useSelector((state: RootState) => state.buyUsedCar.savedCarIds);
+
   const { carId } = route.params as { carId: string };
   const { car, loading } = useCarDetails(carId);
-  const [isSaved, setIsSaved] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const flatListRef = useRef<FlatList>(null);
 
+  // Check if car is saved from Redux
+  const isSaved = savedCarIds.includes(carId);
+
   useEffect(() => {
     if (car) {
-      setIsSaved(car.isSaved || false);
       // Track view
-      buyUsedCarAPI.trackCarView(carId, 'current-user-id');
+      const userId = auth.phone || 'guest-user';
+      buyUsedCarAPI.trackCarView(carId, userId);
     }
-  }, [car, carId]);
+  }, [car, carId, auth.phone]);
 
   const handleSave = async () => {
+    const userId = auth.phone || 'guest-user';
     try {
-      const result = await buyUsedCarAPI.toggleSaveCar({
-        carId,
-        userId: 'current-user-id',
-      });
-      setIsSaved(result.isSaved);
+      await dispatch(toggleSaveCar({ carId, userId })).unwrap();
     } catch (error) {
       console.error('Failed to save car:', error);
     }

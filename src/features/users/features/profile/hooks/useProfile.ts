@@ -115,7 +115,20 @@ export const useProfile = () => {
 
   // Fetch profile stats
   const fetchStats = useCallback(async () => {
-    if (!token) return null;
+    // Always set fallback stats with current savedCarIds count
+    const fallbackStats: ProfileStats = {
+      totalListings: myListings?.length || 0,
+      activeListing: myListings?.filter(l => l.status === 'active').length || 0,
+      soldCars: myListings?.filter(l => l.status === 'sold').length || 0,
+      savedCars: savedCarIds.length,
+      totalLeads: 0,
+      activeLeads: 0,
+    };
+
+    if (!token) {
+      setStats(fallbackStats);
+      return fallbackStats;
+    }
 
     try {
       const response = await getProfileStatsApi(token);
@@ -129,17 +142,10 @@ export const useProfile = () => {
     } catch (err) {
       console.error('Failed to fetch stats:', err);
       // Even if API fails, show saved cars count from Redux
-      const fallbackStats: ProfileStats = {
-        totalListings: 0,
-        activeListing: 0,
-        soldCars: 0,
-        savedCars: savedCarIds.length,
-        totalLeads: 0,
-      };
       setStats(fallbackStats);
       return fallbackStats;
     }
-  }, [token, savedCarIds.length]);
+  }, [token, savedCarIds.length, myListings]);
 
   // Fetch saved cars using Redux thunk
   const fetchSavedCarsData = useCallback(() => {
@@ -300,19 +306,32 @@ export const useProfile = () => {
   useEffect(() => {
     if (token) {
       fetchProfileData();
-      fetchStats();
     }
-  }, [token]);
+    // Always fetch stats (will use fallback if no token)
+    fetchStats();
+  }, [token, fetchStats]);
 
   // Update stats when savedCarIds changes
   useEffect(() => {
-    if (stats) {
-      setStats((prevStats) => ({
-        ...prevStats!,
+    setStats((prevStats) => {
+      if (!prevStats) {
+        // If stats don't exist yet, create them with savedCarIds count
+        return {
+          totalListings: myListings?.length || 0,
+          activeListing: myListings?.filter(l => l.status === 'active').length || 0,
+          soldCars: myListings?.filter(l => l.status === 'sold').length || 0,
+          savedCars: savedCarIds.length,
+          totalLeads: 0,
+          activeLeads: 0,
+        };
+      }
+      // Update existing stats with new savedCarIds count
+      return {
+        ...prevStats,
         savedCars: savedCarIds.length,
-      }));
-    }
-  }, [savedCarIds.length]);
+      };
+    });
+  }, [savedCarIds.length, myListings]);
 
   return {
     // Redux state

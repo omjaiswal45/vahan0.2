@@ -5,6 +5,7 @@ import HomeScreen from './screens/HomeScreen';
 import RCCheckNavigator from '../rcCheck/RCCheckNavigator';
 import { ChallanCheckNavigator } from '../challanCheck/ChallanCheckNavigator';
 import AddListingNavigator from '../../../dealer/navigators/AddListingNavigator';
+import { defaultStackScreenOptions } from '../../../../navigation/navigationOptions';
 
 
 
@@ -14,7 +15,15 @@ const HomeStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="HomeMain" component={HomeScreen} />
     <Stack.Screen name="SellCarStack" component={AddListingNavigator} />
-    <Stack.Screen name="RCCheckStack" component={RCCheckNavigator} />
+    <Stack.Screen
+      name="RCCheckStack"
+      component={RCCheckNavigator}
+      options={{
+        ...defaultStackScreenOptions,
+        headerShown: true,
+        title: 'RC Check'
+      }}
+    />
     <Stack.Screen name="ChallanCheckStack" component={ChallanCheckNavigator} />
   </Stack.Navigator>
 );
