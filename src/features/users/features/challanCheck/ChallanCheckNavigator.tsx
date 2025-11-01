@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { ChallanCheckHomeScreen } from './screens/ChallanCheckHomeScreen';
 import { ChallanCheckReportScreen } from './screens/ChallanCheckReportScreen';
 import { SavedChallanReportsScreen } from './screens/SavedChallanReportsScreen';
-import { colors } from '../../../../styles';
+import { defaultStackScreenOptions } from '../../../../navigation/navigationOptions';
 
 export type ChallanCheckStackParamList = {
   ChallanCheckHome: undefined;
@@ -17,27 +17,13 @@ const Stack = createStackNavigator<ChallanCheckStackParamList>();
 
 export const ChallanCheckNavigator: React.FC = () => {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: colors.background,
-          elevation: 0,
-          shadowOpacity: 0,
-          borderBottomWidth: 1,
-          borderBottomColor: colors.border,
-        },
-        headerTintColor: colors.text,
-        headerTitleStyle: {
-          fontWeight: '700',
-          fontSize: 18,
-        },
-      }}
-    >
+    <Stack.Navigator screenOptions={defaultStackScreenOptions}>
       <Stack.Screen
         name="ChallanCheckHome"
         component={ChallanCheckHomeScreen}
         options={{
           title: 'Challan Check',
+          headerBackTitle: '', // Hide back button text, show only arrow
         }}
       />
       <Stack.Screen

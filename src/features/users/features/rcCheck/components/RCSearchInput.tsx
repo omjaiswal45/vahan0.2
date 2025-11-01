@@ -1,6 +1,6 @@
 // src/features/users/features/rcCheck/components/RCSearchInput.tsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -15,14 +15,22 @@ interface RCSearchInputProps {
   onSearch: (regNumber: string) => void;
   loading?: boolean;
   placeholder?: string;
+  initialValue?: string;
 }
 
 const RCSearchInput: React.FC<RCSearchInputProps> = ({
   onSearch,
   loading = false,
   placeholder = 'Enter Registration Number',
+  initialValue = '',
 }) => {
-  const [regNumber, setRegNumber] = useState('');
+  const [regNumber, setRegNumber] = useState(initialValue);
+
+  useEffect(() => {
+    if (initialValue) {
+      setRegNumber(initialValue);
+    }
+  }, [initialValue]);
   const [error, setError] = useState('');
 
   const formatRegNumber = (text: string) => {

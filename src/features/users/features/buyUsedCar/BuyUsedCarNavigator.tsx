@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { CarFeedScreen } from './screens/CarFeedScreen';
 import { CarDetailScreen } from './screens/CarDetailScreen';
 import { SavedCarsScreen } from './screens/SavedCarsScreen';
-import { colors } from '../../../../styles/colors';
+import { defaultNativeStackScreenOptions } from '../../../../navigation/navigationOptions';
 
 export type BuyUsedCarStackParamList = {
   CarFeed: undefined;
@@ -17,18 +17,7 @@ const Stack = createNativeStackNavigator<BuyUsedCarStackParamList>();
 
 export const BuyUsedCarNavigator: React.FC = () => {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: colors.white,
-        },
-        headerTintColor: colors.text,
-        headerTitleStyle: {
-          fontWeight: '600',
-        },
-        headerShadowVisible: true,
-      }}
-    >
+    <Stack.Navigator screenOptions={defaultNativeStackScreenOptions}>
       <Stack.Screen
         name="CarFeed"
         component={CarFeedScreen}

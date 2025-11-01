@@ -10,9 +10,9 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  role: 'customer',
+  role: 'customer', // Default role selection (customer pre-selected)
   phone: null,
-  isVerified: false,
+  isVerified: false, // Not authenticated until user logs in
   loading: false,
   error: '',
 };

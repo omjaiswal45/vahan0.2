@@ -1,6 +1,6 @@
 // src/features/users/features/rcCheck/screens/RCCheckHomeScreen.tsx
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,8 @@ import {
 import { colors } from '../../../../../styles/colors';
 import { useRCCheck } from '../hooks/useRCCheck';
 import RCSearchInput from '../components/RCSearchInput';
+import VehicleNumberModal from '../../../../../components/VehicleNumberModal';
+import { useVehicleNumber } from '../../../../../hooks/useVehicleNumber';
 
 interface RCCheckHomeScreenProps {
   navigation: any;
@@ -19,6 +21,20 @@ interface RCCheckHomeScreenProps {
 
 const RCCheckHomeScreen: React.FC<RCCheckHomeScreenProps> = ({ navigation }) => {
   const { checkRC, recentSearches, clearRecent, loading } = useRCCheck();
+  const {
+    vehicleNumber,
+    shouldShowModal,
+    saveVehicleNumber,
+    skipForNow,
+  } = useVehicleNumber();
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    // Show modal when screen is focused and vehicle number is not set
+    if (shouldShowModal()) {
+      setShowModal(true);
+    }
+  }, []);
 
   const handleSearch = async (regNumber: string) => {
     try {
@@ -41,6 +57,18 @@ const RCCheckHomeScreen: React.FC<RCCheckHomeScreenProps> = ({ navigation }) => 
     handleSearch(regNumber);
   };
 
+  const handleVehicleNumberSubmit = (number: string) => {
+    saveVehicleNumber(number);
+    setShowModal(false);
+    // Optionally auto-search with the saved number
+    handleSearch(number);
+  };
+
+  const handleSkip = () => {
+    skipForNow();
+    setShowModal(false);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -54,7 +82,11 @@ const RCCheckHomeScreen: React.FC<RCCheckHomeScreenProps> = ({ navigation }) => 
 
         {/* Search Section */}
         <View style={styles.searchSection}>
-          <RCSearchInput onSearch={handleSearch} loading={loading} />
+          <RCSearchInput
+            onSearch={handleSearch}
+            loading={loading}
+            initialValue={vehicleNumber || ''}
+          />
         </View>
 
         {/* Features Grid */}
@@ -141,6 +173,17 @@ const RCCheckHomeScreen: React.FC<RCCheckHomeScreenProps> = ({ navigation }) => 
           </View>
         </View>
       </ScrollView>
+
+      {/* Vehicle Number Modal */}
+      <VehicleNumberModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        onSubmit={handleVehicleNumberSubmit}
+        onSkip={handleSkip}
+        contextTitle="Check Your Car's RC Details"
+        contextMessage="Just enter your car number to see all RC details in one tap. Your number helps us fetch the correct details securely."
+        showDemoOption={false}
+      />
     </SafeAreaView>
   );
 };

@@ -5,7 +5,6 @@ import AuthNavigator from './AuthNavigator';
 import DealerTabs from './DealerTabs';
 import CustomerTabs from './CustomerTabs';
 import SplashScreenComponent from '../features/auth/screens/SplashScreen';
-import RCCheckNavigator from '../features/users/features/rcCheck/RCCheckNavigator';
 
 const RootNavigator = () => {
   const { role, isVerified } = useSelector((state: RootState) => state.auth);
@@ -16,10 +15,22 @@ const RootNavigator = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (showSplash) return <SplashScreenComponent />;
+  // Show splash screen for 3 seconds
+  if (showSplash) {
+    return <SplashScreenComponent />;
+  }
 
-  if (isVerified && role === 'dealer') return <DealerTabs />;
-  if (isVerified && role === 'customer') return <CustomerTabs />;1
+  // After splash, check authentication status
+  // If user is verified and has a role, show appropriate tabs
+  if (isVerified && role === 'dealer') {
+    return <DealerTabs />;
+  }
+
+  if (isVerified && role === 'customer') {
+    return <CustomerTabs />;
+  }
+
+  // Default: Show login/auth screen
   return <AuthNavigator />;
 };
 

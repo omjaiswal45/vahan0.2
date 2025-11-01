@@ -12,6 +12,7 @@ import LeadsScreen from '../features/dealer/screens/LeadsScreen';
 import ChatScreen from '../features/dealer/screens/ChatScreen';
 import DealerprofileScreen from '../features/dealer/screens/DealerProfileScreen';
 import AddListingNavigator from '../features/dealer/navigators/AddListingNavigator';
+import { defaultNativeStackScreenOptions } from './navigationOptions';
 
 
 const Tab = createBottomTabNavigator();
@@ -19,7 +20,7 @@ const Stack = createNativeStackNavigator();
 
 // Listings Stack
 const ListingsStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: true }}>
+  <Stack.Navigator screenOptions={defaultNativeStackScreenOptions}>
     <Stack.Screen
       name="ListingsHome"
       component={ListingsScreen}
@@ -34,7 +35,7 @@ const ListingsStack = () => (
 );
 // Leads Stack
 const LeadsStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: true }}>
+  <Stack.Navigator screenOptions={defaultNativeStackScreenOptions}>
     <Stack.Screen name="LeadsHome" component={LeadsScreen} options={{ title: 'Leads' }} />
     <Stack.Screen name="Chat" component={ChatScreen} options={{ title: 'Chat' }} />
   </Stack.Navigator>

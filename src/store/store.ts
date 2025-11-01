@@ -1,4 +1,6 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { persistStore, persistReducer } from 'redux-persist';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import authReducer from './slices/authslice';
 import userReducer from './slices/userslice';
 import locationReducer from './slices/locationSlice';
@@ -7,6 +9,16 @@ import customerReducer from './slices/customerSlice';
 import buyUsedCarReducer from './slices/buyUsedCarSlice';
 import rcCheckReducer from './slices/rcCheckSlice'
 import challanCheckReducer from './slices/challanCheckSlice';
+import vehicleReducer from './slices/vehicleSlice';
+
+// Persist configuration
+const persistConfig = {
+  key: 'root',
+  storage: AsyncStorage,
+  whitelist: ['vehicle', 'auth', 'user', 'buyUsedCar'], // Persist auth to keep users logged in and saved cars
+  // Users only need to login once, then stay logged in until they logout
+};
+
 const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
@@ -15,12 +27,23 @@ const rootReducer = combineReducers({
   customer: customerReducer,
   buyUsedCar: buyUsedCarReducer,
   rcCheck: rcCheckReducer,
-   challanCheck: challanCheckReducer,
+  challanCheck: challanCheckReducer,
+  vehicle: vehicleReducer,
 });
 
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
 export const store = configureStore({
-  reducer: rootReducer,
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+      },
+    }),
 });
+
+export const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

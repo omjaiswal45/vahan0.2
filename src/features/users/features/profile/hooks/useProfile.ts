@@ -31,12 +31,13 @@ import { Form } from 'react-hook-form';
 
 export const useProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
-  
+
   // Get state from Redux
   const { profile, savedCars, myListings, loading, error } = useSelector(
     (state: RootState) => state.customer
   );
   const token = useSelector((state: RootState) => state.auth?.token);
+  const savedCarIds = useSelector((state: RootState) => state.buyUsedCar.savedCarIds);
 
   const [stats, setStats] = useState<ProfileStats | null>(null);
   const [settings, setSettings] = useState<SettingsConfig | null>(null);
@@ -118,13 +119,27 @@ export const useProfile = () => {
 
     try {
       const response = await getProfileStatsApi(token);
-      setStats(response.data);
-      return response.data;
+      // Merge API stats with Redux savedCarIds count
+      const mergedStats = {
+        ...response.data,
+        savedCars: savedCarIds.length, // Use Redux count for saved cars
+      };
+      setStats(mergedStats);
+      return mergedStats;
     } catch (err) {
       console.error('Failed to fetch stats:', err);
-      return null;
+      // Even if API fails, show saved cars count from Redux
+      const fallbackStats: ProfileStats = {
+        totalListings: 0,
+        activeListing: 0,
+        soldCars: 0,
+        savedCars: savedCarIds.length,
+        totalLeads: 0,
+      };
+      setStats(fallbackStats);
+      return fallbackStats;
     }
-  }, [token]);
+  }, [token, savedCarIds.length]);
 
   // Fetch saved cars using Redux thunk
   const fetchSavedCarsData = useCallback(() => {
@@ -288,6 +303,16 @@ export const useProfile = () => {
       fetchStats();
     }
   }, [token]);
+
+  // Update stats when savedCarIds changes
+  useEffect(() => {
+    if (stats) {
+      setStats((prevStats) => ({
+        ...prevStats!,
+        savedCars: savedCarIds.length,
+      }));
+    }
+  }, [savedCarIds.length]);
 
   return {
     // Redux state

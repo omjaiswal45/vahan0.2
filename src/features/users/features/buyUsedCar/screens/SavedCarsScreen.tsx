@@ -1,41 +1,47 @@
 // src/features/users/features/buyUsedCar/screens/SavedCarsScreen.tsx
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   View,
   FlatList,
   StyleSheet,
-  ActivityIndicator,
   RefreshControl,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../../../../../store/store';
+import { toggleSaveCar } from '../../../../../store/slices/buyUsedCarSlice';
 import { CarCard } from '../components/CarCard';
 import { EmptyState } from '../components/EmptyState';
-import { useSavedCars } from '../hooks/useBuyUsedCar';
 import { Car } from '../types';
-import { buyUsedCarAPI } from '../services/buyUsedCarAPI';
+import { MOCK_CARS } from '../services/mockCarData';
 import { colors } from '../../../../../styles/colors';
 import { spacing } from '../../../../../styles/spacing';
 
 export const SavedCarsScreen: React.FC = () => {
   const navigation = useNavigation();
-  const { savedCars, loading, refreshing, refresh } = useSavedCars('current-user-id');
+  const dispatch = useDispatch<AppDispatch>();
+  const auth = useSelector((state: RootState) => state.auth);
+  const savedCarIds = useSelector((state: RootState) => state.buyUsedCar.savedCarIds);
+
+  // Filter MOCK_CARS by savedCarIds from Redux
+  const savedCars = useMemo(() =>
+    MOCK_CARS.filter(car => savedCarIds.includes(car.id)),
+    [savedCarIds]
+  );
 
   const handleCarPress = useCallback((car: Car) => {
     navigation.navigate('CarDetail' as never, { carId: car.id } as never);
   }, [navigation]);
 
   const handleSavePress = useCallback(async (carId: string) => {
+    const userId = auth.phone || 'guest-user';
     try {
-      await buyUsedCarAPI.toggleSaveCar({
-        carId,
-        userId: 'current-user-id',
-      });
-      refresh();
+      await dispatch(toggleSaveCar({ carId, userId })).unwrap();
     } catch (error) {
       console.error('Failed to unsave car:', error);
     }
-  }, [refresh]);
+  }, [auth.phone, dispatch]);
 
   const renderCarItem = useCallback(({ item }: { item: Car }) => (
     <CarCard
@@ -46,7 +52,6 @@ export const SavedCarsScreen: React.FC = () => {
   ), [handleCarPress, handleSavePress]);
 
   const renderEmpty = useCallback(() => {
-    if (loading) return null;
     return (
       <EmptyState
         icon="heart-outline"
@@ -56,15 +61,7 @@ export const SavedCarsScreen: React.FC = () => {
         onActionPress={() => navigation.navigate('CarFeed' as never)}
       />
     );
-  }, [loading, navigation]);
-
-  if (loading && savedCars.length === 0) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
-  }
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
@@ -75,14 +72,6 @@ export const SavedCarsScreen: React.FC = () => {
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={renderEmpty}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={refresh}
-            colors={[colors.primary]}
-            tintColor={colors.primary}
-          />
-        }
       />
     </View>
   );
@@ -92,11 +81,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   listContent: {
     paddingHorizontal: spacing.lg,

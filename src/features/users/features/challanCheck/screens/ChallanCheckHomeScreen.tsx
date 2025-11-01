@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,8 @@ import { ChallanHeroCard } from '../components/ChallanHeroCard';
 import { ChallanSearchInput } from '../components/ChallanSearchInput';
 import { RecentChallanSearchesCard } from '../components/RecentChallanSearchesCard';
 import { colors } from '../../../../../styles';
+import VehicleNumberModal from '../../../../../components/VehicleNumberModal';
+import { useVehicleNumber } from '../../../../../hooks/useVehicleNumber';
 
 
 interface ChallanCheckHomeScreenProps {
@@ -29,6 +31,13 @@ export const ChallanCheckHomeScreen: React.FC<ChallanCheckHomeScreenProps> = ({ 
     searchChallan,
     clearAllSearches,
   } = useChallanCheck();
+  const {
+    vehicleNumber,
+    shouldShowModal,
+    saveVehicleNumber,
+    skipForNow,
+  } = useVehicleNumber();
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     navigation.setOptions({
@@ -44,6 +53,25 @@ export const ChallanCheckHomeScreen: React.FC<ChallanCheckHomeScreenProps> = ({ 
       headerTitle: 'Challan Checker',
     });
   }, [navigation]);
+
+  useEffect(() => {
+    // Show modal when screen is focused and vehicle number is not set
+    if (shouldShowModal()) {
+      setShowModal(true);
+    }
+  }, []);
+
+  const handleVehicleNumberSubmit = (number: string) => {
+    saveVehicleNumber(number);
+    setShowModal(false);
+    // Optionally auto-search with the saved number
+    handleSearch(number);
+  };
+
+  const handleSkip = () => {
+    skipForNow();
+    setShowModal(false);
+  };
 
   const handleSearch = async (registrationNumber: string) => {
     if (!registrationNumber.trim()) return;
@@ -78,7 +106,11 @@ export const ChallanCheckHomeScreen: React.FC<ChallanCheckHomeScreenProps> = ({ 
 
           {/* Search Section */}
           <View style={styles.searchSection}>
-            <ChallanSearchInput onSearch={handleSearch} isLoading={isLoading} />
+            <ChallanSearchInput
+              onSearch={handleSearch}
+              isLoading={isLoading}
+              initialValue={vehicleNumber || ''}
+            />
           </View>
 
           {/* Recent Searches */}
@@ -123,6 +155,17 @@ export const ChallanCheckHomeScreen: React.FC<ChallanCheckHomeScreenProps> = ({ 
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* Vehicle Number Modal */}
+      <VehicleNumberModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        onSubmit={handleVehicleNumberSubmit}
+        onSkip={handleSkip}
+        contextTitle="Check Your Car's Challan"
+        contextMessage="Just enter your car number to see all challans in one tap. Your number helps us fetch the correct details securely."
+        showDemoOption={false}
+      />
     </SafeAreaView>
   );
 };
@@ -163,7 +206,7 @@ const styles = StyleSheet.create({
     paddingBottom: 48,
   },
   headerButton: {
-    marginRight: 12,
+    marginRight: 0,
     backgroundColor: colors.primaryDarker,
     borderRadius: 8,
     paddingHorizontal: 12,

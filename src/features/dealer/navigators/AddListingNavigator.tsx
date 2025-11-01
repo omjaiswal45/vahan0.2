@@ -3,11 +3,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AddListingScreen from '../screens/AddListingScreen';
 import ListingDetailScreen from '../screens/ListingDetailScreen';
 import ImagePickerScreen from '../screens/ImagePickerScreen';
+import { defaultNativeStackScreenOptions } from '../../../navigation/navigationOptions';
 
 const Stack = createNativeStackNavigator();
 
 const AddListingNavigator = () => (
-  <Stack.Navigator screenOptions={{ headerShown: true }}>
+  <Stack.Navigator screenOptions={defaultNativeStackScreenOptions}>
     <Stack.Screen
       name="AddListing"
       component={AddListingScreen}

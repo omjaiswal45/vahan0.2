@@ -1,5 +1,5 @@
 // src/features/users/features/home/screens/HomeScreen.tsx
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -14,8 +14,9 @@ import {
   StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../../../store/store';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../../../../../store/store';
+import { toggleSaveCar as toggleSaveCarAction } from '../../../../../store/slices/buyUsedCarSlice';
 import { useLocation } from '../../../../location/hooks/useLocation';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -26,6 +27,7 @@ import { CarCard } from '../../buyUsedCar/components/CarCard';
 import { colors } from '../../../../../styles/colors';
 import { spacing } from '../../../../../styles/spacing';
 import { MOCK_CARS } from '../../buyUsedCar/services/mockCarData';
+import { buyUsedCarAPI } from '../../buyUsedCar/services/buyUsedCarAPI';
 import LottieView from 'lottie-react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -38,12 +40,18 @@ const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 type NavigationProp = NativeStackNavigationProp<HomeStackParamList>;
 
 const HomeScreen = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const location = useSelector((state: RootState) => state.location);
+  const auth = useSelector((state: RootState) => state.auth);
+  const reduxSavedCarIds = useSelector((state: RootState) => state.buyUsedCar.savedCarIds);
   const { getLocation } = useLocation();
   const navigation = useNavigation<NavigationProp>();
   const bannerAnimation = useRef(new Animated.Value(0)).current;
   const scrollY = useRef(new Animated.Value(0)).current;
   const lottieRef = useRef<LottieView>(null);
+
+  // Track saved car IDs for instant UI updates
+  const [savedCarIds, setSavedCarIds] = useState<Set<string>>(new Set(reduxSavedCarIds));
 
   useEffect(() => {
     getLocation();
@@ -163,7 +171,7 @@ const handleNavigate = (item: typeof gridItems[0]) => {
     return MOCK_CARS.slice(0, 6).map(car => ({
       id: car.id,
       thumbnail: car.thumbnail,
-      isSaved: car.isSaved,
+      isSaved: savedCarIds.has(car.id) || car.isSaved, // Merge saved state
       isVerified: car.isVerified,
       brand: car.brand,
       model: car.model,
@@ -176,7 +184,7 @@ const handleNavigate = (item: typeof gridItems[0]) => {
       location: car.location,
       price: car.price,
     }));
-  }, []);
+  }, [savedCarIds]);
 
   const handleBuyCarsPress = () => {
     navigation.navigate('BuyUsedCar' as any, { screen: 'CarFeed' } as any);
@@ -184,15 +192,62 @@ const handleNavigate = (item: typeof gridItems[0]) => {
 
   const handleCarPress = (car: any) => {
     console.log('HomeScreen -> navigating to car id:', car.id);
-    navigation.navigate('BuyUsedCar' as any, {
-      screen: 'CarDetail',
-      params: { carId: car.id },
-    } as any);
+
+    // First navigate to BuyUsedCar tab to ensure CarFeed is in the stack
+    navigation.navigate('BuyUsedCar' as any);
+
+    // Then navigate to CarDetail with car ID
+    // Small delay ensures CarFeed is mounted before navigating to detail
+    setTimeout(() => {
+      navigation.navigate('BuyUsedCar' as any, {
+        screen: 'CarDetail',
+        params: { carId: car.id },
+      } as any);
+    }, 50);
   };
 
-  const handleSavePress = (car: any) => {
-    console.log('save clicked', car.id);
-  };
+  const handleSavePress = useCallback(async (car: any) => {
+    const userId = auth.phone || 'guest-user'; // Use phone as userId, fallback to guest
+
+    try {
+      // Optimistically update local UI
+      setSavedCarIds(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(car.id)) {
+          newSet.delete(car.id);
+        } else {
+          newSet.add(car.id);
+        }
+        return newSet;
+      });
+
+      // Dispatch Redux action for global state + persistence
+      const result = await dispatch(toggleSaveCarAction({ carId: car.id, userId })).unwrap();
+
+      // Sync local state with Redux result
+      setSavedCarIds(prev => {
+        const newSet = new Set(prev);
+        if (result.isSaved) {
+          newSet.add(car.id);
+        } else {
+          newSet.delete(car.id);
+        }
+        return newSet;
+      });
+    } catch (error) {
+      console.error('Failed to save car:', error);
+      // Revert optimistic update on error
+      setSavedCarIds(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(car.id)) {
+          newSet.delete(car.id);
+        } else {
+          newSet.add(car.id);
+        }
+        return newSet;
+      });
+    }
+  }, [auth.phone, dispatch]);
 
   const handleBannerPress = () => {
     navigation.navigate('BuyUsedCar' as any, { screen: 'CarFeed' } as any);

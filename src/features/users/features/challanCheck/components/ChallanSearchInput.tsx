@@ -18,18 +18,26 @@ interface ChallanSearchInputProps {
   onSearch: (registrationNumber: string) => void;
   isLoading?: boolean;
   placeholder?: string;
+  initialValue?: string;
 }
 
 export const ChallanSearchInput: React.FC<ChallanSearchInputProps> = ({
   onSearch,
   isLoading = false,
   placeholder = 'Search vehicle registration',
+  initialValue = '',
 }) => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(initialValue);
   const [isFocused, setIsFocused] = useState(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const borderAnim = useRef(new Animated.Value(0)).current;
   const inputRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+    if (initialValue) {
+      setValue(initialValue);
+    }
+  }, [initialValue]);
 
   useEffect(() => {
     Animated.timing(borderAnim, {
