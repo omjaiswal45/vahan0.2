@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CarCard } from '../components/CarCard';
 import { SearchBar } from '../components/SearchBar';
 import { FilterModal } from '../components/FilterModal';
+import { ActiveFilterChips } from '../components/ActiveFilterChips';
+import { SortDropdown } from '../components/SortDropdown';
 import { useBuyUsedCar } from '../hooks/useBuyUsedCar';
 import { useFilterOptions } from '../hooks/useBuyUsedCar';
 import { Car, CarFilters } from '../types';
@@ -43,7 +45,24 @@ export const CarFeedScreen: React.FC = () => {
 
   const { filterOptions } = useFilterOptions();
   const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [sortModalVisible, setSortModalVisible] = useState(false);
   const [currentFilters, setCurrentFilters] = useState<CarFilters>({});
+  const [currentSort, setCurrentSort] = useState<string>('recent');
+
+  // Hide/Show bottom tabs when modals are open
+  useEffect(() => {
+    const isModalOpen = filterModalVisible || sortModalVisible;
+
+    navigation.setOptions({
+      tabBarStyle: isModalOpen ? { display: 'none' } : undefined,
+    });
+
+    return () => {
+      navigation.setOptions({
+        tabBarStyle: undefined,
+      });
+    };
+  }, [filterModalVisible, sortModalVisible, navigation]);
 
   const getActiveFiltersCount = useCallback((): number => {
     let count = 0;
@@ -76,8 +95,52 @@ export const CarFeedScreen: React.FC = () => {
 
   const handleApplyFilters = useCallback((filters: CarFilters) => {
     setCurrentFilters(filters);
-    applyFilters(filters);
-  }, [applyFilters]);
+    const filtersWithSort = { ...filters, sortBy: currentSort as any };
+    applyFilters(filtersWithSort);
+  }, [applyFilters, currentSort]);
+
+  const handleSortChange = useCallback((sortBy: string) => {
+    setCurrentSort(sortBy);
+    const filtersWithSort = { ...currentFilters, sortBy: sortBy as any };
+    applyFilters(filtersWithSort);
+    setSortModalVisible(false);
+  }, [currentFilters, applyFilters]);
+
+  const handleRemoveFilter = useCallback((filterKey: keyof CarFilters, value?: any) => {
+    setCurrentFilters(prev => {
+      const newFilters = { ...prev };
+
+      if (value !== undefined) {
+        // Remove specific value from array filter
+        const currentArray = (newFilters[filterKey] as any[]) || [];
+        newFilters[filterKey] = currentArray.filter(v => v !== value) as any;
+
+        // Remove the key entirely if array is empty
+        if ((newFilters[filterKey] as any[]).length === 0) {
+          delete newFilters[filterKey];
+        }
+      } else {
+        // Remove entire filter key
+        if (filterKey === 'priceMin' || filterKey === 'priceMax') {
+          delete newFilters.priceMin;
+          delete newFilters.priceMax;
+        } else if (filterKey === 'yearMin' || filterKey === 'yearMax') {
+          delete newFilters.yearMin;
+          delete newFilters.yearMax;
+        } else {
+          delete newFilters[filterKey];
+        }
+      }
+
+      applyFilters({ ...newFilters, sortBy: currentSort as any });
+      return newFilters;
+    });
+  }, [applyFilters, currentSort]);
+
+  const handleClearAllFilters = useCallback(() => {
+    setCurrentFilters({});
+    applyFilters({ sortBy: currentSort as any });
+  }, [applyFilters, currentSort]);
 
   const renderCarItem = useCallback(({ item }: { item: Car }) => (
     <CarCard
@@ -119,8 +182,19 @@ export const CarFeedScreen: React.FC = () => {
       <SearchBar
         onSearch={handleSearch}
         onFilterPress={() => setFilterModalVisible(true)}
+        onSortPress={() => setSortModalVisible(true)}
         activeFiltersCount={getActiveFiltersCount()}
+        enableRealTimeSearch={true}
+        debounceMs={500}
       />
+
+      {getActiveFiltersCount() > 0 && (
+        <ActiveFilterChips
+          filters={currentFilters}
+          onRemoveFilter={handleRemoveFilter}
+          onClearAll={handleClearAllFilters}
+        />
+      )}
 
       <FlatList
         data={cars}
@@ -154,6 +228,13 @@ export const CarFeedScreen: React.FC = () => {
         filterOptions={filterOptions}
         currentFilters={currentFilters}
       />
+
+      <SortDropdown
+        visible={sortModalVisible}
+        selectedSort={currentSort}
+        onSortChange={handleSortChange}
+        onClose={() => setSortModalVisible(false)}
+      />
     </View>
   );
 };
@@ -169,7 +250,11 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
   },
   headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingVertical: spacing.md,
+    paddingHorizontal: spacing.sm,
   },
   resultCount: {
     fontSize: typography.sizes.md,
