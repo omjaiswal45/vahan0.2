@@ -8,6 +8,7 @@ import DashboardScreen from '../features/dealer/screens/DashboardScreen';
 import ListingsScreen from '../features/dealer/screens/ListingsScreen';
 import AddListingScreen from '../features/dealer/screens/AddListingScreen';
 import ListingDetailScreen from '../features/dealer/screens/ListingDetailScreen';
+import EditListingScreen from '../features/dealer/screens/EditListingScreen';
 import LeadsScreen from '../features/dealer/screens/LeadsScreen';
 import ChatScreen from '../features/dealer/screens/ChatScreen';
 import DealerprofileScreen from '../features/dealer/screens/DealerProfileScreen';
@@ -25,6 +26,16 @@ const ListingsStack = () => (
       name="ListingsHome"
       component={ListingsScreen}
       options={{ title: 'Listings' }}
+    />
+    <Stack.Screen
+      name="ListingDetail"
+      component={ListingDetailScreen}
+      options={{ title: 'Listing Detail' }}
+    />
+    <Stack.Screen
+      name="EditListing"
+      component={EditListingScreen}
+      options={{ title: 'Edit Listing' }}
     />
     <Stack.Screen
       name="AddListingStack"

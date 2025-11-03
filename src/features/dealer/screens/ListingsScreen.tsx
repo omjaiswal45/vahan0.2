@@ -72,7 +72,7 @@ const ListingsScreen = () => {
         }}
       >
         <TouchableOpacity
-          onPress={() => navigation.navigate("AddListing")}
+          onPress={() => navigation.navigate("AddListingStack")}
           activeOpacity={0.8}
           style={{
             flexDirection: "row",
@@ -114,7 +114,7 @@ const ListingsScreen = () => {
             <ListingCard
               listing={item}
               onPress={() =>
-                navigation.navigate("ListingDetail", { id: item.id })
+                navigation.navigate("ListingDetail", { id: item.id, listing: item })
               }
               autoplay={visibleItems.has(item.id)}
             />

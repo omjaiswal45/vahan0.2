@@ -18,6 +18,7 @@ import { setCity } from "../../../store/slices/locationSlice";
 import { RootState } from "../../../store/store";
 import citiesData from "../../../utils/Indian_Cities_In_States.json";
 import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface LocationSelectProps {
   tabBarHeight?: number;
@@ -89,23 +90,22 @@ export default function LocationSelect({ tabBarHeight = 60, carData, onComplete 
 
     onComplete(finalCarData);
 
-    navigation.navigate("Listings", {
-      screen: "ImagePickerScreen",
-      params: finalCarData,
-    });
+    // Navigate to ImagePickerScreen with car data
+    navigation.navigate("ImagePickerScreen", { carData: finalCarData });
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.keyboardView}
-    >
-      <StatusBar barStyle="dark-content" />
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={[styles.container, { paddingBottom: tabBarHeight + 90 }]}
-        keyboardShouldPersistTaps="handled"
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardView}
       >
+        <StatusBar barStyle="dark-content" />
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={[styles.container, { paddingBottom: 100 }]}
+          keyboardShouldPersistTaps="handled"
+        >
         <Text style={styles.title}>Select Your Location</Text>
         <Text style={styles.subtitle}>Enter your city or select from suggestions</Text>
 
@@ -151,24 +151,28 @@ export default function LocationSelect({ tabBarHeight = 60, carData, onComplete 
             </View>
           )}
         />
-      </ScrollView>
+        </ScrollView>
 
-      <View style={[styles.submitContainer, { bottom: tabBarHeight }]}>
-        <TouchableOpacity
-          style={[styles.submitButton, { backgroundColor: searchQuery.trim() ? "#ff1ea5" : "#ccc" }]}
-          onPress={handleNext}
-          activeOpacity={0.8}
-          disabled={!searchQuery.trim()}
-        >
-          <Text style={styles.submitText}>Next</Text>
-          <Text style={styles.arrow}>→</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+        <SafeAreaView edges={['bottom']} style={styles.submitWrapper}>
+          <View style={styles.submitContainer}>
+            <TouchableOpacity
+              style={[styles.submitButton, { backgroundColor: searchQuery.trim() ? "#ff1ea5" : "#ccc" }]}
+              onPress={handleNext}
+              activeOpacity={0.8}
+              disabled={!searchQuery.trim()}
+            >
+              <Text style={styles.submitText}>Next</Text>
+              <Text style={styles.arrow}>→</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: "#FAFAFA" },
   keyboardView: { flex: 1, backgroundColor: "#FAFAFA" },
   scrollView: { flex: 1 },
   container: { paddingHorizontal: 20, paddingTop: 24 },
@@ -182,7 +186,8 @@ const styles = StyleSheet.create({
   emptyBox: { flex: 1, justifyContent: "center", alignItems: "center", paddingVertical: 40 },
   emptyTitle: { fontSize: 18, fontWeight: "700", color: "#333", marginTop: 12 },
   emptySub: { fontSize: 14, color: "#777", textAlign: "center", marginTop: 4 },
-  submitContainer: { position: "absolute", left: 0, right: 0, backgroundColor: "#FAFAFA", paddingHorizontal: 20, paddingTop: 16, paddingBottom: 20, borderTopWidth: 1, borderTopColor: "#f0f0f0", shadowColor: "#000", shadowOffset: { width: 0, height: -2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 8 },
+  submitWrapper: { backgroundColor: "transparent" },
+  submitContainer: { backgroundColor: "#FAFAFA", paddingHorizontal: 20, paddingTop: 16, paddingBottom: 12, borderTopWidth: 1, borderTopColor: "#f0f0f0", ...Platform.select({ ios: { shadowColor: "#000", shadowOffset: { width: 0, height: -2 }, shadowOpacity: 0.05, shadowRadius: 8 }, android: { elevation: 8 } }) },
   submitButton: { borderRadius: 14, paddingVertical: 16, flexDirection: "row", justifyContent: "center", alignItems: "center", shadowColor: "#ff1ea5", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 6 },
   submitText: { color: "#fff", fontSize: 18, fontWeight: "700", marginRight: 8 },
   arrow: { color: "#fff", fontSize: 20, fontWeight: "700" },

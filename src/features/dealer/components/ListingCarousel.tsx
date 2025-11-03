@@ -1,17 +1,33 @@
 import React, { useRef, useState, useEffect } from "react";
 import { View, Image, FlatList, Dimensions, NativeSyntheticEvent, NativeScrollEvent, PanResponder } from "react-native";
 
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
 interface ListingCarouselProps {
   images: string[];
   autoplay?: boolean; // autoplay only for top visible cards
+  height?: number; // optional custom height
+  fullScreen?: boolean; // for detail screens - larger height
 }
 
-const ListingCarousel: React.FC<ListingCarouselProps> = ({ images, autoplay = false }) => {
+const ListingCarousel: React.FC<ListingCarouselProps> = ({
+  images,
+  autoplay = false,
+  height,
+  fullScreen = false
+}) => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [carouselWidth, setCarouselWidth] = useState(Dimensions.get("window").width);
+  const [carouselWidth, setCarouselWidth] = useState(SCREEN_WIDTH);
   const flatListRef = useRef<FlatList>(null);
-  const autoplayRef = useRef<number | null>(null); // <-- fix here
+  const autoplayRef = useRef<number | null>(null);
   const [isInteracting, setIsInteracting] = useState(false);
+
+  // Dynamic height calculation
+  const carouselHeight = height
+    ? height
+    : fullScreen
+      ? SCREEN_WIDTH * 0.75 // 4:3 aspect ratio for detail screens
+      : SCREEN_WIDTH * 0.5; // Smaller for card views
 
   // Autoplay effect
   useEffect(() => {
@@ -66,7 +82,11 @@ const ListingCarousel: React.FC<ListingCarouselProps> = ({ images, autoplay = fa
         renderItem={({ item }) => (
           <Image
             source={{ uri: item }}
-            style={{ width: carouselWidth, height: 180, borderRadius: 12 }}
+            style={{
+              width: carouselWidth,
+              height: carouselHeight,
+              borderRadius: fullScreen ? 0 : 12
+            }}
             resizeMode="cover"
           />
         )}

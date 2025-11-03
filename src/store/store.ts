@@ -15,8 +15,8 @@ import vehicleReducer from './slices/vehicleSlice';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['vehicle', 'auth', 'user', 'buyUsedCar'], // Persist auth to keep users logged in and saved cars
-  // Users only need to login once, then stay logged in until they logout
+  whitelist: ['vehicle', 'user', 'buyUsedCar'], // Removed 'auth' - users must login each time
+  // Auth state will not persist, requiring login on each app launch
 };
 
 const rootReducer = combineReducers({
