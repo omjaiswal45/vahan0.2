@@ -20,6 +20,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Spacing } from '../../../styles/spacing';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const IMAGE_SIZE = (SCREEN_WIDTH - 48) / 2;
@@ -370,32 +371,9 @@ const EnhancedImagePickerScreen = () => {
   return (
     <View style={styles.container}>
       <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
-        {/* Fixed Header - Attached to top */}
-        <LinearGradient colors={['#ff1ea5', '#cc1884']} style={styles.headerGradient}>
-          <SafeAreaView edges={['top']}>
-            <View style={styles.headerContent}>
-              <View style={styles.headerIconContainer}>
-                <Ionicons name="images" size={24} color="#fff" />
-                {images.length > 0 && (
-                  <View style={styles.headerBadge}>
-                    <Text style={styles.headerBadgeText}>{images.length}</Text>
-                  </View>
-                )}
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.headerTitle}>Upload Photos</Text>
-                <Text style={styles.headerSubtitle}>{images.length}/5 images</Text>
-              </View>
-            </View>
-          </SafeAreaView>
-          {images.length > 0 && (
-            <View style={styles.progressBarContainer}>
-              <View style={[styles.progressBar, { width: `${(images.length / 5) * 100}%` }]} />
-            </View>
-          )}
-        </LinearGradient>
+        <SafeAreaView edges={['top']} style={{ backgroundColor: '#fff' }} />
 
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingTop: Spacing.sm }} showsVerticalScrollIndicator={false}>
 
             {/* Upload Buttons */}
             <View style={styles.uploadSection}>
@@ -653,6 +631,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerGradient: {
+    backgroundColor: '#ff1ea5',
     paddingBottom: 16,
   },
   headerContent: {
@@ -717,7 +696,7 @@ const styles = StyleSheet.create({
   },
   uploadSection: {
     paddingHorizontal: 16,
-    paddingTop: 20,
+    paddingTop: 0,
     gap: 12,
   },
   emptyStateCard: {

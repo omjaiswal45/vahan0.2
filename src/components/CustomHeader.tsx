@@ -43,7 +43,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   };
 
   return (
-    <SafeAreaView edges={['top']} style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <LinearGradient
         colors={useGradient ? [colors.primary, colors.primaryDark] : [colors.white, colors.white]}
         start={{ x: 0, y: 0 }}
@@ -86,7 +86,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
           </View>
         </View>
       </LinearGradient>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -109,8 +109,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: 56,
+    height: Platform.OS === 'ios' ? 80 : 40,
     paddingHorizontal: 4,
+    paddingTop: Platform.OS === 'ios' ? 30 : 0,
   },
   leftContainer: {
     width: 60,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,12 @@ import {
   Dimensions,
   Image,
   Animated,
+  ScrollView,
+  Platform,
 } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { colors } from '../../../styles/colors';
 
 interface RegistrationInputProps {
   value: string;
@@ -17,7 +22,7 @@ interface RegistrationInputProps {
 }
 
 const { width: screenWidth } = Dimensions.get("window");
-const padding = 16;
+const padding = 20;
 const gap = 12;
 
 const popularBrands = [
@@ -35,10 +40,46 @@ export default function RegistrationInput({
   onChooseBrand,
 }: RegistrationInputProps) {
   const [reg, setReg] = useState(value);
+  const [isFocused, setIsFocused] = useState(false);
+  const fadeAnim = new Animated.Value(0);
+  const slideAnim = new Animated.Value(30);
+  const scrollViewRef = React.useRef<ScrollView>(null);
+
   const brandCardWidth = (screenWidth - padding * 2 - gap * 2) / 3;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        tension: 50,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   const handleFetch = () => {
     if (reg.trim()) onComplete(reg.trim());
+  };
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    // Scroll up when input is focused for better UX
+    setTimeout(() => {
+      scrollViewRef.current?.scrollTo({
+        y: Platform.OS === 'ios' ? 280 : 200,
+        animated: true,
+      });
+    }, Platform.OS === 'ios' ? 300 : 100);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
   };
 
   const renderBrandCard = (
@@ -47,78 +88,225 @@ export default function RegistrationInput({
     key: string
   ) => {
     const scale = new Animated.Value(1);
+    const cardElevation = new Animated.Value(3);
 
     const handlePressIn = () => {
-      Animated.spring(scale, {
-        toValue: 0.95,
-        useNativeDriver: true,
-      }).start();
+      Animated.parallel([
+        Animated.spring(scale, {
+          toValue: 0.92,
+          useNativeDriver: true,
+        }),
+        Animated.timing(cardElevation, {
+          toValue: 8,
+          duration: 150,
+          useNativeDriver: false,
+        }),
+      ]).start();
     };
 
     const handlePressOut = () => {
-      Animated.spring(scale, {
-        toValue: 1,
-        useNativeDriver: true,
-      }).start();
+      Animated.parallel([
+        Animated.spring(scale, {
+          toValue: 1,
+          friction: 3,
+          useNativeDriver: true,
+        }),
+        Animated.timing(cardElevation, {
+          toValue: 3,
+          duration: 150,
+          useNativeDriver: false,
+        }),
+      ]).start();
     };
 
     return (
       <Animated.View
         key={key}
-        style={{ transform: [{ scale }], marginRight: gap }}
+        style={{
+          transform: [{ scale }],
+          marginRight: gap,
+        }}
       >
         <TouchableOpacity
-          activeOpacity={0.8}
+          activeOpacity={0.9}
           onPress={() => onChooseBrand(isMore ? "more" : brand.name)}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
-          style={[
-            styles.brandCard,
-            isMore && styles.moreCard,
-            { width: brandCardWidth },
-          ]}
+          style={[styles.brandCard, { width: brandCardWidth }]}
         >
-          {!isMore && <Image source={{ uri: brand.logo }} style={styles.logo} />}
-          <Text
-            style={[
-              styles.brandName,
-              isMore && { color: "#4caf50", fontSize: 18 },
-            ]}
-          >
-            {isMore ? "More →" : brand.name}
-          </Text>
+          {isMore ? (
+            <LinearGradient
+              colors={["#fff1f9", "#ffe5f4"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.moreCardGradient}
+            >
+              <View style={styles.moreIconContainer}>
+                <Ionicons name="grid" size={28} color="#ff1ea5" />
+              </View>
+              <Text style={styles.moreText}>More</Text>
+            </LinearGradient>
+          ) : (
+            <View style={styles.brandCardContent}>
+              <View style={styles.brandLogoContainer}>
+                <Image source={{ uri: brand.logo }} style={styles.logo} />
+              </View>
+              <Text style={styles.brandName}>{brand.name}</Text>
+            </View>
+          )}
         </TouchableOpacity>
       </Animated.View>
     );
   };
 
+  const renderContent = () => {
+    // For Android, don't use animations that could interfere with keyboard
+    const containerStyle = Platform.OS === 'android'
+      ? {}
+      : {
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }],
+        };
+
+    return (
+      <Animated.View style={containerStyle}>
+        {/* Hero Section with Image and Title */}
+      <View style={styles.heroSection}>
+        {/* Left Side - Text Content */}
+        <View style={styles.heroTextContainer}>
+          <View style={styles.promoBadge}>
+            <LinearGradient
+              colors={[colors.primary, colors.primaryDark]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.promoBadgeGradient}
+            >
+              <Ionicons name="trending-up" size={14} color={colors.white} />
+              <Text style={styles.promoBadgeText}>BEST DEALS</Text>
+            </LinearGradient>
+          </View>
+          <Text style={styles.mainTitle}>Sell Car Online</Text>
+          <Text style={styles.mainTitle}>at the Best Price</Text>
+          <Text style={styles.tagline}>Get instant valuation & quick sale</Text>
+        </View>
+
+        {/* Right Side - Animated Image */}
+        <Animated.View
+          style={[
+            styles.heroImageContainer,
+            {
+              transform: [
+                {
+                  translateY: slideAnim.interpolate({
+                    inputRange: [0, 30],
+                    outputRange: [0, 10],
+                  })
+                },
+                { scale: 1.1 }
+              ],
+            }
+          ]}
+        >
+          <Image
+            source={require('../../../../assets/sellcar.png')}
+            style={styles.heroImage}
+            resizeMode="contain"
+          />
+        </Animated.View>
+      </View>
+
+      {/* Registration Input Card */}
+      <View style={styles.inputSection}>
+        <Text style={styles.inputLabel}>Enter your car registration number</Text>
+        <View style={[styles.inputCard, isFocused && styles.inputCardFocused]}>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g., DL34AC4564"
+            placeholderTextColor={colors.gray[400]}
+            value={reg}
+            onChangeText={setReg}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            autoCapitalize="characters"
+          />
+        </View>
+
+        {/* Fetch Button */}
+        <TouchableOpacity
+          style={[styles.fetchBtn, !reg.trim() && styles.fetchBtnDisabled]}
+          onPress={handleFetch}
+          disabled={!reg.trim()}
+          activeOpacity={0.8}
+        >
+          <LinearGradient
+            colors={reg.trim() ? [colors.primary, colors.primaryDark] : [colors.gray[300], colors.gray[400]]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.fetchBtnGradient}
+          >
+            <Text style={styles.fetchBtnText}>Fetch car details</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
+
+      {/* Divider */}
+      <View style={styles.dividerContainer}>
+        <View style={styles.dividerLine} />
+        <Text style={styles.orText}>OR</Text>
+        <View style={styles.dividerLine} />
+      </View>
+
+      {/* Brand Selection Header */}
+      <Text style={styles.brandSectionTitle}>Select your car brand</Text>
+
+      {/* Brand Cards */}
+      <View style={styles.brandsContainer}>
+        {/* First Row: 3 cards */}
+        <View style={styles.row}>
+          {popularBrands.slice(0, 3).map((b) => renderBrandCard(b, false, b.id))}
+        </View>
+
+        {/* Second Row: 2 cards + More */}
+        <View style={styles.row}>
+          {popularBrands.slice(3).map((b) => renderBrandCard(b, false, b.id))}
+          {renderBrandCard({ id: "more", name: "More", logo: "" }, true, "more")}
+        </View>
+      </View>
+    </Animated.View>
+    );
+  };
+
+  // iOS: Use ScrollView with smooth animation
+  if (Platform.OS === 'ios') {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.container}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          keyboardDismissMode="on-drag"
+        >
+          {renderContent()}
+        </ScrollView>
+      </View>
+    );
+  }
+
+  // Android: Use ScrollView but without automatic keyboard handling
   return (
-    <View style={[styles.container, { width: screenWidth }]}>
-      <Text style={styles.title}>Enter Registration Number</Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Enter Registration Number"
-        value={reg}
-        onChangeText={setReg}
-      />
-
-      <TouchableOpacity style={styles.fetchBtn} onPress={handleFetch}>
-        <Text style={{ color: "#fff", fontWeight: "800" }}>Fetch Details</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.orText}>Or Choose Brand</Text>
-
-      {/* First Row: 3 cards */}
-      <View style={styles.row}>
-        {popularBrands.slice(0, 3).map((b) => renderBrandCard(b, false, b.id))}
-      </View>
-
-      {/* Second Row: 2 cards + More */}
-      <View style={styles.row}>
-        {popularBrands.slice(3).map((b) => renderBrandCard(b, false, b.id))}
-        {renderBrandCard({ id: "more", name: "More", logo: "" }, true, "more")}
-      </View>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.container}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
+      >
+        {renderContent()}
+      </ScrollView>
     </View>
   );
 }
@@ -126,55 +314,251 @@ export default function RegistrationInput({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.background,
+  },
+  scrollContent: {
     padding,
-    justifyContent: "center",
+    paddingTop: 16,
+    paddingBottom: 32,
   },
-  title: { fontSize: 18, fontWeight: "500", marginBottom: 12 },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    backgroundColor: "#f9f9f9",
+  // Brand Header Section
+  brandHeader: {
+    marginBottom: 24,
   },
-  fetchBtn: {
-    backgroundColor: "#f000a8ff",
-    paddingVertical: 14,
+  logoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  logoGradient: {
+    width: 40,
+    height: 40,
     borderRadius: 12,
     alignItems: "center",
-    marginTop: 16,
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  appName: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: colors.text,
+    letterSpacing: 0.5,
+  },
+  // Hero Section
+  heroSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 32,
+    backgroundColor: colors.pink[50],
+    borderRadius: 20,
+    padding: 20,
+    paddingRight: 0,
+    overflow: "hidden",
+  },
+  heroTextContainer: {
+    flex: 1,
+    paddingRight: 16,
+  },
+  promoBadge: {
+    alignSelf: "flex-start",
+    marginBottom: 12,
+    borderRadius: 20,
+    overflow: "hidden",
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  promoBadgeGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    gap: 6,
+  },
+  promoBadgeText: {
+    color: colors.white,
+    fontSize: 11,
+    fontWeight: "700",
+    letterSpacing: 0.5,
+  },
+  mainTitle: {
+    fontSize: 28,
+    fontWeight: "800",
+    color: colors.text,
+    lineHeight: 36,
+    letterSpacing: -0.5,
+  },
+  tagline: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    marginTop: 8,
+    fontWeight: "500",
+  },
+  heroImageContainer: {
+    width: 140,
+    height: 140,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  heroImage: {
+    width: "100%",
+    height: "100%",
+  },
+  // Input Section
+  inputSection: {
+    marginBottom: 24,
+  },
+  inputLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.text,
+    marginBottom: 12,
+  },
+  inputCard: {
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: colors.border,
+    shadowColor: colors.shadow,
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  inputCardFocused: {
+    borderColor: colors.primary,
+    shadowColor: colors.primary,
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  input: {
+    fontSize: 16,
+    color: colors.text,
+    paddingVertical: 14,
+    fontWeight: "500",
+  },
+  fetchBtn: {
+    borderRadius: 12,
+    overflow: "hidden",
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  fetchBtnDisabled: {
+    shadowOpacity: 0.05,
+  },
+  fetchBtnGradient: {
+    paddingVertical: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  fetchBtnText: {
+    color: colors.white,
+    fontWeight: "700",
+    fontSize: 16,
+    letterSpacing: 0.3,
+  },
+  // Divider
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 24,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: colors.border,
   },
   orText: {
-    marginVertical: 16,
+    marginHorizontal: 16,
     fontWeight: "600",
+    fontSize: 14,
+    color: colors.textSecondary,
+  },
+  // Brand Section
+  brandSectionTitle: {
     fontSize: 16,
+    fontWeight: "600",
+    color: colors.text,
+    marginBottom: 16,
+  },
+  brandsContainer: {
+    marginBottom: 16,
   },
   row: {
     flexDirection: "row",
     marginBottom: gap,
   },
   brandCard: {
-    height: 110,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 12,
+    height: 120,
+    borderRadius: 16,
+    backgroundColor: colors.white,
+    shadowColor: colors.shadow,
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
+    overflow: "hidden",
+  },
+  brandCardContent: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 8,
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 3,
+    padding: 12,
+    position: "relative",
   },
-  moreCard: {
-    borderWidth: 2,
-    borderColor: "#ff1ea5ff",
-    backgroundColor: "#e8f5e9",
+  brandLogoContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: 14,
+    backgroundColor: colors.gray[50],
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 6,
   },
-  logo: { width: 50, height: 50, resizeMode: "contain", marginBottom: 6 },
-  brandName: { fontWeight: "600", fontSize: 14, textAlign: "center" },
+  logo: {
+    width: 58,
+    height: 58,
+    resizeMode: "contain",
+  },
+  brandName: {
+    fontWeight: "700",
+    fontSize: 13,
+    textAlign: "center",
+    color: colors.text,
+    letterSpacing: 0.3,
+  },
+  moreCardGradient: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 12,
+  },
+  moreIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 8,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  moreText: {
+    fontWeight: "700",
+    fontSize: 15,
+    color: colors.primary,
+  },
 });

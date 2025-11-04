@@ -63,7 +63,7 @@ const ListingsScreen = () => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F5F5F5" }}>
+    <View style={{ flex: 1, backgroundColor: "#F5F5F5" }}>
       {/* Add Listing Button */}
       <View
         style={{
@@ -130,7 +130,7 @@ const ListingsScreen = () => {
           </Text>
         }
       />
-    </SafeAreaView>
+    </View>
   ); 
 };
 

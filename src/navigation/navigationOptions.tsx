@@ -70,6 +70,9 @@ export const defaultNativeStackScreenOptions: NativeStackNavigationOptions = {
   headerBackTitleVisible: false,
   headerShadowVisible: true,
   animation: 'slide_from_right',
+  statusBarTranslucent: false,
+  headerTransparent: false,
+  headerStatusBarHeight: 0,
   headerBackground: () => (
     <LinearGradient
       colors={[colors.primary, colors.primaryDark]}

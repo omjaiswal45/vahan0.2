@@ -4,31 +4,43 @@ import AddListingScreen from '../screens/AddListingScreen';
 import ListingDetailScreen from '../screens/ListingDetailScreen';
 import EnhancedImagePickerScreen from '../screens/EnhancedImagePickerScreen';
 import ReviewSubmitScreen from '../screens/ReviewSubmitScreen';
-import { defaultNativeStackScreenOptions } from '../../../navigation/navigationOptions';
+import CustomHeader from '../../../components/CustomHeader';
 
 const Stack = createNativeStackNavigator();
 
 const AddListingNavigator = () => (
-  <Stack.Navigator screenOptions={defaultNativeStackScreenOptions}>
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen
       name="AddListing"
       component={AddListingScreen}
-      options={{ headerShown: true, title: 'Add Listing' }}
+      options={{
+        header: () => <CustomHeader title="Add Listing" showBackButton={true} />,
+        headerShown: true,
+      }}
     />
     <Stack.Screen
       name="ImagePickerScreen"
       component={EnhancedImagePickerScreen}
-      options={{ headerShown: true, title: 'Upload Photos' }}
+      options={{
+        header: () => <CustomHeader title="Upload Photos" showBackButton={true} />,
+        headerShown: true,
+      }}
     />
     <Stack.Screen
       name="ReviewSubmit"
       component={ReviewSubmitScreen}
-      options={{ headerShown: true, title: 'Review & Submit' }}
+      options={{
+        header: () => <CustomHeader title="Review & Submit" showBackButton={true} />,
+        headerShown: true,
+      }}
     />
     <Stack.Screen
       name="ListingDetail"
       component={ListingDetailScreen}
-      options={{ headerShown: true, title: 'Listing Detail' }}
+      options={{
+        header: () => <CustomHeader title="Listing Detail" showBackButton={true} />,
+        headerShown: true,
+      }}
     />
   </Stack.Navigator>
 );

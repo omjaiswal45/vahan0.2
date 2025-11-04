@@ -14,7 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Spacing } from '../../../styles/spacing';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -97,22 +97,9 @@ const ReviewSubmitScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Fixed Header - Attached to top */}
-      <LinearGradient colors={['#ff1ea5', '#cc1884']} style={styles.headerGradient}>
-        <SafeAreaView edges={['top']}>
-          <View style={styles.headerContent}>
-            <View style={styles.headerIconContainer}>
-              <Ionicons name="checkmark-circle" size={24} color="#fff" />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.headerTitle}>Review Your Listing</Text>
-              <Text style={styles.headerSubtitle}>Check everything before submitting</Text>
-            </View>
-          </View>
-        </SafeAreaView>
-      </LinearGradient>
+      <SafeAreaView edges={['top']} style={{ backgroundColor: '#fff' }} />
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingTop: Spacing.sm }} showsVerticalScrollIndicator={false}>
 
         {/* Images Section */}
         <View style={styles.section}>
@@ -261,6 +248,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   headerGradient: {
+    backgroundColor: '#ff1ea5',
     paddingBottom: 16,
   },
   headerContent: {
@@ -294,6 +282,7 @@ const styles = StyleSheet.create({
   section: {
     marginHorizontal: 16,
     marginBottom: 16,
+    marginTop: 0,
   },
   sectionHeader: {
     flexDirection: 'row',

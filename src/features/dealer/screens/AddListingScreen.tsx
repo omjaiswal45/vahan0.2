@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
-import { View, FlatList, StyleSheet, Dimensions, ScrollView } from "react-native";
+import { View, FlatList, StyleSheet, Dimensions, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import { Spacing } from "../../../styles/spacing";
 
 // Attribute components
 import RegistrationInput from "../components/RegistrationInput";
@@ -205,35 +206,63 @@ export default function AddListingScreen() {
   return (
     <View style={styles.container}>
       {/* Breadcrumb at top */}
-      <ScrollView
-        ref={breadcrumbScrollRef}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={{ maxHeight: 60 }}
-        contentContainerStyle={{ alignItems: "center", paddingHorizontal: 8 }}
-      >
-        <AttributeBreadcrumb
-          steps={steps}
-          currentIndex={currentStep}
-          onStepPress={scrollToIndex}
-        />
-      </ScrollView>
+      <View style={styles.breadcrumbContainer}>
+        <ScrollView
+          ref={breadcrumbScrollRef}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ alignItems: "center", paddingHorizontal: Spacing.sm }}
+        >
+          <AttributeBreadcrumb
+            steps={steps}
+            currentIndex={currentStep}
+            onStepPress={scrollToIndex}
+          />
+        </ScrollView>
+      </View>
 
       {/* Horizontal cards for each attribute */}
-      <FlatList
-        ref={flatListRef}
-        data={attributes}
-        keyExtractor={(item) => item.key}
-        renderItem={({ item }) => <View style={{ width }}>{item.component}</View>}
-        horizontal
-        pagingEnabled
-        scrollEnabled={false}
-        showsHorizontalScrollIndicator={false}
-      />
+      <View style={styles.flatListContainer}>
+        <FlatList
+          ref={flatListRef}
+          data={attributes}
+          keyExtractor={(item) => item.key}
+          renderItem={({ item }) => (
+            <View style={styles.itemContainer}>
+              {item.component}
+            </View>
+          )}
+          horizontal
+          pagingEnabled
+          scrollEnabled={false}
+          showsHorizontalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          removeClippedSubviews={false}
+          getItemLayout={(data, index) => ({
+            length: width,
+            offset: width * index,
+            index,
+          })}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff"
+  },
+  breadcrumbContainer: {
+    height: 60,
+    backgroundColor: "#fff",
+  },
+  flatListContainer: {
+    flex: 1,
+  },
+  itemContainer: {
+    width,
+    flex: 1,
+  },
 });

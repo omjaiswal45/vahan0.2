@@ -15,7 +15,7 @@ const AppStatusBar: React.FC<AppStatusBarProps> = ({
     <StatusBar
       barStyle={barStyle}
       backgroundColor={Platform.OS === 'android' ? backgroundColor : undefined}
-      translucent={Platform.OS === 'android'}
+      translucent={false}
     />
   );
 };

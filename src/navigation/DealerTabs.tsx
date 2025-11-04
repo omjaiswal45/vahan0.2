@@ -56,6 +56,7 @@ const DealerTabs = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
       headerShown: false,
+      unmountOnBlur: false,
       tabBarIcon: ({ focused, color }) => {
         let iconName: string = 'home';
 
