@@ -29,6 +29,8 @@ import { spacing } from '../../../../../styles/spacing';
 import { MOCK_CARS } from '../../buyUsedCar/services/mockCarData';
 import { buyUsedCarAPI } from '../../buyUsedCar/services/buyUsedCarAPI';
 import LottieView from 'lottie-react-native';
+import VehicleNumberModal from '../../../../../components/VehicleNumberModal';
+import { useVehicleNumber } from '../../../../../hooks/useVehicleNumber';
 
 const { width, height } = Dimensions.get('window');
 const GRID_ITEM_SIZE = (width - 64) / 3;
@@ -53,9 +55,18 @@ const HomeScreen = () => {
   // Track saved car IDs for instant UI updates
   const [savedCarIds, setSavedCarIds] = useState<Set<string>>(new Set(reduxSavedCarIds));
 
+  // Vehicle Number Modal State
+  const {
+    vehicleNumber,
+    shouldShowModal,
+    saveVehicleNumber,
+    skipForNow,
+  } = useVehicleNumber();
+  const [showVehicleModal, setShowVehicleModal] = useState(false);
+
   useEffect(() => {
     getLocation();
-    
+
     // Subtle pulse animation for banner
     Animated.loop(
       Animated.sequence([
@@ -71,7 +82,28 @@ const HomeScreen = () => {
         }),
       ])
     ).start();
-  }, []);
+
+    // Show vehicle number modal after a short delay when home screen loads
+    const timer = setTimeout(() => {
+      if (shouldShowModal()) {
+        setShowVehicleModal(true);
+      }
+    }, 1500); // 1.5 second delay to let the screen render first
+
+    return () => clearTimeout(timer);
+  }, [vehicleNumber]);
+
+  // Handle vehicle number submission from modal
+  const handleVehicleNumberSubmit = (number: string) => {
+    saveVehicleNumber(number);
+    setShowVehicleModal(false);
+  };
+
+  // Handle skip button in modal
+  const handleVehicleModalSkip = () => {
+    skipForNow();
+    setShowVehicleModal(false);
+  };
 
   // Scroll-based animations
   const headerTranslateY = scrollY.interpolate({
@@ -425,9 +457,9 @@ const handleNavigate = (item: typeof gridItems[0]) => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#F9FAFB" />
-      
+
       {/* Floating Pink Header */}
-      <Animated.View 
+      <Animated.View
         style={[
           styles.floatingHeader,
           {
@@ -452,8 +484,8 @@ const handleNavigate = (item: typeof gridItems[0]) => {
 
             <View style={styles.floatingSearchContainer}>
               <Ionicons name="search-outline" size={18} color="#6B7280" />
-              <TextInput 
-                placeholder="Search cars..." 
+              <TextInput
+                placeholder="Search cars..."
                 style={styles.floatingSearchInput}
                 placeholderTextColor="#9CA3AF"
               />
@@ -481,6 +513,17 @@ const handleNavigate = (item: typeof gridItems[0]) => {
           scrollEventThrottle={16}
         />
       </SafeAreaView>
+
+      {/* Vehicle Number Modal - Shows after login to encourage car number entry */}
+      <VehicleNumberModal
+        visible={showVehicleModal}
+        onClose={() => setShowVehicleModal(false)}
+        onSubmit={handleVehicleNumberSubmit}
+        onSkip={handleVehicleModalSkip}
+        contextTitle="Add Your Car Number"
+        contextMessage="Save your car number once and get instant access to challan checks, RC details, and personalized car services across the app."
+        showDemoOption={false}
+      />
     </View>
   );
 };
@@ -496,7 +539,7 @@ const styles = StyleSheet.create({
   
   // Animated Header (Location + Search) - FIXED FOR ANDROID
   animatedHeaderContainer: {
-    paddingTop: Platform.OS === 'ios' ? 8 : (StatusBar.currentHeight || 0) + 8,
+    paddingTop: Platform.OS === 'ios' ? 50 : (StatusBar.currentHeight || 0) + 8,
     backgroundColor: '#F9FAFB',
   },
   locationContainer: { 

@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(cat:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npx expo install:*)",
+      "Bash(git restore:*)",
+      "Bash(npm uninstall:*)"
     ],
     "deny": [],
     "ask": []

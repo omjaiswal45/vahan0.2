@@ -5,9 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
-  StatusBar,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../styles/colors';
@@ -42,6 +40,22 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
     }
   };
 
+  // Get dynamic padding based on platform
+  const getContainerStyle = () => {
+    if (Platform.OS === 'ios') {
+      return {
+        height: 88,
+        paddingTop: 38,
+      };
+    }
+
+    // Android - use moderate fixed padding that works for both modes
+    return {
+      height: 80,
+      paddingTop: 24,
+    };
+  };
+
   return (
     <View style={styles.safeArea}>
       <LinearGradient
@@ -50,7 +64,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
         end={{ x: 1, y: 0 }}
         style={styles.gradientContainer}
       >
-        <View style={styles.container}>
+        <View style={[styles.container, getContainerStyle()]}>
           {/* Left Side - Back Button */}
           <View style={styles.leftContainer}>
             {showBackButton && (
@@ -109,9 +123,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: Platform.OS === 'ios' ? 80 : 40,
     paddingHorizontal: 4,
-    paddingTop: Platform.OS === 'ios' ? 30 : 0,
   },
   leftContainer: {
     width: 60,

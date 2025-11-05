@@ -52,6 +52,17 @@ const LeadsStack = () => (
   </Stack.Navigator>
 );
 
+// Profile Stack
+const ProfileStack = () => (
+  <Stack.Navigator screenOptions={defaultNativeStackScreenOptions}>
+    <Stack.Screen
+      name="ProfileHome"
+      component={DealerprofileScreen}
+      options={{ title: 'Profile' }}
+    />
+  </Stack.Navigator>
+);
+
 const DealerTabs = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
@@ -105,7 +116,7 @@ const DealerTabs = () => (
     <Tab.Screen name="Dashboard" component={DashboardScreen} />
     <Tab.Screen name="Listings" component={ListingsStack} />
     <Tab.Screen name="Leads" component={LeadsStack} />
-    <Tab.Screen name="profile" component={DealerprofileScreen} />
+    <Tab.Screen name="profile" component={ProfileStack} />
   </Tab.Navigator>
 );
 

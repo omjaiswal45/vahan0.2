@@ -172,47 +172,66 @@ export default function RegistrationInput({
       <Animated.View style={containerStyle}>
         {/* Hero Section with Image and Title */}
       <View style={styles.heroSection}>
-        {/* Left Side - Text Content */}
-        <View style={styles.heroTextContainer}>
-          <View style={styles.promoBadge}>
-            <LinearGradient
-              colors={[colors.primary, colors.primaryDark]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.promoBadgeGradient}
-            >
-              <Ionicons name="trending-up" size={14} color={colors.white} />
-              <Text style={styles.promoBadgeText}>BEST DEALS</Text>
-            </LinearGradient>
+        <View style={styles.heroContent}>
+          {/* Left Side - Text Content */}
+          <View style={styles.heroTextContainer}>
+            <View style={styles.promoBadge}>
+              <LinearGradient
+                colors={[colors.primary, colors.primaryDark]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.promoBadgeGradient}
+              >
+                <Ionicons name="trending-up" size={16} color={colors.white} />
+                <Text style={styles.promoBadgeText}>BEST DEALS</Text>
+              </LinearGradient>
+            </View>
+            <Text style={styles.mainTitle}>Sell Car Online at the Best Price</Text>
+            <Text style={styles.tagline}>Get instant valuation & quick sale</Text>
           </View>
-          <Text style={styles.mainTitle}>Sell Car Online</Text>
-          <Text style={styles.mainTitle}>at the Best Price</Text>
-          <Text style={styles.tagline}>Get instant valuation & quick sale</Text>
+
+          {/* Right Side - Animated Image */}
+          <Animated.View
+            style={[
+              styles.heroImageContainer,
+              {
+                transform: [
+                  {
+                    translateY: slideAnim.interpolate({
+                      inputRange: [0, 30],
+                      outputRange: [0, 10],
+                    })
+                  },
+                  { scale: 1.05 }
+                ],
+              }
+            ]}
+          >
+            <Image
+              source={require('../../../../assets/sellcar.png')}
+              style={styles.heroImage}
+              resizeMode="contain"
+            />
+          </Animated.View>
         </View>
 
-        {/* Right Side - Animated Image */}
-        <Animated.View
-          style={[
-            styles.heroImageContainer,
-            {
-              transform: [
-                {
-                  translateY: slideAnim.interpolate({
-                    inputRange: [0, 30],
-                    outputRange: [0, 10],
-                  })
-                },
-                { scale: 1.1 }
-              ],
-            }
-          ]}
-        >
-          <Image
-            source={require('../../../../assets/sellcar.png')}
-            style={styles.heroImage}
-            resizeMode="contain"
-          />
-        </Animated.View>
+        {/* Quick Stats Bar */}
+        <View style={styles.quickStatsBar}>
+          <View style={styles.quickStatItem}>
+            <Ionicons name="shield-checkmark" size={18} color="#10B981" />
+            <Text style={styles.quickStatText}>Verified</Text>
+          </View>
+          <View style={styles.quickStatDivider} />
+          <View style={styles.quickStatItem}>
+            <Ionicons name="pricetag" size={18} color="#F59E0B" />
+            <Text style={styles.quickStatText}>Best Price</Text>
+          </View>
+          <View style={styles.quickStatDivider} />
+          <View style={styles.quickStatItem}>
+            <Ionicons name="flash" size={18} color="#3B82F6" />
+            <Text style={styles.quickStatText}>Quick Sale</Text>
+          </View>
+        </View>
       </View>
 
       {/* Registration Input Card */}
@@ -319,7 +338,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding,
     paddingTop: 16,
-    paddingBottom: 32,
+    paddingBottom: 100,
   },
   // Brand Header Section
   brandHeader: {
@@ -345,15 +364,18 @@ const styles = StyleSheet.create({
   },
   // Hero Section
   heroSection: {
+    marginBottom: 32,
+    backgroundColor: colors.pink[50],
+    borderRadius: 24,
+    overflow: "hidden",
+  },
+  heroContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 32,
-    backgroundColor: colors.pink[50],
-    borderRadius: 20,
     padding: 20,
-    paddingRight: 0,
-    overflow: "hidden",
+    paddingRight: 20,
+    paddingBottom: 16,
   },
   heroTextContainer: {
     flex: 1,
@@ -384,35 +406,83 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   mainTitle: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "800",
     color: colors.text,
-    lineHeight: 36,
-    letterSpacing: -0.5,
+    lineHeight: 32,
+    letterSpacing: -0.3,
+    flexShrink: 1,
   },
   tagline: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.textSecondary,
-    marginTop: 8,
-    fontWeight: "500",
+    marginTop: 6,
+    fontWeight: "600",
+    flexShrink: 1,
   },
   heroImageContainer: {
-    width: 140,
-    height: 140,
+    width: 160,
+    height: 160,
     alignItems: "center",
     justifyContent: "center",
+    position: "relative",
   },
   heroImage: {
     width: "100%",
     height: "100%",
+    zIndex: 3,
+  },
+  glowCircle: {
+    position: "absolute",
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: colors.primary,
+    opacity: 0.15,
+    zIndex: 1,
+  },
+  glowCircleOuter: {
+    position: "absolute",
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: colors.primary,
+    opacity: 0.08,
+    zIndex: 0,
+  },
+  // Quick Stats Bar
+  quickStatsBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    backgroundColor: colors.white,
+    borderTopWidth: 1,
+    borderTopColor: colors.pink[100],
+  },
+  quickStatItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  quickStatText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: colors.text,
+  },
+  quickStatDivider: {
+    width: 1,
+    height: 20,
+    backgroundColor: colors.gray[200],
   },
   // Input Section
   inputSection: {
     marginBottom: 24,
   },
   inputLabel: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 17,
+    fontWeight: "700",
     color: colors.text,
     marginBottom: 12,
   },
