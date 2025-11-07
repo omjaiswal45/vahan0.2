@@ -15,6 +15,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Spacing } from '../../../styles/spacing';
+import { useLocalNotifications } from '../../notifications';
+import { NotificationMessages } from '../../notifications/notificationMessages';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -24,6 +26,9 @@ const ReviewSubmitScreen = () => {
   const { listingData } = route.params || {};
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Local notifications hook (works in Expo Go!)
+  const { presentNotificationNow, scheduleNotification } = useLocalNotifications();
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -46,23 +51,20 @@ const ReviewSubmitScreen = () => {
 
       setIsSubmitting(false);
 
-      // Success alert with navigation
-      Alert.alert(
-        '🎉 Success!',
-        'Your car listing is under review! We will notify you once it\'s approved.',
-        [
-          {
-            text: 'View Listings',
-            onPress: () => {
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'ListingsHome' }],
-              });
-            },
-          },
-        ],
-        { cancelable: false }
+      // Send confirmation notification (Big Tech style - engaging & interactive)
+      const notification = NotificationMessages.LISTING_SUBMITTED;
+      await presentNotificationNow(
+        notification.title(listingData.brand, listingData.model),
+        notification.body(listingData.brand, listingData.model),
+        { type: 'alert', screen: 'DealerListings' }
       );
+
+      console.log('📬 Notification sent successfully!');
+
+      // Auto-redirect to listings screen (notification will inform user)
+      // Navigate back to the Listings tab by going back to parent navigator
+      // This pops the entire AddListingStack and returns to ListingsHome
+      navigation.getParent()?.goBack();
     } catch (error) {
       console.error('❌ Submission Error:', error);
       setIsSubmitting(false);

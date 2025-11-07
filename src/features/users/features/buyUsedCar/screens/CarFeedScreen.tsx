@@ -24,12 +24,14 @@ import { RootState, AppDispatch } from '../../../../../store/store';
 import { colors } from '../../../../../styles/colors';
 import { spacing } from '../../../../../styles/spacing'
 import { typography } from '../../../../../styles/typography';
+import { useLocalNotifications, NotificationMessages } from '../../../../notifications';
 
 export const CarFeedScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
   const auth = useSelector((state: RootState) => state.auth);
   const savedCarIds = useSelector((state: RootState) => state.buyUsedCar.savedCarIds);
+  const { presentNotificationNow } = useLocalNotifications();
 
   const {
     cars,
@@ -83,11 +85,28 @@ export const CarFeedScreen: React.FC = () => {
   const handleSavePress = useCallback(async (carId: string) => {
     const userId = auth.phone || 'guest-user';
     try {
-      await dispatch(toggleSaveCar({ carId, userId })).unwrap();
+      const result = await dispatch(toggleSaveCar({ carId, userId })).unwrap();
+
+      // Send notification only when adding to wishlist (not removing)
+      if (result.isSaved) {
+        const car = cars.find(c => c.id === carId);
+        if (car) {
+          const notification = NotificationMessages.ADDED_TO_WISHLIST;
+          await presentNotificationNow(
+            notification.title(car.brand, car.model),
+            notification.body(),
+            {
+              type: 'wishlist',
+              screen: 'SavedCars',
+              carId: car.id
+            }
+          );
+        }
+      }
     } catch (error) {
       console.error('Failed to save car:', error);
     }
-  }, [dispatch, auth.phone]);
+  }, [dispatch, auth.phone, cars, presentNotificationNow]);
 
   const handleSearch = useCallback((query: string) => {
     searchCars(query);

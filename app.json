@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -17,12 +17,13 @@
       "infoPlist": {
         "NSCameraUsageDescription": "VahanHelp needs access to your camera to take photos of your car.",
         "NSPhotoLibraryUsageDescription": "VahanHelp needs access to your photo library to select car images."
-      }
+      },
+      "bundleIdentifier": "com.jassu1314.VahanHelp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ff1ea5"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -33,7 +34,11 @@
         "android.permission.READ_MEDIA_IMAGES",
         "android.permission.RECORD_AUDIO"
       ],
-      "package": "com.jassu1314.VahanHelp"
+      "package": "com.jassu1314.VahanHelp",
+      "notification": {
+        "icon": "./assets/icon.png",
+        "color": "#ff1ea5"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -45,6 +50,14 @@
         {
           "photosPermission": "VahanHelp needs access to your photos to upload car images.",
           "cameraPermission": "VahanHelp needs access to your camera to take photos of your car."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#ff1ea5",
+          "sounds": []
         }
       ]
     ]

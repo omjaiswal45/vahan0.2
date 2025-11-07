@@ -5,7 +5,10 @@
       "Bash(npm install:*)",
       "Bash(npx expo install:*)",
       "Bash(git restore:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx expo-notifications-debug:*)",
+      "Bash(npx expo start --clear)"
     ],
     "deny": [],
     "ask": []

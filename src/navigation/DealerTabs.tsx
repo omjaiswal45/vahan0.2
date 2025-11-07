@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { CommonActions } from '@react-navigation/native';
 
 // Screens
 import DashboardScreen from '../features/dealer/screens/DashboardScreen';
@@ -68,6 +69,7 @@ const DealerTabs = () => (
     screenOptions={({ route }) => ({
       headerShown: false,
       unmountOnBlur: false,
+      lazy: false,
       tabBarIcon: ({ focused, color }) => {
         let iconName: string = 'home';
 
@@ -114,7 +116,21 @@ const DealerTabs = () => (
     })}
   >
     <Tab.Screen name="Dashboard" component={DashboardScreen} />
-    <Tab.Screen name="Listings" component={ListingsStack} />
+    <Tab.Screen
+      name="Listings"
+      component={ListingsStack}
+      listeners={({ navigation }) => ({
+        tabPress: () => {
+          // Reset the Listings stack to the initial screen when tab is pressed
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: 'Listings' }],
+            })
+          );
+        },
+      })}
+    />
     <Tab.Screen name="Leads" component={LeadsStack} />
     <Tab.Screen name="profile" component={ProfileStack} />
   </Tab.Navigator>
