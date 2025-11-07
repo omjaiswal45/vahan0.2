@@ -46,6 +46,8 @@ const HomeScreen = () => {
   const location = useSelector((state: RootState) => state.location);
   const auth = useSelector((state: RootState) => state.auth);
   const reduxSavedCarIds = useSelector((state: RootState) => state.buyUsedCar.savedCarIds);
+  const currentInsuranceData = useSelector((state: RootState) => state.carInsurance.currentInsuranceData);
+  const pendingChallanCount = useSelector((state: RootState) => state.challanCheck.pendingChallanCount);
   const { getLocation } = useLocation();
   const navigation = useNavigation<NavigationProp>();
   const bannerAnimation = useRef(new Animated.Value(0)).current;
@@ -173,7 +175,8 @@ const HomeScreen = () => {
     {
       id: 6,
       title: 'Car Insurance',
-      stack: 'FinanceScreen',
+      stack: 'CarInsuranceStack',
+      target: 'CarInsuranceHome',
       image: 'https://img.freepik.com/premium-vector/illustration-vector-graphic-cartoon-character-car-insurance_516790-109.jpg',
     },
   ];
@@ -286,29 +289,72 @@ const handleNavigate = (item: typeof gridItems[0]) => {
   };
 
   /** ---------------- RENDER ---------------- */
-  const renderGridItem = ({ item }: any) => (
-    <TouchableOpacity
-      style={styles.gridItemContainer}
-      onPress={() => handleNavigate(item)}
-      activeOpacity={0.8}
-    >
-      <ImageBackground 
-        source={{ uri: item.image }} 
-        style={styles.gridItemBackground} 
-        imageStyle={styles.gridItemImage}
+  const renderGridItem = ({ item }: any) => {
+    // Determine insurance badge state
+    let insuranceBadgeStatus: 'active' | 'expired' | null = null;
+    if (item.title === 'Car Insurance' && currentInsuranceData) {
+      const hasActivePolicy = currentInsuranceData.currentPolicy?.status === 'active';
+      insuranceBadgeStatus = hasActivePolicy ? 'active' : 'expired';
+    }
+
+    // Show count badge for Challan Check if there are pending challans
+    const showChallanBadge = item.title === 'Challan Check' && pendingChallanCount > 0;
+
+    // Debug logs
+    if (item.title === 'Car Insurance') {
+      console.log('Car Insurance Grid - insuranceBadgeStatus:', insuranceBadgeStatus);
+    }
+    if (item.title === 'Challan Check') {
+      console.log('Challan Check Grid - pendingChallanCount:', pendingChallanCount);
+    }
+
+    return (
+      <TouchableOpacity
+        style={styles.gridItemContainer}
+        onPress={() => handleNavigate(item)}
+        activeOpacity={0.8}
       >
-        <LinearGradient 
-          colors={['transparent', 'rgba(0,0,0,0.6)']} 
-          style={styles.gridItemGradient} 
-        />
-        <View style={styles.gridItemTextContainer}>
-          <Text style={styles.gridItemText}>
-            {item.title}
-          </Text>
-        </View>
-      </ImageBackground>
-    </TouchableOpacity>
-  );
+        <ImageBackground
+          source={{ uri: item.image }}
+          style={styles.gridItemBackground}
+          imageStyle={styles.gridItemImage}
+        >
+          <LinearGradient
+            colors={['transparent', 'rgba(0,0,0,0.6)']}
+            style={styles.gridItemGradient}
+          />
+          <View style={styles.gridItemTextContainer}>
+            <Text style={styles.gridItemText}>
+              {item.title}
+            </Text>
+          </View>
+
+        </ImageBackground>
+
+        {/* Insurance Status Badge - Outside ImageBackground to avoid clipping */}
+        {insuranceBadgeStatus && (
+          <View style={[
+            styles.insuranceStatusBadge,
+            insuranceBadgeStatus === 'active'
+              ? styles.insuranceActiveBadge
+              : styles.insuranceExpiredBadge
+          ]}>
+            <View style={styles.insuranceBadgeDot} />
+            <Text style={styles.insuranceStatusText}>
+              {insuranceBadgeStatus === 'active' ? 'Active' : 'Expired'}
+            </Text>
+          </View>
+        )}
+
+        {/* Challan Count Badge - Outside ImageBackground to avoid clipping */}
+        {showChallanBadge && (
+          <View style={styles.countBadge}>
+            <Text style={styles.countBadgeText}>{pendingChallanCount}</Text>
+          </View>
+        )}
+      </TouchableOpacity>
+    );
+  };
 
   const ListHeader = () => (
     <>
@@ -796,11 +842,13 @@ const styles = StyleSheet.create({
     width: GRID_ITEM_SIZE,
     height: GRID_ITEM_SIZE,
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: 'visible',
   },
   gridItemBackground: {
     flex: 1,
     justifyContent: 'flex-end',
+    borderRadius: 12,
+    overflow: 'hidden',
   },
   gridItemImage: {
     borderRadius: 12,
@@ -824,6 +872,68 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0,0,0,0.6)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
+  },
+  insuranceStatusBadge: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 6,
+    borderWidth: 2,
+    borderColor: '#fff',
+    zIndex: 100,
+  },
+  insuranceActiveBadge: {
+    backgroundColor: '#10B981',
+  },
+  insuranceExpiredBadge: {
+    backgroundColor: '#EF4444',
+  },
+  insuranceBadgeDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#fff',
+  },
+  insuranceStatusText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+  },
+  countBadge: {
+    position: 'absolute',
+    top: -10,
+    right: -10,
+    backgroundColor: '#FF3B30',
+    borderRadius: 12,
+    minWidth: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 6,
+    borderWidth: 2,
+    borderColor: '#fff',
+    zIndex: 100,
+  },
+  countBadgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '900',
   },
   columnWrapper: {
     justifyContent: 'space-between',

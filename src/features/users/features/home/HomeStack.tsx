@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './screens/HomeScreen';
 import RCCheckNavigator from '../rcCheck/RCCheckNavigator';
 import { ChallanCheckNavigator } from '../challanCheck/ChallanCheckNavigator';
+import { CarInsuranceNavigator } from '../carInsurance/CarInsuranceNavigator';
 import AddListingNavigator from '../../../dealer/navigators/AddListingNavigator';
 import { defaultStackScreenOptions } from '../../../../navigation/navigationOptions';
 
@@ -18,13 +19,9 @@ const HomeStack = () => (
     <Stack.Screen
       name="RCCheckStack"
       component={RCCheckNavigator}
-      options={{
-        ...defaultStackScreenOptions,
-        headerShown: true,
-        title: 'RC Check'
-      }}
     />
     <Stack.Screen name="ChallanCheckStack" component={ChallanCheckNavigator} />
+    <Stack.Screen name="CarInsuranceStack" component={CarInsuranceNavigator} />
   </Stack.Navigator>
 );
 

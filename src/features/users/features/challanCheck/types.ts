@@ -36,6 +36,7 @@ export interface ChallanCheckState {
   savedReports: VehicleChallanData[];
   isLoading: boolean;
   error: string | null;
+  pendingChallanCount: number; // Count of pending challans to show on home screen badge
 }
 
 export interface ChallanSearchRequest {

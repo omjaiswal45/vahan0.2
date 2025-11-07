@@ -23,24 +23,29 @@ import {
   CHANNEL_CONFIGS,
 } from '../constants';
 import { PushTokenState, NotificationPermission } from '../types';
+import Constants from 'expo-constants';
 
 // Configure how notifications are presented when app is in foreground
-Notifications.setNotificationHandler({
-  handleNotification: async (notification) => {
-    const payload = parseNotificationPayload(notification);
-    const shouldShow = shouldShowInForeground(payload.data);
+// Only set handler if not using Expo Go (remote notifications don't work in Expo Go)
+const isExpoGo = Constants.appOwnership === 'expo';
+if (!isExpoGo) {
+  Notifications.setNotificationHandler({
+    handleNotification: async (notification) => {
+      const payload = parseNotificationPayload(notification);
+      const shouldShow = shouldShowInForeground(payload.data);
 
-    // Don't show alert/banner in foreground - we'll use custom NotificationBanner component
-    // This prevents duplicate notifications on iOS
-    return {
-      shouldShowAlert: false, // Don't show system alert - use custom banner
-      shouldPlaySound: shouldShow && NOTIFICATION_CONFIG.PLAY_SOUND_IN_FOREGROUND,
-      shouldSetBadge: NOTIFICATION_CONFIG.SET_BADGE,
-      shouldShowBanner: false, // Don't show system banner - use custom banner
-      shouldShowList: true, // Still add to notification center
-    };
-  },
-});
+      // Don't show alert/banner in foreground - we'll use custom NotificationBanner component
+      // This prevents duplicate notifications on iOS
+      return {
+        shouldShowAlert: false, // Don't show system alert - use custom banner
+        shouldPlaySound: shouldShow && NOTIFICATION_CONFIG.PLAY_SOUND_IN_FOREGROUND,
+        shouldSetBadge: NOTIFICATION_CONFIG.SET_BADGE,
+        shouldShowBanner: false, // Don't show system banner - use custom banner
+        shouldShowList: true, // Still add to notification center
+      };
+    },
+  });
+}
 
 interface UseNotificationsOptions {
   userId?: string;
@@ -224,6 +229,20 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
    */
   const getPushToken = async (): Promise<string | null> => {
     try {
+      // Check if running in Expo Go - remote notifications don't work in Expo Go
+      if (isExpoGo) {
+        const errorMsg = 'Push notifications not supported in Expo Go. Use development build.';
+        notificationLogger.warning(errorMsg, null, 'Token');
+
+        setTokenState((prev) => ({
+          ...prev,
+          error: errorMsg,
+          isLoading: false,
+        }));
+
+        return null;
+      }
+
       // Check if physical device
       if (!isPhysicalDevice()) {
         const errorMsg = ERROR_MESSAGES.NOT_PHYSICAL_DEVICE;
@@ -357,6 +376,12 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
    * Setup notification listeners
    */
   useEffect(() => {
+    // Skip listener setup in Expo Go - remote notifications don't work
+    if (isExpoGo) {
+      notificationLogger.info('Skipping notification listeners in Expo Go', null, 'Setup');
+      return;
+    }
+
     // Listener for notifications received while app is foregrounded
     notificationListener.current = Notifications.addNotificationReceivedListener(
       handleNotificationReceived

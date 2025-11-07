@@ -8,7 +8,13 @@
       "Bash(npm uninstall:*)",
       "Bash(npx tsc:*)",
       "Bash(npx expo-notifications-debug:*)",
-      "Bash(npx expo start --clear)"
+      "Bash(npx expo start --clear)",
+      "Bash(tree:*)",
+      "Bash(nul)",
+      "Bash(rm:*)",
+      "Bash(\"c:\\Users\\Acer\\Desktop\\VahanHelpApp-main\\src\\features\\users\\features\\carInsurance\\types.ts\")",
+      "Bash(touch:*)",
+      "Bash(npm start)"
     ],
     "deny": [],
     "ask": []

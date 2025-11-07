@@ -9,13 +9,14 @@ import customerReducer from './slices/customerSlice';
 import buyUsedCarReducer from './slices/buyUsedCarSlice';
 import rcCheckReducer from './slices/rcCheckSlice'
 import challanCheckReducer from './slices/challanCheckSlice';
+import carInsuranceReducer from './slices/carInsuranceSlice';
 import vehicleReducer from './slices/vehicleSlice';
 
 // Persist configuration
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['vehicle', 'user', 'buyUsedCar'], // Removed 'auth' - users must login each time
+  whitelist: ['vehicle', 'user', 'buyUsedCar', 'carInsurance', 'challanCheck'], // Removed 'auth' - users must login each time
   // Auth state will not persist, requiring login on each app launch
 };
 
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
   buyUsedCar: buyUsedCarReducer,
   rcCheck: rcCheckReducer,
   challanCheck: challanCheckReducer,
+  carInsurance: carInsuranceReducer,
   vehicle: vehicleReducer,
 });
 

@@ -1,34 +1,34 @@
-// src/store/slices/challanCheckSlice.ts
+// src/store/slices/carInsuranceSlice.ts
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ChallanCheckState, VehicleChallanData } from '../../features/users/features/challanCheck/types';
+import { CarInsuranceState, VehicleInsuranceData } from '../../features/users/features/carInsurance/types';
 
 const MAX_RECENT_SEARCHES = 5;
 const MAX_SAVED_REPORTS = 10;
 
-const initialState: ChallanCheckState = {
-  currentChallanData: null,
+const initialState: CarInsuranceState = {
+  currentInsuranceData: null,
   recentSearches: [],
   savedReports: [],
   isLoading: false,
   error: null,
-  pendingChallanCount: 0,
+  hasExpiredInsurance: false,
 };
 
-const challanCheckSlice = createSlice({
-  name: 'challanCheck',
+const carInsuranceSlice = createSlice({
+  name: 'carInsurance',
   initialState,
   reducers: {
-    setChallanData: (state, action: PayloadAction<VehicleChallanData>) => {
-      state.currentChallanData = action.payload;
+    setInsuranceData: (state, action: PayloadAction<VehicleInsuranceData>) => {
+      state.currentInsuranceData = action.payload;
       state.isLoading = false;
       state.error = null;
 
-      // Count both pending and overdue challans for home screen badge
-      const pendingCount = action.payload.challans.filter(
-        challan => challan.status === 'pending' || challan.status === 'overdue'
-      ).length;
-      state.pendingChallanCount = pendingCount;
+      // Check if the current policy is expired or if there's no current policy
+      const hasExpired = !action.payload.currentPolicy ||
+                         action.payload.currentPolicy.status === 'expired' ||
+                         action.payload.currentPolicy.status === 'expiring-soon';
+      state.hasExpiredInsurance = hasExpired;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
@@ -55,11 +55,11 @@ const challanCheckSlice = createSlice({
     clearRecentSearches: (state) => {
       state.recentSearches = [];
     },
-    saveReport: (state, action: PayloadAction<VehicleChallanData>) => {
+    saveReport: (state, action: PayloadAction<VehicleInsuranceData>) => {
       const exists = state.savedReports.findIndex(
         report => report.registrationNumber === action.payload.registrationNumber
       );
-      
+
       if (exists !== -1) {
         state.savedReports[exists] = action.payload;
       } else {
@@ -74,34 +74,23 @@ const challanCheckSlice = createSlice({
         report => report.registrationNumber !== action.payload
       );
     },
-    clearChallanData: (state) => {
-      state.currentChallanData = null;
+    clearInsuranceData: (state) => {
+      state.currentInsuranceData = null;
       state.error = null;
     },
     clearBadgeState: (state) => {
-      state.pendingChallanCount = 0;
+      state.hasExpiredInsurance = false;
     },
-    updateChallanStatus: (state, action: PayloadAction<{ challanId: string; status: 'paid' }>) => {
-      if (state.currentChallanData) {
-        const challanIndex = state.currentChallanData.challans.findIndex(
-          c => c.id === action.payload.challanId
-        );
-        if (challanIndex !== -1) {
-          state.currentChallanData.challans[challanIndex].status = action.payload.status;
-
-          // Recalculate pending and overdue challan count
-          const pendingCount = state.currentChallanData.challans.filter(
-            challan => challan.status === 'pending' || challan.status === 'overdue'
-          ).length;
-          state.pendingChallanCount = pendingCount;
-        }
+    updatePolicyStatus: (state, action: PayloadAction<{ policyId: string; status: 'active' | 'expired' | 'expiring-soon' }>) => {
+      if (state.currentInsuranceData?.currentPolicy?.id === action.payload.policyId) {
+        state.currentInsuranceData.currentPolicy.status = action.payload.status;
       }
     },
   },
 });
 
 export const {
-  setChallanData,
+  setInsuranceData,
   setLoading,
   setError,
   clearError,
@@ -110,9 +99,9 @@ export const {
   clearRecentSearches,
   saveReport,
   removeSavedReport,
-  clearChallanData,
+  clearInsuranceData,
   clearBadgeState,
-  updateChallanStatus,
-} = challanCheckSlice.actions;
+  updatePolicyStatus,
+} = carInsuranceSlice.actions;
 
-export default challanCheckSlice.reducer;
+export default carInsuranceSlice.reducer;

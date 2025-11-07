@@ -1,6 +1,6 @@
 // src/features/users/features/rcCheck/screens/RCCheckReportScreen.tsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import { colors } from '../../../../../styles/colors';
+import { spacing } from '../../../../../styles';
 import { useRCCheck } from '../hooks/useRCCheck';
 import TrustScoreCard from '../components/TrustScoreCard';
 import VehicleInfoCard from '../components/VehicleInfoCard';
@@ -64,36 +65,31 @@ const RCCheckReportScreen: React.FC<RCCheckReportScreenProps> = ({ navigation })
     Alert.alert('Share Report', 'Share functionality coming soon!');
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.backButtonText}>← Back</Text>
-          </TouchableOpacity>
+  // Configure navigation header with action buttons
+  useEffect(() => {
+    if (currentReport) {
+      navigation.setOptions({
+        headerRight: () => (
           <View style={styles.headerActions}>
             <TouchableOpacity
-              style={styles.iconButton}
-              onPress={handleShareReport}
-            >
-              <Text style={styles.iconButtonText}>📤</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.iconButton, isSaving && styles.iconButtonDisabled]}
+              style={styles.headerButton}
               onPress={handleSaveReport}
               disabled={isSaving}
             >
-              <Text style={styles.iconButtonText}>
+              <Text style={styles.headerButtonText}>
                 {isReportSaved(currentReport.reportId) ? '💾' : '🔖'}
               </Text>
+              <Text style={styles.headerButtonLabel}>Save</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        ),
+      });
+    }
+  }, [currentReport, isSaving]);
 
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.reportHeader}>
           <Text style={styles.reportTitle}>
             {currentReport.basicInfo.manufacturer} {currentReport.basicInfo.model}
@@ -359,44 +355,30 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray[50],
   },
   scrollContent: {
-    padding: 20,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  backButton: {
-    padding: 8,
-  },
-  backButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.blue[600],
+    padding: spacing.md,
+    paddingBottom: spacing.xl,
   },
   headerActions: {
     flexDirection: 'row',
-    gap: 8,
-  },
-  iconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.white,
-    justifyContent: 'center',
     alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    marginRight: spacing.md,
   },
-  iconButtonDisabled: {
-    opacity: 0.5,
+  headerButton: {
+    paddingHorizontal: 10,
+    paddingVertical: spacing.xs + 2,
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
   },
-  iconButtonText: {
-    fontSize: 20,
+  headerButtonText: {
+    fontSize: 16,
+  },
+  headerButtonLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.primary,
   },
   reportHeader: {
     marginBottom: 24,

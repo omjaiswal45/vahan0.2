@@ -9,10 +9,14 @@ import { store, persistor } from './src/store/store';
 import AppStatusBar from './src/components/AppStatusBar';
 import { ActivityIndicator, View } from 'react-native';
 import { clearVehicleNumber } from './src/store/slices/vehicleSlice';
+import { clearInsuranceData, clearBadgeState as clearInsuranceBadge } from './src/store/slices/carInsuranceSlice';
+import { clearChallanData, clearBadgeState as clearChallanBadge } from './src/store/slices/challanCheckSlice';
 import { useNotifications, NotificationBanner, DebugPanel } from './src/features/notifications';
 
 // Set to true to clear vehicle data on every app start (for development/testing)
 const CLEAR_VEHICLE_ON_START = true;
+// Set to true to clear notification badges on every app start (for testing)
+const CLEAR_BADGES_ON_START = true;
 
 // Inner component that has access to dispatch
 function AppContent() {
@@ -43,13 +47,21 @@ function AppContent() {
   });
 
   useEffect(() => {
-    if (CLEAR_VEHICLE_ON_START && __DEV__) {
-      // Dispatch action to clear vehicle state for testing
-      dispatch(clearVehicleNumber());
-      setIsReady(true);
-    } else {
-      setIsReady(true);
+    if (__DEV__) {
+      // Clear states for testing in development mode
+      if (CLEAR_VEHICLE_ON_START) {
+        dispatch(clearVehicleNumber());
+      }
+      if (CLEAR_BADGES_ON_START) {
+        // Clear both the data and badge states
+        dispatch(clearInsuranceData());
+        dispatch(clearInsuranceBadge());
+        dispatch(clearChallanData());
+        dispatch(clearChallanBadge());
+        console.log('🧪 Testing Mode: Insurance and Challan data cleared');
+      }
     }
+    setIsReady(true);
   }, [dispatch]);
 
   if (!isReady) {
