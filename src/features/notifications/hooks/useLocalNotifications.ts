@@ -185,7 +185,21 @@ export function useLocalNotifications() {
       data?: Record<string, any>
     ): Promise<string | null> => {
       try {
+        // Check permissions first
+        const { status } = await Notifications.getPermissionsAsync();
+        if (status !== 'granted') {
+          notificationLogger.warning('Notification permission not granted', null, 'Local');
+
+          // Request permission
+          const { status: newStatus } = await Notifications.requestPermissionsAsync();
+          if (newStatus !== 'granted') {
+            notificationLogger.error('Permission denied for notifications', null, 'Local');
+            return null;
+          }
+        }
+
         const notificationId = createNotificationId('instant');
+        const channelId = data ? getNotificationCategory(data) : 'default';
 
         const id = await Notifications.scheduleNotificationAsync({
           identifier: notificationId,
@@ -194,6 +208,8 @@ export function useLocalNotifications() {
             body,
             data: data || {},
             sound: 'default',
+            priority: Notifications.AndroidNotificationPriority.HIGH,
+            ...(channelId && { channelId }),
           },
           trigger: null, // Present immediately
         });

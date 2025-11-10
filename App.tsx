@@ -7,11 +7,34 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootNavigator from './src/navigation/RootNavigator';
 import { store, persistor } from './src/store/store';
 import AppStatusBar from './src/components/AppStatusBar';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, View, Platform, LogBox } from 'react-native';
+import * as Notifications from 'expo-notifications';
 import { clearVehicleNumber } from './src/store/slices/vehicleSlice';
 import { clearInsuranceData, clearBadgeState as clearInsuranceBadge } from './src/store/slices/carInsuranceSlice';
 import { clearChallanData, clearBadgeState as clearChallanBadge } from './src/store/slices/challanCheckSlice';
-import { useNotifications, NotificationBanner, DebugPanel } from './src/features/notifications';
+import { useNotifications, NotificationBanner } from './src/features/notifications';
+
+// Suppress Expo Go notification warnings (only affects development)
+LogBox.ignoreLogs([
+  'expo-notifications: Android Push notifications',
+  '`expo-notifications` functionality is not fully supported in Expo Go',
+]);
+
+// Suppress console errors for Expo Go push notification limitations (development only)
+if (__DEV__) {
+  const originalError = console.error;
+  console.error = (...args) => {
+    if (
+      typeof args[0] === 'string' &&
+      (args[0].includes('expo-notifications: Android Push notifications') ||
+       args[0].includes('expo-notifications` functionality is not fully supported'))
+    ) {
+      // Suppress this specific error in development
+      return;
+    }
+    originalError(...args);
+  };
+}
 
 // Set to true to clear vehicle data on every app start (for development/testing)
 const CLEAR_VEHICLE_ON_START = true;
@@ -22,31 +45,62 @@ const CLEAR_BADGES_ON_START = true;
 function AppContent() {
   const dispatch = useDispatch();
   const [isReady, setIsReady] = useState(false);
-  const [showDebugPanel, setShowDebugPanel] = useState(false);
 
-  // Initialize notifications (follows big tech pattern - doesn't auto-request)
-  const {
-    token,
-    permissionStatus,
-    lastNotification,
-  } = useNotifications({
-    userId: undefined, // Set this to actual userId when user logs in
-    autoRegister: false, // Don't auto-register - wait for contextual moment
+  // Initialize notifications
+  const { lastNotification } = useNotifications({
+    userId: undefined,
+    autoRegister: false,
     onNotificationReceived: (notification) => {
       console.log('📬 Notification received:', notification);
     },
     onNotificationTapped: (response) => {
       console.log('👆 Notification tapped:', response);
-      // Handle navigation based on notification data
       const data = response.notification.request.content.data;
       if (data?.screen) {
-        // Navigate to specific screen
         console.log('Navigate to:', data.screen, data.params);
       }
     },
   });
 
   useEffect(() => {
+    const setupNotificationChannels = async () => {
+      if (Platform.OS === 'android') {
+        try {
+          // Create default notification channel for Android
+          await Notifications.setNotificationChannelAsync('default', {
+            name: 'Default Notifications',
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#ff1ea5',
+            sound: 'default',
+            enableVibrate: true,
+            enableLights: true,
+            lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+            showBadge: true,
+          });
+
+          // Create wishlist channel
+          await Notifications.setNotificationChannelAsync('wishlist', {
+            name: 'Wishlist Notifications',
+            importance: Notifications.AndroidImportance.HIGH,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#ff1ea5',
+            sound: 'default',
+            enableVibrate: true,
+            enableLights: true,
+            lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+            showBadge: true,
+          });
+
+          console.log('✅ Android notification channels configured');
+        } catch (error) {
+          console.error('Failed to setup Android channels:', error);
+        }
+      }
+    };
+
+    setupNotificationChannels();
+
     if (__DEV__) {
       // Clear states for testing in development mode
       if (CLEAR_VEHICLE_ON_START) {
@@ -81,14 +135,13 @@ function AppContent() {
         <RootNavigator />
       </NavigationContainer>
 
-      {/* In-App Notification Banner (shows when notification received in foreground) */}
+      {/* In-App Notification Banner */}
       <NotificationBanner
         notification={lastNotification}
         onPress={(notification) => {
           console.log('Banner tapped:', notification);
           const data = notification.request.content.data;
           if (data?.screen) {
-            // Handle navigation
             console.log('Navigate to:', data.screen);
           }
         }}
@@ -96,16 +149,6 @@ function AppContent() {
           // Clear notification
         }}
       />
-
-      {/* Debug Panel (only in development) */}
-      {__DEV__ && (
-        <DebugPanel
-          pushToken={token}
-          permissionStatus={permissionStatus}
-          visible={showDebugPanel}
-          onClose={() => setShowDebugPanel(false)}
-        />
-      )}
     </>
   );
 }

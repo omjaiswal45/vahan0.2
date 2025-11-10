@@ -14,7 +14,8 @@
       "Bash(rm:*)",
       "Bash(\"c:\\Users\\Acer\\Desktop\\VahanHelpApp-main\\src\\features\\users\\features\\carInsurance\\types.ts\")",
       "Bash(touch:*)",
-      "Bash(npm start)"
+      "Bash(npm start)",
+      "Bash(npx expo start --clear --port 8082)"
     ],
     "deny": [],
     "ask": []

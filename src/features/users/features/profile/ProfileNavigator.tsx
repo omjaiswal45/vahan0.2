@@ -73,9 +73,7 @@ const ProfileNavigator: React.FC = () => {
         name="SellCar"
         component={AddListingNavigator}
         options={{
-          ...defaultNativeStackScreenOptions,
-          title: 'Add Listing',
-          headerShown: true
+          headerShown: false
         }}
       />
     </Stack.Navigator>

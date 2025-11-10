@@ -31,6 +31,7 @@ import { buyUsedCarAPI } from '../../buyUsedCar/services/buyUsedCarAPI';
 import LottieView from 'lottie-react-native';
 import VehicleNumberModal from '../../../../../components/VehicleNumberModal';
 import { useVehicleNumber } from '../../../../../hooks/useVehicleNumber';
+import { useLocalNotifications, NotificationMessages } from '../../../../notifications';
 
 const { width, height } = Dimensions.get('window');
 const GRID_ITEM_SIZE = (width - 64) / 3;
@@ -53,6 +54,7 @@ const HomeScreen = () => {
   const bannerAnimation = useRef(new Animated.Value(0)).current;
   const scrollY = useRef(new Animated.Value(0)).current;
   const lottieRef = useRef<LottieView>(null);
+  const { presentNotificationNow } = useLocalNotifications();
 
   // Track saved car IDs for instant UI updates
   const [savedCarIds, setSavedCarIds] = useState<Set<string>>(new Set(reduxSavedCarIds));
@@ -269,6 +271,20 @@ const handleNavigate = (item: typeof gridItems[0]) => {
         }
         return newSet;
       });
+
+      // Send notification only when adding to wishlist (not removing)
+      if (result.isSaved) {
+        const notification = NotificationMessages.ADDED_TO_WISHLIST;
+        await presentNotificationNow(
+          notification.title(car.brand, car.model),
+          notification.body(),
+          {
+            type: 'wishlist',
+            screen: 'SavedCars',
+            carId: car.id
+          }
+        );
+      }
     } catch (error) {
       console.error('Failed to save car:', error);
       // Revert optimistic update on error
@@ -282,7 +298,7 @@ const handleNavigate = (item: typeof gridItems[0]) => {
         return newSet;
       });
     }
-  }, [auth.phone, dispatch]);
+  }, [auth.phone, dispatch, presentNotificationNow]);
 
   const handleBannerPress = () => {
     navigation.navigate('BuyUsedCar' as any, { screen: 'CarFeed' } as any);
@@ -299,14 +315,6 @@ const handleNavigate = (item: typeof gridItems[0]) => {
 
     // Show count badge for Challan Check if there are pending challans
     const showChallanBadge = item.title === 'Challan Check' && pendingChallanCount > 0;
-
-    // Debug logs
-    if (item.title === 'Car Insurance') {
-      console.log('Car Insurance Grid - insuranceBadgeStatus:', insuranceBadgeStatus);
-    }
-    if (item.title === 'Challan Check') {
-      console.log('Challan Check Grid - pendingChallanCount:', pendingChallanCount);
-    }
 
     return (
       <TouchableOpacity
@@ -496,6 +504,10 @@ const handleNavigate = (item: typeof gridItems[0]) => {
             />
           </View>
         )}
+        removeClippedSubviews={false}
+        scrollEnabled={true}
+        snapToInterval={undefined}
+        decelerationRate="normal"
       />
     </>
   );

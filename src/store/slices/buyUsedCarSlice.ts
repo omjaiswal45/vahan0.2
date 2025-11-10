@@ -133,7 +133,7 @@ const buyUsedCarSlice = createSlice({
     builder
       .addCase(toggleSaveCar.fulfilled, (state, action) => {
         const { carId, isSaved } = action.payload;
-        
+
         if (isSaved) {
           if (!state.savedCarIds.includes(carId)) {
             state.savedCarIds.push(carId);
@@ -141,7 +141,7 @@ const buyUsedCarSlice = createSlice({
         } else {
           state.savedCarIds = state.savedCarIds.filter(id => id !== carId);
         }
-        
+
         // Update car in the list
         const carIndex = state.cars.findIndex(car => car.id === carId);
         if (carIndex !== -1) {

@@ -146,11 +146,13 @@ export const buyUsedCarAPI = {
     // 🎭 MOCK DATA
     if (USE_MOCK_DATA) {
       await delay(300);
-      // Toggle the saved state
+      // Find the car and toggle its saved state
       const car = MOCK_CARS.find(c => c.id === payload.carId);
       if (car) {
-        car.isSaved = !car.isSaved;
-        return { isSaved: car.isSaved };
+        // Toggle the state
+        const newSavedState = !car.isSaved;
+        car.isSaved = newSavedState;
+        return { isSaved: newSavedState };
       }
       return { isSaved: false };
     }

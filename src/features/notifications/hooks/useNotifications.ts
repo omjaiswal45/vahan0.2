@@ -26,26 +26,25 @@ import { PushTokenState, NotificationPermission } from '../types';
 import Constants from 'expo-constants';
 
 // Configure how notifications are presented when app is in foreground
-// Only set handler if not using Expo Go (remote notifications don't work in Expo Go)
+// Note: Local notifications work in Expo Go, only remote notifications don't work
 const isExpoGo = Constants.appOwnership === 'expo';
-if (!isExpoGo) {
-  Notifications.setNotificationHandler({
-    handleNotification: async (notification) => {
-      const payload = parseNotificationPayload(notification);
-      const shouldShow = shouldShowInForeground(payload.data);
 
-      // Don't show alert/banner in foreground - we'll use custom NotificationBanner component
-      // This prevents duplicate notifications on iOS
-      return {
-        shouldShowAlert: false, // Don't show system alert - use custom banner
-        shouldPlaySound: shouldShow && NOTIFICATION_CONFIG.PLAY_SOUND_IN_FOREGROUND,
-        shouldSetBadge: NOTIFICATION_CONFIG.SET_BADGE,
-        shouldShowBanner: false, // Don't show system banner - use custom banner
-        shouldShowList: true, // Still add to notification center
-      };
-    },
-  });
-}
+// Always set notification handler (local notifications work in Expo Go)
+Notifications.setNotificationHandler({
+  handleNotification: async (notification) => {
+    const payload = parseNotificationPayload(notification);
+    const shouldShow = shouldShowInForeground(payload.data);
+
+    // Show notifications in foreground
+    // In Expo Go, only local notifications will work
+    return {
+      shouldShowBanner: true, // Show system banner
+      shouldPlaySound: shouldShow && NOTIFICATION_CONFIG.PLAY_SOUND_IN_FOREGROUND,
+      shouldSetBadge: NOTIFICATION_CONFIG.SET_BADGE,
+      shouldShowList: true, // Add to notification center
+    };
+  },
+});
 
 interface UseNotificationsOptions {
   userId?: string;

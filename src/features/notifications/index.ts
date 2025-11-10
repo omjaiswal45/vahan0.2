@@ -12,6 +12,9 @@ export { NotificationBanner } from './components/NotificationBanner';
 export { DebugPanel } from './components/DebugPanel';
 export { PermissionPrimerModal } from './components/PermissionPrimerModal';
 
+// Screens (Development)
+export { NotificationTestScreen } from './screens/NotificationTestScreen';
+
 // Services
 export {
   registerPushToken,

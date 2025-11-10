@@ -29,6 +29,13 @@ export const SavedCarsScreen: React.FC = () => {
   const savedCarIds = useSelector((state: RootState) => state.buyUsedCar.savedCarIds);
   const [refreshing, setRefreshing] = React.useState(false);
 
+  // Sync MOCK_CARS isSaved property with Redux savedCarIds on mount
+  React.useEffect(() => {
+    MOCK_CARS.forEach(car => {
+      car.isSaved = savedCarIds.includes(car.id);
+    });
+  }, [savedCarIds]);
+
   // Filter MOCK_CARS by savedCarIds from Redux
   const savedCars = useMemo(() =>
     MOCK_CARS.filter(car => savedCarIds.includes(car.id)),
@@ -169,6 +176,7 @@ export const SavedCarsScreen: React.FC = () => {
         data={savedCars}
         renderItem={renderCarCard}
         keyExtractor={(item) => item.id}
+        extraData={savedCarIds} // Force re-render when savedCarIds changes
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={renderEmpty}
